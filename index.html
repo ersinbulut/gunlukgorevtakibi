@@ -14,6 +14,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   :root {
     --primary: #6366F1;
@@ -293,6 +294,80 @@
   .icon-bg-danger { background: #FEE2E2; color: var(--danger); }
   .icon-bg-info { background: #CFFAFE; color: var(--info); }
   .icon-bg-accent { background: #FCE7F3; color: var(--accent); }
+
+  /* CHARTS SECTION */
+  .charts-section {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 8px;
+  }
+  @media (max-width: 992px) {
+    .charts-grid { grid-template-columns: 1fr; }
+  }
+  .chart-card {
+    background: linear-gradient(135deg, #fafbff 0%, #f3f4ff 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .chart-card-title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-card-title i {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+  }
+  .chart-card-badge {
+    background: white;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gray);
+    border: 1px solid var(--border);
+  }
+  .chart-canvas-wrapper {
+    position: relative;
+    height: 220px;
+  }
+  .chart-empty {
+    text-align: center;
+    color: var(--gray);
+    font-size: 0.85rem;
+    padding: 60px 20px;
+  }
+  .chart-empty i {
+    font-size: 2.2rem;
+    color: var(--border);
+    display: block;
+    margin-bottom: 10px;
+  }
 
   /* QUICK ADD */
   .quick-add-section {
@@ -986,6 +1061,67 @@
         <div class="stat-label">Aktif Süre</div>
         <div class="stat-value" id="statHours">0s 0d</div>
         <div class="stat-trend"><i class="fas fa-business-time"></i> Verimli zaman</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS / ANALYTICS SECTION -->
+  <div class="charts-section">
+    <div class="section-title">
+      <i class="fas fa-chart-pie text-primary"></i> Görsel Analitik
+      <small style="font-weight:400;color:var(--gray);font-size:0.8rem">— Günlük ilerlemeni grafiklerle takip et</small>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <i style="background:#D1FAE5;color:#10B981"><i class="fas fa-circle-check"></i></i>
+            Günlük Tamamlanma Durumu
+          </div>
+          <span class="chart-card-badge" id="donutBadge">0 aktivite</span>
+        </div>
+        <div class="chart-canvas-wrapper" id="donutWrapper">
+          <canvas id="completionDonut"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <i style="background:#EEF2FF;color:#6366F1"><i class="fas fa-chart-column"></i></i>
+            Saatlik Aktivite Dağılımı
+          </div>
+          <span class="chart-card-badge" id="hourlyBadge">Bugün</span>
+        </div>
+        <div class="chart-canvas-wrapper" id="hourlyWrapper">
+          <canvas id="hourlyBar"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <i style="background:#FCE7F3;color:#EC4899"><i class="fas fa-chart-line"></i></i>
+            Son 7 Gün Trendi
+          </div>
+          <span class="chart-card-badge" id="trendBadge">% tamamlanma</span>
+        </div>
+        <div class="chart-canvas-wrapper" id="trendWrapper">
+          <canvas id="weeklyTrend"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <div class="chart-card-title">
+            <i style="background:#EDE9FE;color:#8B5CF6"><i class="fas fa-spider"></i></i>
+            Yaşam Dengesi (Kategori)
+          </div>
+          <span class="chart-card-badge" id="radarBadge">Bu hafta</span>
+        </div>
+        <div class="chart-canvas-wrapper" id="radarWrapper">
+          <canvas id="categoryRadar"></canvas>
+        </div>
       </div>
     </div>
   </div>
@@ -1985,7 +2121,320 @@
     renderCategories();
     renderAchievements();
     renderUpcomingReminders();
+    renderCharts();
     updateTimelineLabel();
+  }
+
+  // ============= CHARTS =============
+  let chartInstances = {};
+
+  function destroyChart(key) {
+    if (chartInstances[key]) {
+      chartInstances[key].destroy();
+      delete chartInstances[key];
+    }
+  }
+
+  function renderCharts() {
+    if (typeof Chart === 'undefined') return;
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = '#64748B';
+    renderCompletionDonut();
+    renderHourlyBar();
+    renderWeeklyTrend();
+    renderCategoryRadar();
+  }
+
+  // 1. Donut Chart - Daily Completion Status
+  function renderCompletionDonut() {
+    const dayTasks = tasks.filter(t => t.date === currentDate);
+    const completed = dayTasks.filter(t => t.status === 'completed').length;
+    const pending = dayTasks.filter(t => t.status === 'pending').length;
+    const progress = dayTasks.filter(t => t.status === 'progress').length;
+    const scheduled = dayTasks.filter(t => t.status === 'scheduled').length;
+    const total = dayTasks.length;
+
+    document.getElementById('donutBadge').textContent = `${total} aktivite`;
+    const wrapper = document.getElementById('donutWrapper');
+
+    if (total === 0) {
+      wrapper.innerHTML = '<div class="chart-empty"><i class="fas fa-chart-pie"></i>Henüz aktivite yok<br><small>Veri ekledikçe grafik dolacak</small></div>';
+      return;
+    }
+    if (!document.getElementById('completionDonut')) {
+      wrapper.innerHTML = '<canvas id="completionDonut"></canvas>';
+    }
+    destroyChart('donut');
+    const ctx = document.getElementById('completionDonut').getContext('2d');
+    const percent = Math.round((completed/total)*100);
+
+    chartInstances.donut = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Tamamlanan', 'Devam Eden', 'Planlanmış', 'Bekleyen'],
+        datasets: [{
+          data: [completed, progress, scheduled, pending],
+          backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#E5E7EB'],
+          borderWidth: 0,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { padding: 12, font: { size: 11, weight: '600' }, usePointStyle: true, pointStyle: 'circle' }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15,23,42,0.95)',
+            padding: 12, cornerRadius: 8, titleFont: { weight: '700' },
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${ctx.parsed} aktivite (${Math.round(ctx.parsed/total*100)}%)`
+            }
+          }
+        }
+      },
+      plugins: [{
+        id: 'centerText',
+        afterDraw: (chart) => {
+          const { ctx, width, height } = chart;
+          ctx.save();
+          const centerX = width / 2;
+          const centerY = (height / 2) - 18;
+          ctx.font = 'bold 28px "Plus Jakarta Sans"';
+          ctx.fillStyle = '#0F172A';
+          ctx.textAlign = 'center';
+          ctx.fillText(percent + '%', centerX, centerY);
+          ctx.font = '600 11px "Plus Jakarta Sans"';
+          ctx.fillStyle = '#64748B';
+          ctx.fillText('TAMAMLANDI', centerX, centerY + 18);
+          ctx.restore();
+        }
+      }]
+    });
+  }
+
+  // 2. Bar Chart - Hourly Activity Distribution
+  function renderHourlyBar() {
+    const dayTasks = tasks.filter(t => t.date === currentDate);
+    const wrapper = document.getElementById('hourlyWrapper');
+    if (dayTasks.length === 0) {
+      wrapper.innerHTML = '<div class="chart-empty"><i class="fas fa-chart-column"></i>Saatlik veri için aktivite ekle</div>';
+      return;
+    }
+    if (!document.getElementById('hourlyBar')) {
+      wrapper.innerHTML = '<canvas id="hourlyBar"></canvas>';
+    }
+    destroyChart('hourly');
+
+    // Order from 6 AM to 5 AM next day
+    const hourOrder = [];
+    for (let i = 6; i < 24; i++) hourOrder.push(i);
+    for (let i = 0; i < 6; i++) hourOrder.push(i);
+
+    const labels = hourOrder.map(h => String(h).padStart(2,'0'));
+    const completedData = hourOrder.map(h =>
+      dayTasks.filter(t => parseInt(t.startTime.split(':')[0]) === h && t.status === 'completed').length
+    );
+    const otherData = hourOrder.map(h =>
+      dayTasks.filter(t => parseInt(t.startTime.split(':')[0]) === h && t.status !== 'completed').length
+    );
+
+    const ctx = document.getElementById('hourlyBar').getContext('2d');
+    chartInstances.hourly = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Tamamlanan', data: completedData, backgroundColor: '#10B981', borderRadius: 6, stack: 'a' },
+          { label: 'Diğer', data: otherData, backgroundColor: '#C7D2FE', borderRadius: 6, stack: 'a' }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, font: { size: 11, weight: '600' } } },
+          tooltip: {
+            backgroundColor: 'rgba(15,23,42,0.95)', padding: 12, cornerRadius: 8,
+            callbacks: { title: (items) => items[0].label + ':00' }
+          }
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false }, ticks: { font: { size: 9, weight: '600' } } },
+          y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } }, grid: { color: 'rgba(0,0,0,0.04)' } }
+        }
+      }
+    });
+  }
+
+  // 3. Line Chart - Last 7 Days Trend
+  function renderWeeklyTrend() {
+    const wrapper = document.getElementById('trendWrapper');
+    const last7 = [];
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      last7.push(formatDate(d));
+    }
+
+    const totals = last7.map(d => tasks.filter(t => t.date === d).length);
+    const completed = last7.map(d => tasks.filter(t => t.date === d && t.status === 'completed').length);
+    const percents = last7.map((d, i) => totals[i] > 0 ? Math.round((completed[i]/totals[i])*100) : 0);
+
+    if (totals.every(t => t === 0)) {
+      wrapper.innerHTML = '<div class="chart-empty"><i class="fas fa-chart-line"></i>Trend için birkaç günlük veri gerekli</div>';
+      return;
+    }
+    if (!document.getElementById('weeklyTrend')) {
+      wrapper.innerHTML = '<canvas id="weeklyTrend"></canvas>';
+    }
+    destroyChart('trend');
+
+    const labels = last7.map(d => {
+      const date = new Date(d);
+      return `${dayNamesShort[(date.getDay()+6)%7]} ${date.getDate()}`;
+    });
+
+    const ctx = document.getElementById('weeklyTrend').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+    gradient.addColorStop(0, 'rgba(236, 72, 153, 0.35)');
+    gradient.addColorStop(1, 'rgba(236, 72, 153, 0.02)');
+
+    chartInstances.trend = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Tamamlanma %',
+          data: percents,
+          borderColor: '#EC4899',
+          backgroundColor: gradient,
+          borderWidth: 3,
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: '#EC4899',
+          pointBorderColor: 'white',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7
+        }, {
+          label: 'Toplam Aktivite',
+          data: totals,
+          borderColor: '#6366F1',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [5, 5],
+          tension: 0.4,
+          pointBackgroundColor: '#6366F1',
+          pointRadius: 4,
+          yAxisID: 'y1'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, font: { size: 11, weight: '600' } } },
+          tooltip: {
+            backgroundColor: 'rgba(15,23,42,0.95)', padding: 12, cornerRadius: 8,
+            callbacks: {
+              label: (ctx) => {
+                if (ctx.datasetIndex === 0) return ` Tamamlanma: %${ctx.parsed.y}`;
+                return ` Toplam: ${ctx.parsed.y} aktivite`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' } } },
+          y: {
+            beginAtZero: true, max: 100,
+            ticks: { callback: (v) => v + '%', font: { size: 10 } },
+            grid: { color: 'rgba(0,0,0,0.04)' },
+            title: { display: true, text: 'Tamamlanma %', font: { size: 10, weight: '600' } }
+          },
+          y1: {
+            beginAtZero: true,
+            position: 'right',
+            grid: { drawOnChartArea: false },
+            ticks: { stepSize: 1, font: { size: 10 } },
+            title: { display: true, text: 'Aktivite Sayısı', font: { size: 10, weight: '600' } }
+          }
+        }
+      }
+    });
+  }
+
+  // 4. Radar Chart - Category Balance (this week)
+  function renderCategoryRadar() {
+    const wrapper = document.getElementById('radarWrapper');
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(currentWeekStart);
+      d.setDate(d.getDate() + i);
+      weekDates.push(formatDate(d));
+    }
+    const weekTasks = tasks.filter(t => weekDates.includes(t.date));
+
+    if (weekTasks.length === 0) {
+      wrapper.innerHTML = '<div class="chart-empty"><i class="fas fa-spider"></i>Haftalık denge için aktivite ekle</div>';
+      return;
+    }
+    if (!document.getElementById('categoryRadar')) {
+      wrapper.innerHTML = '<canvas id="categoryRadar"></canvas>';
+    }
+    destroyChart('radar');
+
+    const labels = categories.map(c => `${c.icon} ${c.name}`);
+    const data = categories.map(c => weekTasks.filter(t => t.category === c.name).length);
+
+    const ctx = document.getElementById('categoryRadar').getContext('2d');
+    chartInstances.radar = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Bu Hafta',
+          data,
+          backgroundColor: 'rgba(139, 92, 246, 0.2)',
+          borderColor: '#8B5CF6',
+          borderWidth: 2,
+          pointBackgroundColor: '#8B5CF6',
+          pointBorderColor: 'white',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15,23,42,0.95)', padding: 12, cornerRadius: 8,
+            callbacks: { label: (ctx) => ` ${ctx.parsed.r} aktivite` }
+          }
+        },
+        scales: {
+          r: {
+            beginAtZero: true,
+            ticks: { stepSize: Math.max(1, Math.ceil(Math.max(...data)/4)), font: { size: 9 }, backdropColor: 'transparent' },
+            grid: { color: 'rgba(0,0,0,0.06)' },
+            angleLines: { color: 'rgba(0,0,0,0.06)' },
+            pointLabels: { font: { size: 9, weight: '600' }, color: '#475569' }
+          }
+        }
+      }
+    });
   }
 
   function updateTimelineLabel() {
