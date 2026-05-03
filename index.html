@@ -1223,6 +1223,7 @@
   const quickActivityPresets = [
     { title: 'Uyandım', emoji: '☀️', category: 'Uyku', priority: 'medium' },
     { title: 'Diş fırçaladım', emoji: '🪥', category: 'Kişisel Bakım', priority: 'medium' },
+    { title: 'Duş aldım', emoji: '🚿', category: 'Kişisel Bakım', priority: 'medium' },
     { title: 'Kahvaltı yaptım', emoji: '🍳', category: 'Yemek', priority: 'medium' },
     { title: 'İşe gittim', emoji: '💼', category: 'İş', priority: 'high' },
     { title: 'Yemeğe çıktım', emoji: '🍽️', category: 'Yemek', priority: 'low' },
@@ -1235,9 +1236,16 @@
     { title: 'Su içtim', emoji: '💧', category: 'Sağlık', priority: 'medium' },
     { title: 'Kitap okudum', emoji: '📚', category: 'Eğitim', priority: 'high' },
     { title: 'Müzik dinledim', emoji: '🎵', category: 'Hobi', priority: 'low' },
-    { title: 'Duş aldım', emoji: '🚿', category: 'Kişisel Bakım', priority: 'medium' },
     { title: 'Arkadaşla görüştüm', emoji: '👥', category: 'Sosyal', priority: 'medium' },
     { title: 'Meditasyon yaptım', emoji: '🧘', category: 'Sağlık', priority: 'high' },
+    { title: 'Çamaşır yıkamaya attım', emoji: '🧺', category: 'Diğer', priority: 'medium' },
+    { title: 'Çamaşır asıp kuruttum', emoji: '🧻', category: 'Diğer', priority: 'medium' },
+    { title: 'Çamaşır katladım', emoji: '👕', category: 'Diğer', priority: 'low' },
+    { title: 'Temizlik yaptım', emoji: '🧹', category: 'Diğer', priority: 'medium' },
+    { title: 'Oyun oynadım', emoji: '🎮', category: 'Hobi', priority: 'low' },
+    { title: 'Film izledim', emoji: '🎬', category: 'Hobi', priority: 'low' },
+    { title: 'Dizi izledim', emoji: '📺', category: 'Hobi', priority: 'low' },
+    { title: 'Proje geliştirdim', emoji: '💻', category: 'İş', priority: 'high' },
     { title: 'Uyumaya gittim', emoji: '😴', category: 'Uyku', priority: 'high' }
   ];
 
@@ -2008,7 +2016,12 @@
     const isToday = currentDate === formatDate(new Date());
 
     let html = '';
-    for (let h = 0; h < 24; h++) {
+    // Start from 6 AM (06:00), wrap around to end at 5 AM next morning
+    const hourOrder = [];
+    for (let i = 6; i < 24; i++) hourOrder.push(i);
+    for (let i = 0; i < 6; i++) hourOrder.push(i);
+
+    for (const h of hourOrder) {
       const hourTasks = dayTasks.filter(t => parseInt(t.startTime.split(':')[0]) === h);
       const period = h < 6 ? 'Gece' : h < 12 ? 'Sabah' : h < 17 ? 'Öğleden Sonra' : h < 21 ? 'Akşam' : 'Gece';
       const isCurrent = isToday && h === currentHour;
