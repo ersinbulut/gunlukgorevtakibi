@@ -3,30 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Günlük İş Takip Paneli</title>
+<title>Kişisel Gelişim Takip Paneli</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #4F46E5;
-    --primary-dark: #3730A3;
+    --primary: #6366F1;
+    --primary-dark: #4338CA;
     --primary-light: #EEF2FF;
+    --accent: #EC4899;
     --success: #10B981;
     --warning: #F59E0B;
     --danger: #EF4444;
     --info: #06B6D4;
-    --dark: #1E293B;
+    --purple: #8B5CF6;
+    --dark: #0F172A;
     --gray: #64748B;
     --light: #F8FAFC;
     --border: #E2E8F0;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 
   * { box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4ecfb 100%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #F1F5F9;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.08) 0px, transparent 50%);
     min-height: 100vh;
     color: var(--dark);
     padding-bottom: 40px;
@@ -34,64 +40,219 @@
 
   /* HEADER */
   .top-header {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 24px 0;
-    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.25);
-    margin-bottom: 30px;
+    padding: 28px 0;
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .top-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
   }
   .top-header h1 {
     font-weight: 800;
-    font-size: 1.75rem;
+    font-size: 1.85rem;
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    position: relative;
+    z-index: 1;
   }
-  .top-header h1 i { font-size: 2rem; }
+  .top-header h1 .icon-box {
+    width: 50px; height: 50px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+  }
   .top-header .subtitle {
-    opacity: 0.9;
+    opacity: 0.92;
     font-size: 0.95rem;
-    margin-top: 4px;
+    margin-top: 6px;
+    font-weight: 400;
   }
   .live-clock {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 10px 20px;
-    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(15px);
+    padding: 12px 22px;
+    border-radius: 14px;
     font-weight: 600;
-    font-size: 1.1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 1.05rem;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    position: relative;
+    z-index: 1;
+  }
+  .motivation-banner {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    padding: 10px 18px;
+    border-radius: 12px;
+    margin-top: 14px;
+    font-size: 0.9rem;
+    border-left: 3px solid #FBBF24;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* WEEK SELECTOR */
+  .week-selector {
+    background: white;
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+  .week-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  .day-card {
+    background: var(--light);
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .day-card:hover {
+    background: var(--primary-light);
+    transform: translateY(-3px);
+  }
+  .day-card.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+    transform: translateY(-2px);
+  }
+  .day-card.today {
+    border-color: var(--accent);
+  }
+  .day-card.today::after {
+    content: 'BUGÜN';
+    position: absolute;
+    top: -8px;
+    right: -4px;
+    background: var(--accent);
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 700;
+  }
+  .day-card .day-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+  }
+  .day-card .day-number {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-top: 4px;
+  }
+  .day-card .day-month {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+  .day-card .day-progress {
+    margin-top: 6px;
+    height: 4px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .day-card.active .day-progress { background: rgba(255,255,255,0.25); }
+  .day-card .day-progress-fill {
+    height: 100%;
+    background: var(--success);
+    border-radius: 4px;
+    transition: width 0.4s;
+  }
+  .day-card.active .day-progress-fill { background: white; }
+  .week-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 0 4px;
+  }
+  .week-nav-btn {
+    background: var(--light);
+    border: none;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    color: var(--gray);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .week-nav-btn:hover { background: var(--primary-light); color: var(--primary); }
+  .week-title {
+    font-weight: 700;
+    color: var(--dark);
   }
 
   /* STAT CARDS */
   .stat-card {
     background: white;
     border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     border: 1px solid var(--border);
     transition: all 0.3s ease;
     height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    opacity: 0.08;
+    transform: translate(30%, -30%);
   }
   .stat-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08);
   }
+  .stat-card.stat-score::before { background: var(--primary); }
+  .stat-card.stat-streak::before { background: var(--accent); }
+  .stat-card.stat-done::before { background: var(--success); }
+  .stat-card.stat-time::before { background: var(--info); }
+
   .stat-card .stat-icon {
-    width: 52px;
-    height: 52px;
+    width: 48px; height: 48px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 14px;
+    font-size: 1.35rem;
+    margin-bottom: 12px;
   }
   .stat-card .stat-label {
     color: var(--gray);
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.8rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -100,10 +261,11 @@
     font-weight: 800;
     margin-top: 4px;
     color: var(--dark);
+    line-height: 1.1;
   }
   .stat-card .stat-trend {
-    font-size: 0.8rem;
-    margin-top: 6px;
+    font-size: 0.78rem;
+    margin-top: 8px;
     color: var(--gray);
   }
 
@@ -112,25 +274,82 @@
   .icon-bg-warning { background: #FEF3C7; color: var(--warning); }
   .icon-bg-danger { background: #FEE2E2; color: var(--danger); }
   .icon-bg-info { background: #CFFAFE; color: var(--info); }
+  .icon-bg-accent { background: #FCE7F3; color: var(--accent); }
+  .icon-bg-purple { background: #EDE9FE; color: var(--purple); }
+
+  /* QUICK ADD ACTIVITIES */
+  .quick-add-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+  }
+  .section-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark);
+  }
+  .quick-activities {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .quick-activity {
+    background: var(--light);
+    border: 1.5px solid transparent;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dark);
+  }
+  .quick-activity:hover {
+    background: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(99, 102, 241, 0.15);
+  }
+  .quick-activity .qa-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
 
   /* CONTROL PANEL */
   .control-panel {
     background: white;
     border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    padding: 18px 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     border: 1px solid var(--border);
-    margin-bottom: 24px;
+    margin-bottom: 22px;
   }
   .form-control, .form-select {
     border: 1.5px solid var(--border);
     border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 0.95rem;
+    padding: 9px 14px;
+    font-size: 0.92rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .form-control:focus, .form-select:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
 
   /* BUTTONS */
@@ -138,9 +357,10 @@
     border-radius: 10px;
     padding: 10px 20px;
     font-weight: 600;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     transition: all 0.2s;
     border: none;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .btn-primary-custom {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -148,7 +368,7 @@
   }
   .btn-primary-custom:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
     color: white;
   }
   .btn-outline-custom {
@@ -166,22 +386,10 @@
     background: white;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     border: 1px solid var(--border);
   }
-  .timeline-title {
-    font-weight: 700;
-    font-size: 1.15rem;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--dark);
-  }
-  .timeline {
-    position: relative;
-    padding-left: 0;
-  }
+  .timeline { padding-left: 0; }
   .hour-block {
     display: flex;
     border-bottom: 1px dashed var(--border);
@@ -192,24 +400,39 @@
   .hour-block:last-child { border-bottom: none; }
   .hour-block:hover { background: #FAFBFF; }
   .hour-block.current-hour {
-    background: linear-gradient(90deg, rgba(79, 70, 229, 0.08), transparent);
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
     border-left: 3px solid var(--primary);
-    padding-left: 10px;
+    padding-left: 12px;
+    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.08);
+  }
+  .hour-block.current-hour .hour-label::after {
+    content: 'ŞİMDİ';
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    font-size: 0.55rem;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 700;
+    margin-left: 4px;
+    vertical-align: middle;
   }
   .hour-label {
-    width: 90px;
+    width: 95px;
     flex-shrink: 0;
     font-weight: 700;
     color: var(--primary);
-    font-size: 1rem;
+    font-size: 1.05rem;
     padding-top: 4px;
   }
   .hour-label .period {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--gray);
     font-weight: 500;
     margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
   .hour-tasks {
     flex: 1;
@@ -221,13 +444,15 @@
     background: transparent;
     border: 1.5px dashed var(--border);
     color: var(--gray);
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 9px 14px;
+    border-radius: 10px;
     font-size: 0.85rem;
     text-align: left;
     transition: all 0.2s;
     cursor: pointer;
     width: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
   }
   .add-task-btn:hover {
     border-color: var(--primary);
@@ -240,21 +465,20 @@
     background: white;
     border: 1px solid var(--border);
     border-left: 4px solid var(--primary);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 12px 14px;
     transition: all 0.25s;
-    position: relative;
   }
   .task-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
     transform: translateX(2px);
   }
   .task-card.priority-high { border-left-color: var(--danger); }
   .task-card.priority-medium { border-left-color: var(--warning); }
   .task-card.priority-low { border-left-color: var(--info); }
   .task-card.status-completed {
-    opacity: 0.7;
-    background: #F8FAFC;
+    background: linear-gradient(90deg, #F0FDF4, white);
+    border-left-color: var(--success);
   }
   .task-card.status-completed .task-title {
     text-decoration: line-through;
@@ -266,22 +490,26 @@
     align-items: flex-start;
     gap: 10px;
   }
+  .task-emoji {
+    font-size: 1.4rem;
+    margin-right: 4px;
+  }
   .task-title {
     font-weight: 600;
     font-size: 0.95rem;
     color: var(--dark);
     margin: 0;
-    flex: 1;
+    display: inline;
   }
   .task-description {
     color: var(--gray);
-    font-size: 0.85rem;
+    font-size: 0.83rem;
     margin-top: 4px;
     line-height: 1.5;
   }
   .task-meta {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin-top: 8px;
     flex-wrap: wrap;
     align-items: center;
@@ -291,25 +519,15 @@
     border-radius: 20px;
     font-size: 0.7rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
   }
   .badge-completed { background: #D1FAE5; color: #065F46; }
   .badge-pending { background: #FEF3C7; color: #92400E; }
   .badge-progress { background: #DBEAFE; color: #1E40AF; }
   .badge-cancelled { background: #FEE2E2; color: #991B1B; }
-  .badge-category {
-    background: var(--primary-light);
-    color: var(--primary);
-  }
-  .task-actions {
-    display: flex;
-    gap: 4px;
-  }
+  .task-actions { display: flex; gap: 4px; }
   .task-action-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
+    width: 30px; height: 30px;
+    border-radius: 8px;
     border: none;
     background: transparent;
     color: var(--gray);
@@ -322,47 +540,137 @@
   }
   .task-action-btn:hover { background: var(--light); color: var(--primary); }
   .task-action-btn.delete:hover { background: #FEE2E2; color: var(--danger); }
-  .task-action-btn.complete:hover { background: #D1FAE5; color: var(--success); }
+  .task-action-btn.complete { color: var(--success); }
+  .task-action-btn.complete:hover { background: #D1FAE5; }
 
-  /* PROGRESS */
-  .progress-section {
+  /* SIDEBAR SECTIONS */
+  .side-section {
     background: white;
     border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     border: 1px solid var(--border);
-    margin-bottom: 24px;
+    margin-bottom: 18px;
   }
-  .progress-section h5 {
+  .side-section h5 {
     font-weight: 700;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   .progress-bar-custom {
-    height: 10px;
+    height: 12px;
     background: var(--light);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     margin-bottom: 8px;
   }
   .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-    border-radius: 10px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 12px;
     transition: width 0.6s ease;
+    position: relative;
   }
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* MOTIVATION CARD */
+  .motivation-card {
+    background: linear-gradient(135deg, var(--accent), #DB2777);
+    color: white;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .motivation-card::before {
+    content: '✨';
+    position: absolute;
+    top: -10px; right: 10px;
+    font-size: 6rem;
+    opacity: 0.15;
+  }
+  .motivation-card .quote {
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .motivation-card .quote-author {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 8px;
+    text-align: right;
+  }
+
+  /* ACHIEVEMENTS */
+  .achievement {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: var(--light);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .achievement.unlocked {
+    background: linear-gradient(90deg, #FEF3C7, #FDE68A);
+  }
+  .achievement-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: white;
+  }
+  .achievement.unlocked .achievement-icon {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: white;
+  }
+  .achievement-info {
+    flex: 1;
+  }
+  .achievement-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--dark);
+  }
+  .achievement-desc {
+    font-size: 0.75rem;
+    color: var(--gray);
+  }
+  .achievement.locked { opacity: 0.5; }
+
+  /* CATEGORY ITEMS */
   .category-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
     border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
   .category-item:last-child { border-bottom: none; }
   .category-dot {
-    width: 10px;
-    height: 10px;
+    width: 11px; height: 11px;
     border-radius: 50%;
     margin-right: 10px;
     display: inline-block;
@@ -371,50 +679,47 @@
   /* MODAL */
   .modal-content {
     border: none;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
   }
   .modal-header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    border-radius: 16px 16px 0 0;
+    border: none;
     padding: 18px 24px;
   }
   .modal-header .btn-close { filter: brightness(0) invert(1); }
   .modal-body { padding: 24px; }
   .form-label {
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     color: var(--dark);
     margin-bottom: 6px;
   }
 
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--gray);
-  }
-  .empty-state i {
-    font-size: 3.5rem;
-    color: var(--border);
-    margin-bottom: 16px;
-  }
-  .empty-state h5 { color: var(--dark); margin-bottom: 8px; }
-
   /* RESPONSIVE */
   @media (max-width: 768px) {
     .top-header h1 { font-size: 1.3rem; }
+    .top-header h1 .icon-box { width: 40px; height: 40px; }
     .stat-card .stat-value { font-size: 1.4rem; }
-    .hour-label { width: 60px; font-size: 0.85rem; }
+    .hour-label { width: 65px; font-size: 0.85rem; }
+    .day-card .day-number { font-size: 1.1rem; }
+    .day-card { padding: 8px 4px; }
   }
 
   /* ANIMATIONS */
   @keyframes slideIn {
-    from { opacity: 0; transform: translateY(-10px); }
+    from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .task-card { animation: slideIn 0.3s ease; }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .pulse { animation: pulse 2s infinite; }
 
   /* SCROLLBAR */
   ::-webkit-scrollbar { width: 8px; }
@@ -430,97 +735,110 @@
   <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
       <div>
-        <h1><i class="fas fa-tasks"></i> Günlük İş Takip Paneli</h1>
-        <div class="subtitle">Saati saatine işlerinizi profesyonelce yönetin</div>
+        <h1>
+          <div class="icon-box"><i class="fas fa-seedling"></i></div>
+          Kişisel Gelişim Takip Paneli
+        </h1>
+        <div class="subtitle">Her küçük adım, büyük bir başarıya götürür 🌱</div>
       </div>
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex flex-column align-items-end gap-2">
         <div class="live-clock" id="liveClock">--:--:--</div>
+        <div style="font-size:0.8rem;opacity:0.85" id="todayLabel"></div>
       </div>
+    </div>
+    <div class="motivation-banner" id="dailyMotivation">
+      <i class="fas fa-fire" style="color:#FBBF24"></i>
+      <span id="motivationText">Bugün harika bir gün için yola çıkıyorsun!</span>
     </div>
   </div>
 </div>
 
 <div class="container-fluid px-4">
 
+  <!-- WEEK SELECTOR -->
+  <div class="week-selector">
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="changeWeek(-1)" title="Önceki Hafta">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="week-title" id="weekTitle">Bu Hafta</div>
+      <button class="week-nav-btn" onclick="changeWeek(1)" title="Sonraki Hafta">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="week-days" id="weekDays"></div>
+  </div>
+
   <!-- STATS -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-6 col-lg">
-      <div class="stat-card">
-        <div class="stat-icon icon-bg-primary"><i class="fas fa-list-check"></i></div>
-        <div class="stat-label">Toplam Görev</div>
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-trend"><i class="fas fa-calendar-day"></i> Bugün</div>
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-3">
+      <div class="stat-card stat-score">
+        <div class="stat-icon icon-bg-primary"><i class="fas fa-star"></i></div>
+        <div class="stat-label">Günlük Skor</div>
+        <div class="stat-value" id="statScore">0</div>
+        <div class="stat-trend"><i class="fas fa-trophy"></i> <span id="scoreLevel">Başlangıç</span></div>
       </div>
     </div>
-    <div class="col-md-6 col-lg">
-      <div class="stat-card">
+    <div class="col-md-6 col-lg-3">
+      <div class="stat-card stat-streak">
+        <div class="stat-icon icon-bg-accent"><i class="fas fa-fire"></i></div>
+        <div class="stat-label">Aktif Seri</div>
+        <div class="stat-value" id="statStreak">0 gün</div>
+        <div class="stat-trend"><i class="fas fa-bolt"></i> Devam et!</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="stat-card stat-done">
         <div class="stat-icon icon-bg-success"><i class="fas fa-check-double"></i></div>
         <div class="stat-label">Tamamlanan</div>
-        <div class="stat-value" id="statCompleted">0</div>
+        <div class="stat-value" id="statCompleted">0 / 0</div>
         <div class="stat-trend"><i class="fas fa-percentage"></i> <span id="statCompletedPercent">0%</span></div>
       </div>
     </div>
-    <div class="col-md-6 col-lg">
-      <div class="stat-card">
-        <div class="stat-icon icon-bg-warning"><i class="fas fa-spinner"></i></div>
-        <div class="stat-label">Devam Eden</div>
-        <div class="stat-value" id="statProgress">0</div>
-        <div class="stat-trend"><i class="fas fa-clock"></i> Aktif görevler</div>
+    <div class="col-md-6 col-lg-3">
+      <div class="stat-card stat-time">
+        <div class="stat-icon icon-bg-info"><i class="fas fa-clock"></i></div>
+        <div class="stat-label">Aktif Süre</div>
+        <div class="stat-value" id="statHours">0s 0d</div>
+        <div class="stat-trend"><i class="fas fa-business-time"></i> Verimli zaman</div>
       </div>
     </div>
-    <div class="col-md-6 col-lg">
-      <div class="stat-card">
-        <div class="stat-icon icon-bg-danger"><i class="fas fa-hourglass-half"></i></div>
-        <div class="stat-label">Bekleyen</div>
-        <div class="stat-value" id="statPending">0</div>
-        <div class="stat-trend"><i class="fas fa-bell"></i> Henüz başlanmadı</div>
-      </div>
+  </div>
+
+  <!-- QUICK ADD -->
+  <div class="quick-add-section">
+    <div class="section-title">
+      <i class="fas fa-bolt text-warning"></i> Hızlı Aktivite Ekle
+      <small style="font-weight:400;color:var(--gray);font-size:0.8rem">— Tek tıkla şu an yaptığını ekle</small>
     </div>
-    <div class="col-md-6 col-lg">
-      <div class="stat-card">
-        <div class="stat-icon icon-bg-info"><i class="fas fa-stopwatch"></i></div>
-        <div class="stat-label">Toplam Süre</div>
-        <div class="stat-value" id="statHours">0s</div>
-        <div class="stat-trend"><i class="fas fa-business-time"></i> Çalışma saati</div>
-      </div>
-    </div>
+    <div class="quick-activities" id="quickActivities"></div>
   </div>
 
   <!-- CONTROL PANEL -->
   <div class="control-panel">
     <div class="row g-3 align-items-end">
       <div class="col-md-3">
-        <label class="form-label"><i class="fas fa-calendar"></i> Tarih Seçin</label>
-        <input type="date" class="form-control" id="datePicker">
-      </div>
-      <div class="col-md-3">
-        <label class="form-label"><i class="fas fa-filter"></i> Durum Filtresi</label>
+        <label class="form-label"><i class="fas fa-filter"></i> Durum</label>
         <select class="form-select" id="filterStatus">
-          <option value="all">Tümü</option>
+          <option value="all">Tüm Durumlar</option>
           <option value="pending">Bekleyen</option>
           <option value="progress">Devam Eden</option>
           <option value="completed">Tamamlanan</option>
-          <option value="cancelled">İptal</option>
         </select>
       </div>
       <div class="col-md-3">
-        <label class="form-label"><i class="fas fa-tag"></i> Kategori Filtresi</label>
-        <select class="form-select" id="filterCategory">
-          <option value="all">Tüm Kategoriler</option>
-          <option value="İş">İş</option>
-          <option value="Toplantı">Toplantı</option>
-          <option value="Eğitim">Eğitim</option>
-          <option value="Kişisel">Kişisel</option>
-          <option value="Spor">Spor</option>
-          <option value="Mola">Mola</option>
-          <option value="Diğer">Diğer</option>
-        </select>
+        <label class="form-label"><i class="fas fa-tag"></i> Kategori</label>
+        <select class="form-select" id="filterCategory"></select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"><i class="fas fa-search"></i> Ara</label>
+        <input type="text" class="form-control" id="searchInput" placeholder="Aktivite ara...">
       </div>
       <div class="col-md-3 d-flex gap-2">
         <button class="btn btn-primary-custom flex-fill" data-bs-toggle="modal" data-bs-target="#taskModal" onclick="prepareNewTask()">
-          <i class="fas fa-plus"></i> Yeni Görev
+          <i class="fas fa-plus"></i> Özel Aktivite
         </button>
-        <button class="btn btn-outline-custom" onclick="exportData()" title="Verileri JSON olarak indir">
+        <button class="btn btn-outline-custom" onclick="exportData()" title="Verileri yedekle">
           <i class="fas fa-download"></i>
         </button>
       </div>
@@ -533,14 +851,13 @@
     <div class="col-lg-8">
       <div class="timeline-container">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="timeline-title">
+          <div class="section-title mb-0">
             <i class="fas fa-stream text-primary"></i> Saatlik Zaman Çizelgesi
+            <small style="font-weight:400;color:var(--gray);font-size:0.8rem" id="timelineDateLabel"></small>
           </div>
-          <div>
-            <button class="btn btn-sm btn-outline-custom" onclick="scrollToCurrentHour()">
-              <i class="fas fa-location-crosshairs"></i> Şu Anki Saat
-            </button>
-          </div>
+          <button class="btn btn-sm btn-outline-custom" onclick="scrollToCurrentHour()">
+            <i class="fas fa-location-crosshairs"></i> Şu An
+          </button>
         </div>
         <div class="timeline" id="timeline"></div>
       </div>
@@ -548,48 +865,58 @@
 
     <!-- SIDEBAR -->
     <div class="col-lg-4">
+      <!-- MOTIVATION CARD -->
+      <div class="motivation-card">
+        <p class="quote" id="motivationQuote">Başarı, küçük çabaların her gün tekrarlanmasıdır.</p>
+        <div class="quote-author" id="motivationAuthor">— Robert Collier</div>
+      </div>
+
       <!-- DAILY PROGRESS -->
-      <div class="progress-section">
+      <div class="side-section">
         <h5><i class="fas fa-chart-line text-primary"></i> Günlük İlerleme</h5>
         <div class="d-flex justify-content-between mb-2">
-          <span style="font-size:0.9rem;color:var(--gray)">Tamamlanma Oranı</span>
-          <span style="font-weight:700" id="progressPercent">0%</span>
+          <span style="font-size:0.88rem;color:var(--gray)">Tamamlanma</span>
+          <span style="font-weight:700;color:var(--primary)" id="progressPercent">0%</span>
         </div>
         <div class="progress-bar-custom">
           <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
         </div>
-        <div class="text-center mt-3" style="font-size:0.85rem;color:var(--gray)">
-          <span id="progressText">Henüz görev eklenmedi</span>
+        <div class="text-center mt-3" style="font-size:0.85rem;color:var(--gray)" id="progressText">
+          Henüz aktivite eklenmedi
         </div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div class="side-section">
+        <h5><i class="fas fa-medal text-warning"></i> Başarımlar</h5>
+        <div id="achievements"></div>
       </div>
 
       <!-- CATEGORY BREAKDOWN -->
-      <div class="progress-section">
-        <h5><i class="fas fa-layer-group text-primary"></i> Kategori Dağılımı</h5>
+      <div class="side-section">
+        <h5><i class="fas fa-layer-group text-purple" style="color:var(--purple)"></i> Kategori Dağılımı</h5>
         <div id="categoryBreakdown">
-          <div class="text-center text-muted py-3" style="font-size:0.85rem">
-            Henüz veri yok
-          </div>
+          <div class="text-center text-muted py-3" style="font-size:0.85rem">Henüz veri yok</div>
         </div>
       </div>
 
-      <!-- QUICK STATS -->
-      <div class="progress-section">
-        <h5><i class="fas fa-bolt text-primary"></i> Hızlı İstatistikler</h5>
+      <!-- WEEKLY SUMMARY -->
+      <div class="side-section">
+        <h5><i class="fas fa-calendar-week text-info"></i> Haftalık Özet</h5>
         <div class="d-flex justify-content-between py-2 border-bottom">
-          <span style="font-size:0.9rem">En verimli saat</span>
-          <strong id="peakHour">-</strong>
+          <span style="font-size:0.88rem">Bu hafta toplam</span>
+          <strong id="weekTotal">0</strong>
         </div>
         <div class="d-flex justify-content-between py-2 border-bottom">
-          <span style="font-size:0.9rem">Yüksek öncelikli</span>
-          <strong id="highPriorityCount">0</strong>
+          <span style="font-size:0.88rem">Tamamlanma oranı</span>
+          <strong id="weekCompletion">0%</strong>
         </div>
         <div class="d-flex justify-content-between py-2 border-bottom">
-          <span style="font-size:0.9rem">Ortalama görev/saat</span>
-          <strong id="avgPerHour">0</strong>
+          <span style="font-size:0.88rem">En verimli gün</span>
+          <strong id="bestDay">-</strong>
         </div>
         <div class="d-flex justify-content-between py-2">
-          <span style="font-size:0.9rem">Aktif kategori sayısı</span>
+          <span style="font-size:0.88rem">Aktif kategoriler</span>
           <strong id="activeCategoryCount">0</strong>
         </div>
       </div>
@@ -602,27 +929,31 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="fas fa-edit me-2"></i><span id="modalTitle">Yeni Görev Ekle</span></h5>
+        <h5 class="modal-title"><i class="fas fa-edit me-2"></i><span id="modalTitle">Yeni Aktivite Ekle</span></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <form id="taskForm">
           <input type="hidden" id="taskId">
           <div class="row g-3">
-            <div class="col-md-12">
-              <label class="form-label">Görev Başlığı <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="taskTitle" required placeholder="Örn: Müşteri toplantısı">
+            <div class="col-md-2">
+              <label class="form-label">Emoji</label>
+              <input type="text" class="form-control text-center" id="taskEmoji" placeholder="📌" maxlength="2" style="font-size:1.2rem">
+            </div>
+            <div class="col-md-10">
+              <label class="form-label">Aktivite Başlığı <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="taskTitle" required placeholder="Örn: Sabah yürüyüşü">
             </div>
             <div class="col-md-12">
-              <label class="form-label">Açıklama</label>
-              <textarea class="form-control" id="taskDescription" rows="2" placeholder="Görev hakkında detay..."></textarea>
+              <label class="form-label">Açıklama / Not</label>
+              <textarea class="form-control" id="taskDescription" rows="2" placeholder="Bu aktivite hakkında notlarım..."></textarea>
             </div>
             <div class="col-md-4">
-              <label class="form-label">Başlangıç Saati <span class="text-danger">*</span></label>
+              <label class="form-label">Başlangıç <span class="text-danger">*</span></label>
               <input type="time" class="form-control" id="taskStartTime" required>
             </div>
             <div class="col-md-4">
-              <label class="form-label">Bitiş Saati</label>
+              <label class="form-label">Bitiş</label>
               <input type="time" class="form-control" id="taskEndTime">
             </div>
             <div class="col-md-4">
@@ -631,15 +962,7 @@
             </div>
             <div class="col-md-4">
               <label class="form-label">Kategori</label>
-              <select class="form-select" id="taskCategory">
-                <option value="İş">İş</option>
-                <option value="Toplantı">Toplantı</option>
-                <option value="Eğitim">Eğitim</option>
-                <option value="Kişisel">Kişisel</option>
-                <option value="Spor">Spor</option>
-                <option value="Mola">Mola</option>
-                <option value="Diğer">Diğer</option>
-              </select>
+              <select class="form-select" id="taskCategory"></select>
             </div>
             <div class="col-md-4">
               <label class="form-label">Öncelik</label>
@@ -654,8 +977,7 @@
               <select class="form-select" id="taskStatus">
                 <option value="pending">Bekliyor</option>
                 <option value="progress">Devam Ediyor</option>
-                <option value="completed">Tamamlandı</option>
-                <option value="cancelled">İptal</option>
+                <option value="completed" selected>Tamamlandı</option>
               </select>
             </div>
           </div>
@@ -679,9 +1001,7 @@
         <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Silme Onayı</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
-        Bu görevi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
-      </div>
+      <div class="modal-body">Bu aktiviteyi silmek istediğinize emin misiniz?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">İptal</button>
         <button type="button" class="btn btn-primary-custom" style="background:linear-gradient(135deg,var(--danger),#B91C1C)" id="confirmDeleteBtn">
@@ -695,53 +1015,272 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ============= STATE =============
-  let tasks = JSON.parse(localStorage.getItem('dailyTasks') || '[]');
+  let tasks = JSON.parse(localStorage.getItem('personalTasks_v2') || '[]');
   let currentDate = new Date().toISOString().split('T')[0];
+  let currentWeekStart = getMonday(new Date());
   let pendingDeleteId = null;
 
-  const categoryColors = {
-    'İş': '#4F46E5',
-    'Toplantı': '#06B6D4',
-    'Eğitim': '#8B5CF6',
-    'Kişisel': '#EC4899',
-    'Spor': '#10B981',
-    'Mola': '#F59E0B',
-    'Diğer': '#64748B'
-  };
+  // ============= CATEGORIES =============
+  const categories = [
+    { name: 'Sağlık', icon: '💊', color: '#10B981' },
+    { name: 'Kişisel Bakım', icon: '🪥', color: '#06B6D4' },
+    { name: 'İş', icon: '💼', color: '#6366F1' },
+    { name: 'Yemek', icon: '🍽️', color: '#F59E0B' },
+    { name: 'Spor', icon: '🏋️', color: '#EF4444' },
+    { name: 'Hobi', icon: '🎨', color: '#8B5CF6' },
+    { name: 'Sosyal', icon: '👥', color: '#EC4899' },
+    { name: 'Eğitim', icon: '📚', color: '#0EA5E9' },
+    { name: 'Uyku', icon: '😴', color: '#64748B' },
+    { name: 'Mola', icon: '☕', color: '#A78BFA' },
+    { name: 'Diğer', icon: '📌', color: '#94A3B8' }
+  ];
+
+  // ============= QUICK ACTIVITIES (PRESETS) =============
+  const quickActivityPresets = [
+    { title: 'Uyandım', emoji: '☀️', category: 'Uyku', priority: 'medium' },
+    { title: 'Diş fırçaladım', emoji: '🪥', category: 'Kişisel Bakım', priority: 'medium' },
+    { title: 'Kahvaltı yaptım', emoji: '🍳', category: 'Yemek', priority: 'medium' },
+    { title: 'İşe gittim', emoji: '💼', category: 'İş', priority: 'high' },
+    { title: 'Yemeğe çıktım', emoji: '🍽️', category: 'Yemek', priority: 'low' },
+    { title: 'İlaç içtim', emoji: '💊', category: 'Sağlık', priority: 'high' },
+    { title: 'Eve geldim', emoji: '🏠', category: 'Diğer', priority: 'low' },
+    { title: 'Yemek yedim', emoji: '🍲', category: 'Yemek', priority: 'medium' },
+    { title: 'Spora gittim', emoji: '🏋️', category: 'Spor', priority: 'high' },
+    { title: 'Yürüyüş yaptım', emoji: '🚶', category: 'Spor', priority: 'medium' },
+    { title: 'Kahve içtim', emoji: '☕', category: 'Mola', priority: 'low' },
+    { title: 'Su içtim', emoji: '💧', category: 'Sağlık', priority: 'medium' },
+    { title: 'Kitap okudum', emoji: '📚', category: 'Eğitim', priority: 'high' },
+    { title: 'Müzik dinledim', emoji: '🎵', category: 'Hobi', priority: 'low' },
+    { title: 'Duş aldım', emoji: '🚿', category: 'Kişisel Bakım', priority: 'medium' },
+    { title: 'Arkadaşla görüştüm', emoji: '👥', category: 'Sosyal', priority: 'medium' },
+    { title: 'Meditasyon yaptım', emoji: '🧘', category: 'Sağlık', priority: 'high' },
+    { title: 'Uyumaya gittim', emoji: '😴', category: 'Uyku', priority: 'high' }
+  ];
+
+  // ============= MOTIVATIONAL QUOTES =============
+  const quotes = [
+    { text: 'Başarı, küçük çabaların her gün tekrarlanmasıdır.', author: 'Robert Collier' },
+    { text: 'Bir yolculuk bin mil bile olsa tek bir adımla başlar.', author: 'Lao Tzu' },
+    { text: 'Disiplin, hedef ile başarı arasındaki köprüdür.', author: 'Jim Rohn' },
+    { text: 'Bugünün işini yarına bırakma.', author: 'Benjamin Franklin' },
+    { text: 'Kendine inan ve her şey mümkün olur.', author: 'Anonim' },
+    { text: 'Küçük adımlar büyük değişimlere yol açar.', author: 'Anonim' },
+    { text: 'Zaman, en değerli yatırımdır.', author: 'Anonim' },
+    { text: 'Bugün, gelecekteki seninin başlangıcıdır.', author: 'Anonim' },
+    { text: 'Hayallerinin peşinden git, onlar seni doğru yere götürür.', author: 'Anonim' },
+    { text: 'Başarısızlık, başarının tohumudur.', author: 'Anonim' }
+  ];
+
+  // ============= DAY NAMES =============
+  const dayNames = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+  const dayNamesShort = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+
+  // ============= ACHIEVEMENTS =============
+  const achievementsList = [
+    { id: 'first_task', icon: '🎯', title: 'İlk Adım', desc: 'İlk aktiviteni ekle' },
+    { id: 'five_done', icon: '⭐', title: 'Verimli Gün', desc: 'Bir günde 5 aktivite tamamla' },
+    { id: 'ten_done', icon: '🔥', title: 'Ateşli Tempo', desc: 'Bir günde 10 aktivite tamamla' },
+    { id: 'streak_3', icon: '🚀', title: '3 Günlük Seri', desc: '3 gün üst üste aktivite ekle' },
+    { id: 'streak_7', icon: '💎', title: 'Bir Hafta Devam', desc: '7 gün üst üste aktivite ekle' },
+    { id: 'all_categories', icon: '🌈', title: 'Çok Yönlü', desc: 'Tüm kategorilerde aktivite ekle' },
+    { id: 'morning_routine', icon: '☀️', title: 'Erken Kuş', desc: 'Sabah 7 öncesi aktivite ekle' },
+    { id: 'high_priority', icon: '⚡', title: 'Önemli İşler', desc: '5 yüksek öncelikli aktivite tamamla' }
+  ];
 
   // ============= INIT =============
   document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('datePicker').value = currentDate;
-    document.getElementById('taskDate').value = currentDate;
+    populateCategorySelects();
+    renderQuickActivities();
+    renderWeekDays();
     startClock();
+    loadDailyMotivation();
     renderAll();
 
-    document.getElementById('datePicker').addEventListener('change', e => {
-      currentDate = e.target.value;
-      renderAll();
-    });
     document.getElementById('filterStatus').addEventListener('change', renderTimeline);
     document.getElementById('filterCategory').addEventListener('change', renderTimeline);
+    document.getElementById('searchInput').addEventListener('input', renderTimeline);
   });
+
+  // ============= UTILITIES =============
+  function getMonday(d) {
+    d = new Date(d);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(d.setDate(diff));
+    monday.setHours(0,0,0,0);
+    return monday;
+  }
+
+  function formatDate(d) {
+    const date = new Date(d);
+    const y = date.getFullYear();
+    const m = String(date.getMonth()+1).padStart(2,'0');
+    const day = String(date.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+  }
+
+  // ============= POPULATE CATEGORIES =============
+  function populateCategorySelects() {
+    const taskCat = document.getElementById('taskCategory');
+    const filterCat = document.getElementById('filterCategory');
+    filterCat.innerHTML = '<option value="all">Tüm Kategoriler</option>';
+    categories.forEach(c => {
+      taskCat.innerHTML += `<option value="${c.name}">${c.icon} ${c.name}</option>`;
+      filterCat.innerHTML += `<option value="${c.name}">${c.icon} ${c.name}</option>`;
+    });
+  }
+
+  // ============= QUICK ACTIVITIES =============
+  function renderQuickActivities() {
+    const container = document.getElementById('quickActivities');
+    container.innerHTML = quickActivityPresets.map((q, i) => {
+      const cat = categories.find(c => c.name === q.category);
+      return `
+        <button class="quick-activity" onclick="addQuickActivity(${i})">
+          <div class="qa-icon" style="background:${cat.color}20;color:${cat.color}">
+            <span style="font-size:1.1rem">${q.emoji}</span>
+          </div>
+          <span>${q.title}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  function addQuickActivity(index) {
+    const preset = quickActivityPresets[index];
+    const now = new Date();
+    const startTime = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const newTask = {
+      id: Date.now().toString(),
+      title: preset.title,
+      emoji: preset.emoji,
+      description: '',
+      startTime,
+      endTime: '',
+      date: currentDate,
+      category: preset.category,
+      priority: preset.priority,
+      status: 'completed',
+      createdAt: new Date().toISOString()
+    };
+    tasks.push(newTask);
+    saveTasks();
+    renderAll();
+    showToast(`${preset.emoji} ${preset.title} eklendi!`);
+  }
+
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed; bottom: 30px; right: 30px;
+      background: linear-gradient(135deg, var(--success), #059669);
+      color: white; padding: 14px 22px; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 9999; font-weight: 600; font-size: 0.9rem;
+      animation: slideIn 0.3s ease;
+    `;
+    toast.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s';
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
+  }
 
   // ============= CLOCK =============
   function startClock() {
     const update = () => {
       const now = new Date();
       const time = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      const date = now.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' });
-      document.getElementById('liveClock').innerHTML = `<i class="far fa-clock me-2"></i>${time} <span style="opacity:0.7;font-size:0.85rem;margin-left:8px">${date}</span>`;
+      document.getElementById('liveClock').innerHTML = `<i class="far fa-clock me-2"></i>${time}`;
+
+      const dayName = dayNames[(now.getDay()+6)%7];
+      const dateStr = `${dayName}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+      document.getElementById('todayLabel').textContent = dateStr;
     };
     update();
     setInterval(update, 1000);
   }
 
+  // ============= MOTIVATION =============
+  function loadDailyMotivation() {
+    const dayIdx = new Date().getDate() % quotes.length;
+    const q = quotes[dayIdx];
+    document.getElementById('motivationQuote').textContent = `"${q.text}"`;
+    document.getElementById('motivationAuthor').textContent = `— ${q.author}`;
+
+    const hour = new Date().getHours();
+    let msg = '';
+    if (hour < 6) msg = 'Erken saatlerdesin! Hayırlı geceler 🌙';
+    else if (hour < 12) msg = 'Günaydın! Bugün harika şeyler başaracaksın ☀️';
+    else if (hour < 17) msg = 'Öğleden sonra dolu dolu geçsin 💪';
+    else if (hour < 21) msg = 'Akşam keyfin yerinde olsun 🌆';
+    else msg = 'Güzel bir gün geçirdin, dinlenme zamanı 🌙';
+    document.getElementById('motivationText').textContent = msg;
+  }
+
+  // ============= WEEK DAYS =============
+  function renderWeekDays() {
+    const container = document.getElementById('weekDays');
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(currentWeekStart);
+      d.setDate(d.getDate() + i);
+      const dateStr = formatDate(d);
+      const isToday = formatDate(today) === dateStr;
+      const isActive = currentDate === dateStr;
+      const dayTasks = tasks.filter(t => t.date === dateStr);
+      const completed = dayTasks.filter(t => t.status === 'completed').length;
+      const total = dayTasks.length;
+      const percent = total > 0 ? (completed/total)*100 : 0;
+      html += `
+        <div class="day-card ${isActive ? 'active' : ''} ${isToday ? 'today' : ''}" onclick="selectDay('${dateStr}')">
+          <div class="day-name">${dayNamesShort[i]}</div>
+          <div class="day-number">${d.getDate()}</div>
+          <div class="day-month">${monthNames[d.getMonth()]}</div>
+          <div class="day-progress"><div class="day-progress-fill" style="width:${percent}%"></div></div>
+        </div>
+      `;
+    }
+    container.innerHTML = html;
+
+    const endOfWeek = new Date(currentWeekStart);
+    endOfWeek.setDate(endOfWeek.getDate() + 6);
+    document.getElementById('weekTitle').innerHTML = `
+      <i class="far fa-calendar-alt me-2 text-primary"></i>
+      ${currentWeekStart.getDate()} ${monthNames[currentWeekStart.getMonth()]} - ${endOfWeek.getDate()} ${monthNames[endOfWeek.getMonth()]} ${endOfWeek.getFullYear()}
+    `;
+  }
+
+  function selectDay(date) {
+    currentDate = date;
+    renderAll();
+  }
+
+  function changeWeek(delta) {
+    currentWeekStart = new Date(currentWeekStart);
+    currentWeekStart.setDate(currentWeekStart.getDate() + (delta * 7));
+    renderWeekDays();
+  }
+
   // ============= TASK CRUD =============
   function prepareNewTask() {
-    document.getElementById('modalTitle').textContent = 'Yeni Görev Ekle';
+    document.getElementById('modalTitle').textContent = 'Yeni Aktivite Ekle';
     document.getElementById('taskForm').reset();
     document.getElementById('taskId').value = '';
     document.getElementById('taskDate').value = currentDate;
+    document.getElementById('taskEmoji').value = '📌';
+    document.getElementById('taskStatus').value = 'completed';
     const now = new Date();
     document.getElementById('taskStartTime').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
   }
@@ -756,9 +1295,10 @@
   function editTask(id) {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
-    document.getElementById('modalTitle').textContent = 'Görevi Düzenle';
+    document.getElementById('modalTitle').textContent = 'Aktiviteyi Düzenle';
     document.getElementById('taskId').value = task.id;
     document.getElementById('taskTitle').value = task.title;
+    document.getElementById('taskEmoji').value = task.emoji || '📌';
     document.getElementById('taskDescription').value = task.description || '';
     document.getElementById('taskStartTime').value = task.startTime;
     document.getElementById('taskEndTime').value = task.endTime || '';
@@ -780,6 +1320,7 @@
     const taskData = {
       id: id || Date.now().toString(),
       title,
+      emoji: document.getElementById('taskEmoji').value || '📌',
       description: document.getElementById('taskDescription').value.trim(),
       startTime,
       endTime: document.getElementById('taskEndTime').value,
@@ -789,14 +1330,12 @@
       status: document.getElementById('taskStatus').value,
       createdAt: id ? tasks.find(t=>t.id===id).createdAt : new Date().toISOString()
     };
-    if (id) {
-      tasks = tasks.map(t => t.id === id ? taskData : t);
-    } else {
-      tasks.push(taskData);
-    }
+    if (id) tasks = tasks.map(t => t.id === id ? taskData : t);
+    else tasks.push(taskData);
     saveTasks();
     bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
     renderAll();
+    if (!id) showToast(`${taskData.emoji} ${taskData.title} eklendi!`);
   }
 
   function deleteTask(id) {
@@ -820,29 +1359,43 @@
       task.status = task.status === 'completed' ? 'pending' : 'completed';
       saveTasks();
       renderAll();
+      if (task.status === 'completed') showToast(`✅ ${task.title} tamamlandı!`);
     }
   }
 
   function saveTasks() {
-    localStorage.setItem('dailyTasks', JSON.stringify(tasks));
+    localStorage.setItem('personalTasks_v2', JSON.stringify(tasks));
   }
 
   // ============= RENDER =============
   function renderAll() {
+    renderWeekDays();
     renderTimeline();
     renderStats();
     renderProgress();
     renderCategories();
-    renderQuickStats();
+    renderAchievements();
+    renderWeeklySummary();
+    updateTimelineLabel();
+  }
+
+  function updateTimelineLabel() {
+    const d = new Date(currentDate);
+    const dayName = dayNames[(d.getDay()+6)%7];
+    const isToday = currentDate === formatDate(new Date());
+    document.getElementById('timelineDateLabel').textContent =
+      `— ${dayName}, ${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}${isToday ? ' (Bugün)' : ''}`;
   }
 
   function getDayTasks() {
     const filterStatus = document.getElementById('filterStatus').value;
     const filterCategory = document.getElementById('filterCategory').value;
+    const search = document.getElementById('searchInput').value.toLowerCase();
     return tasks.filter(t => {
       if (t.date !== currentDate) return false;
       if (filterStatus !== 'all' && t.status !== filterStatus) return false;
       if (filterCategory !== 'all' && t.category !== filterCategory) return false;
+      if (search && !t.title.toLowerCase().includes(search) && !(t.description||'').toLowerCase().includes(search)) return false;
       return true;
     });
   }
@@ -851,77 +1404,66 @@
     const timeline = document.getElementById('timeline');
     const dayTasks = getDayTasks();
     const currentHour = new Date().getHours();
-    const isToday = currentDate === new Date().toISOString().split('T')[0];
+    const isToday = currentDate === formatDate(new Date());
 
     let html = '';
     for (let h = 0; h < 24; h++) {
       const hourTasks = dayTasks.filter(t => parseInt(t.startTime.split(':')[0]) === h);
       const period = h < 6 ? 'Gece' : h < 12 ? 'Sabah' : h < 17 ? 'Öğleden Sonra' : h < 21 ? 'Akşam' : 'Gece';
       const isCurrent = isToday && h === currentHour;
-
       html += `
         <div class="hour-block ${isCurrent ? 'current-hour' : ''}" data-hour="${h}">
-          <div class="hour-label">
-            ${String(h).padStart(2,'0')}:00
-            <span class="period">${period}</span>
-          </div>
+          <div class="hour-label">${String(h).padStart(2,'0')}:00<span class="period">${period}</span></div>
           <div class="hour-tasks">
       `;
-
       if (hourTasks.length === 0) {
         html += `<button class="add-task-btn" onclick="prepareNewTaskAtHour(${h})">
-          <i class="fas fa-plus me-2"></i>Bu saate görev ekle
+          <i class="fas fa-plus me-2"></i>Bu saate aktivite ekle
         </button>`;
       } else {
-        hourTasks.forEach(task => {
-          html += renderTaskCard(task);
-        });
-        html += `<button class="add-task-btn" onclick="prepareNewTaskAtHour(${h})" style="padding:4px 10px;font-size:0.78rem">
-          <i class="fas fa-plus me-1"></i>Görev ekle
+        hourTasks.sort((a,b) => a.startTime.localeCompare(b.startTime));
+        hourTasks.forEach(task => { html += renderTaskCard(task); });
+        html += `<button class="add-task-btn" onclick="prepareNewTaskAtHour(${h})" style="padding:5px 10px;font-size:0.78rem">
+          <i class="fas fa-plus me-1"></i>Aktivite ekle
         </button>`;
       }
-
       html += `</div></div>`;
     }
     timeline.innerHTML = html;
-
-    if (isToday) {
-      setTimeout(scrollToCurrentHour, 100);
-    }
+    if (isToday) setTimeout(scrollToCurrentHour, 100);
   }
 
   function renderTaskCard(task) {
+    const cat = categories.find(c => c.name === task.category) || categories[categories.length-1];
     const statusBadges = {
       'completed': '<span class="task-badge badge-completed"><i class="fas fa-check"></i> Tamamlandı</span>',
       'pending': '<span class="task-badge badge-pending"><i class="fas fa-clock"></i> Bekliyor</span>',
-      'progress': '<span class="task-badge badge-progress"><i class="fas fa-spinner"></i> Devam</span>',
-      'cancelled': '<span class="task-badge badge-cancelled"><i class="fas fa-times"></i> İptal</span>'
+      'progress': '<span class="task-badge badge-progress"><i class="fas fa-spinner"></i> Devam</span>'
     };
     const timeRange = task.endTime ? `${task.startTime} - ${task.endTime}` : task.startTime;
     return `
       <div class="task-card priority-${task.priority} status-${task.status}">
         <div class="task-header">
           <div style="flex:1">
-            <h6 class="task-title">${escapeHtml(task.title)}</h6>
+            <div>
+              <span class="task-emoji">${task.emoji || '📌'}</span>
+              <span class="task-title">${escapeHtml(task.title)}</span>
+            </div>
             ${task.description ? `<div class="task-description">${escapeHtml(task.description)}</div>` : ''}
             <div class="task-meta">
-              <span class="task-badge badge-category" style="background:${categoryColors[task.category]}20;color:${categoryColors[task.category]}">
-                <i class="fas fa-tag"></i> ${task.category}
+              <span class="task-badge" style="background:${cat.color}20;color:${cat.color}">
+                ${cat.icon} ${cat.name}
               </span>
-              ${statusBadges[task.status]}
+              ${statusBadges[task.status] || ''}
               <span style="font-size:0.78rem;color:var(--gray)"><i class="far fa-clock"></i> ${timeRange}</span>
             </div>
           </div>
           <div class="task-actions">
-            <button class="task-action-btn complete" onclick="toggleComplete('${task.id}')" title="Tamamlandı olarak işaretle">
-              <i class="fas fa-check"></i>
+            <button class="task-action-btn complete" onclick="toggleComplete('${task.id}')" title="${task.status === 'completed' ? 'Geri al' : 'Tamamlandı'}">
+              <i class="fas ${task.status === 'completed' ? 'fa-undo' : 'fa-check'}"></i>
             </button>
-            <button class="task-action-btn" onclick="editTask('${task.id}')" title="Düzenle">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="task-action-btn delete" onclick="deleteTask('${task.id}')" title="Sil">
-              <i class="fas fa-trash"></i>
-            </button>
+            <button class="task-action-btn" onclick="editTask('${task.id}')" title="Düzenle"><i class="fas fa-edit"></i></button>
+            <button class="task-action-btn delete" onclick="deleteTask('${task.id}')" title="Sil"><i class="fas fa-trash"></i></button>
           </div>
         </div>
       </div>
@@ -931,10 +1473,25 @@
   function renderStats() {
     const dayTasks = tasks.filter(t => t.date === currentDate);
     const completed = dayTasks.filter(t => t.status === 'completed').length;
-    const progress = dayTasks.filter(t => t.status === 'progress').length;
-    const pending = dayTasks.filter(t => t.status === 'pending').length;
     const total = dayTasks.length;
     const percent = total > 0 ? Math.round((completed/total)*100) : 0;
+
+    // Score: completed*10 + high priority bonus + variety bonus
+    let score = completed * 10;
+    score += dayTasks.filter(t => t.priority === 'high' && t.status === 'completed').length * 5;
+    const cats = new Set(dayTasks.filter(t => t.status === 'completed').map(t => t.category));
+    score += cats.size * 3;
+
+    let level = 'Başlangıç';
+    if (score >= 100) level = 'Efsane! 🏆';
+    else if (score >= 70) level = 'Harika! ⭐';
+    else if (score >= 40) level = 'İyi gidiyor 💪';
+    else if (score >= 20) level = 'Devam et 🚀';
+
+    document.getElementById('statScore').textContent = score;
+    document.getElementById('scoreLevel').textContent = level;
+    document.getElementById('statCompleted').textContent = `${completed} / ${total}`;
+    document.getElementById('statCompletedPercent').textContent = percent + '%';
 
     let totalMinutes = 0;
     dayTasks.forEach(t => {
@@ -945,15 +1502,23 @@
         if (diff > 0) totalMinutes += diff;
       }
     });
-    const hours = Math.floor(totalMinutes/60);
-    const mins = totalMinutes%60;
+    document.getElementById('statHours').textContent = `${Math.floor(totalMinutes/60)}s ${totalMinutes%60}d`;
 
-    document.getElementById('statTotal').textContent = total;
-    document.getElementById('statCompleted').textContent = completed;
-    document.getElementById('statCompletedPercent').textContent = percent + '%';
-    document.getElementById('statProgress').textContent = progress;
-    document.getElementById('statPending').textContent = pending;
-    document.getElementById('statHours').textContent = `${hours}s ${mins}d`;
+    // Streak calculation
+    const dates = [...new Set(tasks.map(t => t.date))].sort().reverse();
+    let streak = 0;
+    const today = formatDate(new Date());
+    let checkDate = new Date();
+    while (true) {
+      const d = formatDate(checkDate);
+      if (dates.includes(d)) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else if (d === today) {
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else break;
+    }
+    document.getElementById('statStreak').textContent = streak + ' gün';
   }
 
   function renderProgress() {
@@ -963,9 +1528,14 @@
     const percent = total > 0 ? Math.round((completed/total)*100) : 0;
     document.getElementById('progressBar').style.width = percent + '%';
     document.getElementById('progressPercent').textContent = percent + '%';
-    document.getElementById('progressText').textContent = total === 0
-      ? 'Henüz görev eklenmedi'
-      : `${completed} / ${total} görev tamamlandı`;
+    let txt;
+    if (total === 0) txt = 'Henüz aktivite eklenmedi';
+    else if (percent === 100) txt = '🎉 Mükemmel! Tüm aktiviteler tamamlandı';
+    else if (percent >= 75) txt = `Harika gidiyorsun! ${total - completed} aktivite kaldı`;
+    else if (percent >= 50) txt = `Yarıyı geçtin, devam et! ${completed}/${total}`;
+    else if (percent > 0) txt = `Başladın, devam! ${completed}/${total} tamamlandı`;
+    else txt = `${total} aktivite seni bekliyor`;
+    document.getElementById('progressText').textContent = txt;
   }
 
   function renderCategories() {
@@ -976,14 +1546,13 @@
       return;
     }
     const counts = {};
-    dayTasks.forEach(t => {
-      counts[t.category] = (counts[t.category] || 0) + 1;
-    });
+    dayTasks.forEach(t => { counts[t.category] = (counts[t.category]||0) + 1; });
     let html = '';
-    Object.entries(counts).sort((a,b) => b[1]-a[1]).forEach(([cat, count]) => {
+    Object.entries(counts).sort((a,b) => b[1]-a[1]).forEach(([catName, count]) => {
+      const cat = categories.find(c => c.name === catName) || categories[categories.length-1];
       html += `
         <div class="category-item">
-          <span><span class="category-dot" style="background:${categoryColors[cat]}"></span>${cat}</span>
+          <span><span class="category-dot" style="background:${cat.color}"></span>${cat.icon} ${catName}</span>
           <strong>${count}</strong>
         </div>
       `;
@@ -991,24 +1560,79 @@
     container.innerHTML = html;
   }
 
-  function renderQuickStats() {
-    const dayTasks = tasks.filter(t => t.date === currentDate);
-    const hourCount = {};
-    dayTasks.forEach(t => {
-      const h = parseInt(t.startTime.split(':')[0]);
-      hourCount[h] = (hourCount[h] || 0) + 1;
+  function renderAchievements() {
+    const container = document.getElementById('achievements');
+    const allTasks = tasks;
+    const dayCompleted = tasks.filter(t => t.date === currentDate && t.status === 'completed').length;
+    const dates = [...new Set(allTasks.map(t => t.date))].sort();
+
+    // Calculate streak
+    let maxStreak = 0, currentStreak = 0;
+    let prev = null;
+    dates.forEach(d => {
+      if (prev) {
+        const diff = (new Date(d) - new Date(prev)) / 86400000;
+        if (diff === 1) currentStreak++;
+        else currentStreak = 1;
+      } else currentStreak = 1;
+      maxStreak = Math.max(maxStreak, currentStreak);
+      prev = d;
     });
-    let peak = '-';
-    let peakVal = 0;
-    Object.entries(hourCount).forEach(([h, c]) => {
-      if (c > peakVal) { peakVal = c; peak = `${String(h).padStart(2,'0')}:00`; }
+
+    const usedCats = new Set(allTasks.map(t => t.category));
+    const earlyTasks = allTasks.filter(t => parseInt(t.startTime.split(':')[0]) < 7).length;
+    const highCompleted = allTasks.filter(t => t.priority === 'high' && t.status === 'completed').length;
+
+    const unlocked = {
+      first_task: allTasks.length >= 1,
+      five_done: dayCompleted >= 5,
+      ten_done: dayCompleted >= 10,
+      streak_3: maxStreak >= 3,
+      streak_7: maxStreak >= 7,
+      all_categories: usedCats.size >= categories.length,
+      morning_routine: earlyTasks >= 1,
+      high_priority: highCompleted >= 5
+    };
+
+    container.innerHTML = achievementsList.map(a => `
+      <div class="achievement ${unlocked[a.id] ? 'unlocked' : 'locked'}">
+        <div class="achievement-icon">${a.icon}</div>
+        <div class="achievement-info">
+          <div class="achievement-title">${a.title}</div>
+          <div class="achievement-desc">${a.desc}</div>
+        </div>
+        ${unlocked[a.id] ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-lock text-muted"></i>'}
+      </div>
+    `).join('');
+  }
+
+  function renderWeeklySummary() {
+    const weekDates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(currentWeekStart);
+      d.setDate(d.getDate() + i);
+      weekDates.push(formatDate(d));
+    }
+    const weekTasks = tasks.filter(t => weekDates.includes(t.date));
+    const weekCompleted = weekTasks.filter(t => t.status === 'completed').length;
+    const weekPercent = weekTasks.length > 0 ? Math.round((weekCompleted/weekTasks.length)*100) : 0;
+
+    const dayCounts = {};
+    weekTasks.forEach(t => { dayCounts[t.date] = (dayCounts[t.date]||0) + 1; });
+    let bestDate = null, bestCount = 0;
+    Object.entries(dayCounts).forEach(([d, c]) => {
+      if (c > bestCount) { bestCount = c; bestDate = d; }
     });
-    document.getElementById('peakHour').textContent = peak;
-    document.getElementById('highPriorityCount').textContent = dayTasks.filter(t => t.priority === 'high').length;
-    const usedHours = Object.keys(hourCount).length;
-    const avg = usedHours > 0 ? (dayTasks.length / usedHours).toFixed(1) : 0;
-    document.getElementById('avgPerHour').textContent = avg;
-    document.getElementById('activeCategoryCount').textContent = new Set(dayTasks.map(t=>t.category)).size;
+    let bestDayLabel = '-';
+    if (bestDate) {
+      const d = new Date(bestDate);
+      bestDayLabel = `${dayNamesShort[(d.getDay()+6)%7]} (${bestCount})`;
+    }
+
+    document.getElementById('weekTotal').textContent = weekTasks.length;
+    document.getElementById('weekCompletion').textContent = weekPercent + '%';
+    document.getElementById('bestDay').textContent = bestDayLabel;
+    document.getElementById('activeCategoryCount').textContent = new Set(weekTasks.map(t=>t.category)).size;
   }
 
   function scrollToCurrentHour() {
@@ -1023,22 +1647,15 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `gunluk-takip-${currentDate}.json`;
+    a.download = `kisisel-gelisim-${formatDate(new Date())}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    showToast('📥 Verileriniz indirildi!');
   }
 
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  // Update current hour highlighting every minute
+  // Refresh time-based UI every minute
   setInterval(() => {
-    if (currentDate === new Date().toISOString().split('T')[0]) {
-      renderTimeline();
-    }
+    if (currentDate === formatDate(new Date())) renderTimeline();
   }, 60000);
 </script>
 </body>
