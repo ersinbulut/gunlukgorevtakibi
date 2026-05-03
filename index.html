@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Günlük İş Takip Paneli</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-dark: #3730A3;
+    --primary-light: #EEF2FF;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --info: #06B6D4;
+    --dark: #1E293B;
+    --gray: #64748B;
+    --light: #F8FAFC;
+    --border: #E2E8F0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4ecfb 100%);
+    min-height: 100vh;
+    color: var(--dark);
+    padding-bottom: 40px;
+  }
+
+  /* HEADER */
+  .top-header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 24px 0;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.25);
+    margin-bottom: 30px;
+  }
+  .top-header h1 {
+    font-weight: 800;
+    font-size: 1.75rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-header h1 i { font-size: 2rem; }
+  .top-header .subtitle {
+    opacity: 0.9;
+    font-size: 0.95rem;
+    margin-top: 4px;
+  }
+  .live-clock {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* STAT CARDS */
+  .stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
+  .stat-card .stat-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+  }
+  .stat-card .stat-label {
+    color: var(--gray);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-card .stat-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    margin-top: 4px;
+    color: var(--dark);
+  }
+  .stat-card .stat-trend {
+    font-size: 0.8rem;
+    margin-top: 6px;
+    color: var(--gray);
+  }
+
+  .icon-bg-primary { background: var(--primary-light); color: var(--primary); }
+  .icon-bg-success { background: #D1FAE5; color: var(--success); }
+  .icon-bg-warning { background: #FEF3C7; color: var(--warning); }
+  .icon-bg-danger { background: #FEE2E2; color: var(--danger); }
+  .icon-bg-info { background: #CFFAFE; color: var(--info); }
+
+  /* CONTROL PANEL */
+  .control-panel {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .form-control, .form-select {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+
+  /* BUTTONS */
+  .btn {
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: all 0.2s;
+    border: none;
+  }
+  .btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+  }
+  .btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+    color: white;
+  }
+  .btn-outline-custom {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--dark);
+  }
+  .btn-outline-custom:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* TIMELINE */
+  .timeline-container {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+  }
+  .timeline-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--dark);
+  }
+  .timeline {
+    position: relative;
+    padding-left: 0;
+  }
+  .hour-block {
+    display: flex;
+    border-bottom: 1px dashed var(--border);
+    padding: 14px 0;
+    transition: background 0.2s;
+    border-radius: 8px;
+  }
+  .hour-block:last-child { border-bottom: none; }
+  .hour-block:hover { background: #FAFBFF; }
+  .hour-block.current-hour {
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0.08), transparent);
+    border-left: 3px solid var(--primary);
+    padding-left: 10px;
+  }
+  .hour-label {
+    width: 90px;
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1rem;
+    padding-top: 4px;
+  }
+  .hour-label .period {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--gray);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .hour-tasks {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .add-task-btn {
+    background: transparent;
+    border: 1.5px dashed var(--border);
+    color: var(--gray);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    text-align: left;
+    transition: all 0.2s;
+    cursor: pointer;
+    width: 100%;
+  }
+  .add-task-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  /* TASK CARD */
+  .task-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .task-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transform: translateX(2px);
+  }
+  .task-card.priority-high { border-left-color: var(--danger); }
+  .task-card.priority-medium { border-left-color: var(--warning); }
+  .task-card.priority-low { border-left-color: var(--info); }
+  .task-card.status-completed {
+    opacity: 0.7;
+    background: #F8FAFC;
+  }
+  .task-card.status-completed .task-title {
+    text-decoration: line-through;
+    color: var(--gray);
+  }
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .task-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--dark);
+    margin: 0;
+    flex: 1;
+  }
+  .task-description {
+    color: var(--gray);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .task-meta {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .task-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-completed { background: #D1FAE5; color: #065F46; }
+  .badge-pending { background: #FEF3C7; color: #92400E; }
+  .badge-progress { background: #DBEAFE; color: #1E40AF; }
+  .badge-cancelled { background: #FEE2E2; color: #991B1B; }
+  .badge-category {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .task-actions {
+    display: flex;
+    gap: 4px;
+  }
+  .task-action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .task-action-btn:hover { background: var(--light); color: var(--primary); }
+  .task-action-btn.delete:hover { background: #FEE2E2; color: var(--danger); }
+  .task-action-btn.complete:hover { background: #D1FAE5; color: var(--success); }
+
+  /* PROGRESS */
+  .progress-section {
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .progress-section h5 {
+    font-weight: 700;
+    margin-bottom: 16px;
+    font-size: 1rem;
+  }
+  .progress-bar-custom {
+    height: 10px;
+    background: var(--light);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+    border-radius: 10px;
+    transition: width 0.6s ease;
+  }
+  .category-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .category-item:last-child { border-bottom: none; }
+  .category-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: inline-block;
+  }
+
+  /* MODAL */
+  .modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+  .modal-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 18px 24px;
+  }
+  .modal-header .btn-close { filter: brightness(0) invert(1); }
+  .modal-body { padding: 24px; }
+  .form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+  }
+  .empty-state i {
+    font-size: 3.5rem;
+    color: var(--border);
+    margin-bottom: 16px;
+  }
+  .empty-state h5 { color: var(--dark); margin-bottom: 8px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .top-header h1 { font-size: 1.3rem; }
+    .stat-card .stat-value { font-size: 1.4rem; }
+    .hour-label { width: 60px; font-size: 0.85rem; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .task-card { animation: slideIn 0.3s ease; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--light); }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-header">
+  <div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <h1><i class="fas fa-tasks"></i> Günlük İş Takip Paneli</h1>
+        <div class="subtitle">Saati saatine işlerinizi profesyonelce yönetin</div>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <div class="live-clock" id="liveClock">--:--:--</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid px-4">
+
+  <!-- STATS -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-6 col-lg">
+      <div class="stat-card">
+        <div class="stat-icon icon-bg-primary"><i class="fas fa-list-check"></i></div>
+        <div class="stat-label">Toplam Görev</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-trend"><i class="fas fa-calendar-day"></i> Bugün</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg">
+      <div class="stat-card">
+        <div class="stat-icon icon-bg-success"><i class="fas fa-check-double"></i></div>
+        <div class="stat-label">Tamamlanan</div>
+        <div class="stat-value" id="statCompleted">0</div>
+        <div class="stat-trend"><i class="fas fa-percentage"></i> <span id="statCompletedPercent">0%</span></div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg">
+      <div class="stat-card">
+        <div class="stat-icon icon-bg-warning"><i class="fas fa-spinner"></i></div>
+        <div class="stat-label">Devam Eden</div>
+        <div class="stat-value" id="statProgress">0</div>
+        <div class="stat-trend"><i class="fas fa-clock"></i> Aktif görevler</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg">
+      <div class="stat-card">
+        <div class="stat-icon icon-bg-danger"><i class="fas fa-hourglass-half"></i></div>
+        <div class="stat-label">Bekleyen</div>
+        <div class="stat-value" id="statPending">0</div>
+        <div class="stat-trend"><i class="fas fa-bell"></i> Henüz başlanmadı</div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg">
+      <div class="stat-card">
+        <div class="stat-icon icon-bg-info"><i class="fas fa-stopwatch"></i></div>
+        <div class="stat-label">Toplam Süre</div>
+        <div class="stat-value" id="statHours">0s</div>
+        <div class="stat-trend"><i class="fas fa-business-time"></i> Çalışma saati</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROL PANEL -->
+  <div class="control-panel">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label"><i class="fas fa-calendar"></i> Tarih Seçin</label>
+        <input type="date" class="form-control" id="datePicker">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"><i class="fas fa-filter"></i> Durum Filtresi</label>
+        <select class="form-select" id="filterStatus">
+          <option value="all">Tümü</option>
+          <option value="pending">Bekleyen</option>
+          <option value="progress">Devam Eden</option>
+          <option value="completed">Tamamlanan</option>
+          <option value="cancelled">İptal</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label"><i class="fas fa-tag"></i> Kategori Filtresi</label>
+        <select class="form-select" id="filterCategory">
+          <option value="all">Tüm Kategoriler</option>
+          <option value="İş">İş</option>
+          <option value="Toplantı">Toplantı</option>
+          <option value="Eğitim">Eğitim</option>
+          <option value="Kişisel">Kişisel</option>
+          <option value="Spor">Spor</option>
+          <option value="Mola">Mola</option>
+          <option value="Diğer">Diğer</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button class="btn btn-primary-custom flex-fill" data-bs-toggle="modal" data-bs-target="#taskModal" onclick="prepareNewTask()">
+          <i class="fas fa-plus"></i> Yeni Görev
+        </button>
+        <button class="btn btn-outline-custom" onclick="exportData()" title="Verileri JSON olarak indir">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="row g-3">
+    <!-- TIMELINE -->
+    <div class="col-lg-8">
+      <div class="timeline-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="timeline-title">
+            <i class="fas fa-stream text-primary"></i> Saatlik Zaman Çizelgesi
+          </div>
+          <div>
+            <button class="btn btn-sm btn-outline-custom" onclick="scrollToCurrentHour()">
+              <i class="fas fa-location-crosshairs"></i> Şu Anki Saat
+            </button>
+          </div>
+        </div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="col-lg-4">
+      <!-- DAILY PROGRESS -->
+      <div class="progress-section">
+        <h5><i class="fas fa-chart-line text-primary"></i> Günlük İlerleme</h5>
+        <div class="d-flex justify-content-between mb-2">
+          <span style="font-size:0.9rem;color:var(--gray)">Tamamlanma Oranı</span>
+          <span style="font-weight:700" id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar-custom">
+          <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+        </div>
+        <div class="text-center mt-3" style="font-size:0.85rem;color:var(--gray)">
+          <span id="progressText">Henüz görev eklenmedi</span>
+        </div>
+      </div>
+
+      <!-- CATEGORY BREAKDOWN -->
+      <div class="progress-section">
+        <h5><i class="fas fa-layer-group text-primary"></i> Kategori Dağılımı</h5>
+        <div id="categoryBreakdown">
+          <div class="text-center text-muted py-3" style="font-size:0.85rem">
+            Henüz veri yok
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK STATS -->
+      <div class="progress-section">
+        <h5><i class="fas fa-bolt text-primary"></i> Hızlı İstatistikler</h5>
+        <div class="d-flex justify-content-between py-2 border-bottom">
+          <span style="font-size:0.9rem">En verimli saat</span>
+          <strong id="peakHour">-</strong>
+        </div>
+        <div class="d-flex justify-content-between py-2 border-bottom">
+          <span style="font-size:0.9rem">Yüksek öncelikli</span>
+          <strong id="highPriorityCount">0</strong>
+        </div>
+        <div class="d-flex justify-content-between py-2 border-bottom">
+          <span style="font-size:0.9rem">Ortalama görev/saat</span>
+          <strong id="avgPerHour">0</strong>
+        </div>
+        <div class="d-flex justify-content-between py-2">
+          <span style="font-size:0.9rem">Aktif kategori sayısı</span>
+          <strong id="activeCategoryCount">0</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal fade" id="taskModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="fas fa-edit me-2"></i><span id="modalTitle">Yeni Görev Ekle</span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="taskForm">
+          <input type="hidden" id="taskId">
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label">Görev Başlığı <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="taskTitle" required placeholder="Örn: Müşteri toplantısı">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Açıklama</label>
+              <textarea class="form-control" id="taskDescription" rows="2" placeholder="Görev hakkında detay..."></textarea>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Başlangıç Saati <span class="text-danger">*</span></label>
+              <input type="time" class="form-control" id="taskStartTime" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Bitiş Saati</label>
+              <input type="time" class="form-control" id="taskEndTime">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Tarih</label>
+              <input type="date" class="form-control" id="taskDate">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Kategori</label>
+              <select class="form-select" id="taskCategory">
+                <option value="İş">İş</option>
+                <option value="Toplantı">Toplantı</option>
+                <option value="Eğitim">Eğitim</option>
+                <option value="Kişisel">Kişisel</option>
+                <option value="Spor">Spor</option>
+                <option value="Mola">Mola</option>
+                <option value="Diğer">Diğer</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Öncelik</label>
+              <select class="form-select" id="taskPriority">
+                <option value="low">Düşük</option>
+                <option value="medium" selected>Orta</option>
+                <option value="high">Yüksek</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Durum</label>
+              <select class="form-select" id="taskStatus">
+                <option value="pending">Bekliyor</option>
+                <option value="progress">Devam Ediyor</option>
+                <option value="completed">Tamamlandı</option>
+                <option value="cancelled">İptal</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary-custom" onclick="saveTask()">
+          <i class="fas fa-save"></i> Kaydet
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background:linear-gradient(135deg,var(--danger),#B91C1C)">
+        <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Silme Onayı</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Bu görevi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">İptal</button>
+        <button type="button" class="btn btn-primary-custom" style="background:linear-gradient(135deg,var(--danger),#B91C1C)" id="confirmDeleteBtn">
+          <i class="fas fa-trash"></i> Evet, Sil
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // ============= STATE =============
+  let tasks = JSON.parse(localStorage.getItem('dailyTasks') || '[]');
+  let currentDate = new Date().toISOString().split('T')[0];
+  let pendingDeleteId = null;
+
+  const categoryColors = {
+    'İş': '#4F46E5',
+    'Toplantı': '#06B6D4',
+    'Eğitim': '#8B5CF6',
+    'Kişisel': '#EC4899',
+    'Spor': '#10B981',
+    'Mola': '#F59E0B',
+    'Diğer': '#64748B'
+  };
+
+  // ============= INIT =============
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('datePicker').value = currentDate;
+    document.getElementById('taskDate').value = currentDate;
+    startClock();
+    renderAll();
+
+    document.getElementById('datePicker').addEventListener('change', e => {
+      currentDate = e.target.value;
+      renderAll();
+    });
+    document.getElementById('filterStatus').addEventListener('change', renderTimeline);
+    document.getElementById('filterCategory').addEventListener('change', renderTimeline);
+  });
+
+  // ============= CLOCK =============
+  function startClock() {
+    const update = () => {
+      const now = new Date();
+      const time = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const date = now.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' });
+      document.getElementById('liveClock').innerHTML = `<i class="far fa-clock me-2"></i>${time} <span style="opacity:0.7;font-size:0.85rem;margin-left:8px">${date}</span>`;
+    };
+    update();
+    setInterval(update, 1000);
+  }
+
+  // ============= TASK CRUD =============
+  function prepareNewTask() {
+    document.getElementById('modalTitle').textContent = 'Yeni Görev Ekle';
+    document.getElementById('taskForm').reset();
+    document.getElementById('taskId').value = '';
+    document.getElementById('taskDate').value = currentDate;
+    const now = new Date();
+    document.getElementById('taskStartTime').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  }
+
+  function prepareNewTaskAtHour(hour) {
+    prepareNewTask();
+    document.getElementById('taskStartTime').value = `${String(hour).padStart(2,'0')}:00`;
+    document.getElementById('taskEndTime').value = `${String((hour+1)%24).padStart(2,'0')}:00`;
+    new bootstrap.Modal(document.getElementById('taskModal')).show();
+  }
+
+  function editTask(id) {
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    document.getElementById('modalTitle').textContent = 'Görevi Düzenle';
+    document.getElementById('taskId').value = task.id;
+    document.getElementById('taskTitle').value = task.title;
+    document.getElementById('taskDescription').value = task.description || '';
+    document.getElementById('taskStartTime').value = task.startTime;
+    document.getElementById('taskEndTime').value = task.endTime || '';
+    document.getElementById('taskDate').value = task.date;
+    document.getElementById('taskCategory').value = task.category;
+    document.getElementById('taskPriority').value = task.priority;
+    document.getElementById('taskStatus').value = task.status;
+    new bootstrap.Modal(document.getElementById('taskModal')).show();
+  }
+
+  function saveTask() {
+    const title = document.getElementById('taskTitle').value.trim();
+    const startTime = document.getElementById('taskStartTime').value;
+    if (!title || !startTime) {
+      alert('Lütfen başlık ve başlangıç saatini doldurun.');
+      return;
+    }
+    const id = document.getElementById('taskId').value;
+    const taskData = {
+      id: id || Date.now().toString(),
+      title,
+      description: document.getElementById('taskDescription').value.trim(),
+      startTime,
+      endTime: document.getElementById('taskEndTime').value,
+      date: document.getElementById('taskDate').value || currentDate,
+      category: document.getElementById('taskCategory').value,
+      priority: document.getElementById('taskPriority').value,
+      status: document.getElementById('taskStatus').value,
+      createdAt: id ? tasks.find(t=>t.id===id).createdAt : new Date().toISOString()
+    };
+    if (id) {
+      tasks = tasks.map(t => t.id === id ? taskData : t);
+    } else {
+      tasks.push(taskData);
+    }
+    saveTasks();
+    bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
+    renderAll();
+  }
+
+  function deleteTask(id) {
+    pendingDeleteId = id;
+    new bootstrap.Modal(document.getElementById('confirmModal')).show();
+  }
+
+  document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    if (pendingDeleteId) {
+      tasks = tasks.filter(t => t.id !== pendingDeleteId);
+      saveTasks();
+      pendingDeleteId = null;
+      bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+      renderAll();
+    }
+  });
+
+  function toggleComplete(id) {
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      task.status = task.status === 'completed' ? 'pending' : 'completed';
+      saveTasks();
+      renderAll();
+    }
+  }
+
+  function saveTasks() {
+    localStorage.setItem('dailyTasks', JSON.stringify(tasks));
+  }
+
+  // ============= RENDER =============
+  function renderAll() {
+    renderTimeline();
+    renderStats();
+    renderProgress();
+    renderCategories();
+    renderQuickStats();
+  }
+
+  function getDayTasks() {
+    const filterStatus = document.getElementById('filterStatus').value;
+    const filterCategory = document.getElementById('filterCategory').value;
+    return tasks.filter(t => {
+      if (t.date !== currentDate) return false;
+      if (filterStatus !== 'all' && t.status !== filterStatus) return false;
+      if (filterCategory !== 'all' && t.category !== filterCategory) return false;
+      return true;
+    });
+  }
+
+  function renderTimeline() {
+    const timeline = document.getElementById('timeline');
+    const dayTasks = getDayTasks();
+    const currentHour = new Date().getHours();
+    const isToday = currentDate === new Date().toISOString().split('T')[0];
+
+    let html = '';
+    for (let h = 0; h < 24; h++) {
+      const hourTasks = dayTasks.filter(t => parseInt(t.startTime.split(':')[0]) === h);
+      const period = h < 6 ? 'Gece' : h < 12 ? 'Sabah' : h < 17 ? 'Öğleden Sonra' : h < 21 ? 'Akşam' : 'Gece';
+      const isCurrent = isToday && h === currentHour;
+
+      html += `
+        <div class="hour-block ${isCurrent ? 'current-hour' : ''}" data-hour="${h}">
+          <div class="hour-label">
+            ${String(h).padStart(2,'0')}:00
+            <span class="period">${period}</span>
+          </div>
+          <div class="hour-tasks">
+      `;
+
+      if (hourTasks.length === 0) {
+        html += `<button class="add-task-btn" onclick="prepareNewTaskAtHour(${h})">
+          <i class="fas fa-plus me-2"></i>Bu saate görev ekle
+        </button>`;
+      } else {
+        hourTasks.forEach(task => {
+          html += renderTaskCard(task);
+        });
+        html += `<button class="add-task-btn" onclick="prepareNewTaskAtHour(${h})" style="padding:4px 10px;font-size:0.78rem">
+          <i class="fas fa-plus me-1"></i>Görev ekle
+        </button>`;
+      }
+
+      html += `</div></div>`;
+    }
+    timeline.innerHTML = html;
+
+    if (isToday) {
+      setTimeout(scrollToCurrentHour, 100);
+    }
+  }
+
+  function renderTaskCard(task) {
+    const statusBadges = {
+      'completed': '<span class="task-badge badge-completed"><i class="fas fa-check"></i> Tamamlandı</span>',
+      'pending': '<span class="task-badge badge-pending"><i class="fas fa-clock"></i> Bekliyor</span>',
+      'progress': '<span class="task-badge badge-progress"><i class="fas fa-spinner"></i> Devam</span>',
+      'cancelled': '<span class="task-badge badge-cancelled"><i class="fas fa-times"></i> İptal</span>'
+    };
+    const timeRange = task.endTime ? `${task.startTime} - ${task.endTime}` : task.startTime;
+    return `
+      <div class="task-card priority-${task.priority} status-${task.status}">
+        <div class="task-header">
+          <div style="flex:1">
+            <h6 class="task-title">${escapeHtml(task.title)}</h6>
+            ${task.description ? `<div class="task-description">${escapeHtml(task.description)}</div>` : ''}
+            <div class="task-meta">
+              <span class="task-badge badge-category" style="background:${categoryColors[task.category]}20;color:${categoryColors[task.category]}">
+                <i class="fas fa-tag"></i> ${task.category}
+              </span>
+              ${statusBadges[task.status]}
+              <span style="font-size:0.78rem;color:var(--gray)"><i class="far fa-clock"></i> ${timeRange}</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button class="task-action-btn complete" onclick="toggleComplete('${task.id}')" title="Tamamlandı olarak işaretle">
+              <i class="fas fa-check"></i>
+            </button>
+            <button class="task-action-btn" onclick="editTask('${task.id}')" title="Düzenle">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="task-action-btn delete" onclick="deleteTask('${task.id}')" title="Sil">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderStats() {
+    const dayTasks = tasks.filter(t => t.date === currentDate);
+    const completed = dayTasks.filter(t => t.status === 'completed').length;
+    const progress = dayTasks.filter(t => t.status === 'progress').length;
+    const pending = dayTasks.filter(t => t.status === 'pending').length;
+    const total = dayTasks.length;
+    const percent = total > 0 ? Math.round((completed/total)*100) : 0;
+
+    let totalMinutes = 0;
+    dayTasks.forEach(t => {
+      if (t.endTime && t.startTime) {
+        const [sh, sm] = t.startTime.split(':').map(Number);
+        const [eh, em] = t.endTime.split(':').map(Number);
+        const diff = (eh*60+em) - (sh*60+sm);
+        if (diff > 0) totalMinutes += diff;
+      }
+    });
+    const hours = Math.floor(totalMinutes/60);
+    const mins = totalMinutes%60;
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statCompleted').textContent = completed;
+    document.getElementById('statCompletedPercent').textContent = percent + '%';
+    document.getElementById('statProgress').textContent = progress;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statHours').textContent = `${hours}s ${mins}d`;
+  }
+
+  function renderProgress() {
+    const dayTasks = tasks.filter(t => t.date === currentDate);
+    const completed = dayTasks.filter(t => t.status === 'completed').length;
+    const total = dayTasks.length;
+    const percent = total > 0 ? Math.round((completed/total)*100) : 0;
+    document.getElementById('progressBar').style.width = percent + '%';
+    document.getElementById('progressPercent').textContent = percent + '%';
+    document.getElementById('progressText').textContent = total === 0
+      ? 'Henüz görev eklenmedi'
+      : `${completed} / ${total} görev tamamlandı`;
+  }
+
+  function renderCategories() {
+    const dayTasks = tasks.filter(t => t.date === currentDate);
+    const container = document.getElementById('categoryBreakdown');
+    if (dayTasks.length === 0) {
+      container.innerHTML = '<div class="text-center text-muted py-3" style="font-size:0.85rem">Henüz veri yok</div>';
+      return;
+    }
+    const counts = {};
+    dayTasks.forEach(t => {
+      counts[t.category] = (counts[t.category] || 0) + 1;
+    });
+    let html = '';
+    Object.entries(counts).sort((a,b) => b[1]-a[1]).forEach(([cat, count]) => {
+      html += `
+        <div class="category-item">
+          <span><span class="category-dot" style="background:${categoryColors[cat]}"></span>${cat}</span>
+          <strong>${count}</strong>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  }
+
+  function renderQuickStats() {
+    const dayTasks = tasks.filter(t => t.date === currentDate);
+    const hourCount = {};
+    dayTasks.forEach(t => {
+      const h = parseInt(t.startTime.split(':')[0]);
+      hourCount[h] = (hourCount[h] || 0) + 1;
+    });
+    let peak = '-';
+    let peakVal = 0;
+    Object.entries(hourCount).forEach(([h, c]) => {
+      if (c > peakVal) { peakVal = c; peak = `${String(h).padStart(2,'0')}:00`; }
+    });
+    document.getElementById('peakHour').textContent = peak;
+    document.getElementById('highPriorityCount').textContent = dayTasks.filter(t => t.priority === 'high').length;
+    const usedHours = Object.keys(hourCount).length;
+    const avg = usedHours > 0 ? (dayTasks.length / usedHours).toFixed(1) : 0;
+    document.getElementById('avgPerHour').textContent = avg;
+    document.getElementById('activeCategoryCount').textContent = new Set(dayTasks.map(t=>t.category)).size;
+  }
+
+  function scrollToCurrentHour() {
+    const currentHour = new Date().getHours();
+    const el = document.querySelector(`[data-hour="${currentHour}"]`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function exportData() {
+    const data = JSON.stringify(tasks, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `gunluk-takip-${currentDate}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // Update current hour highlighting every minute
+  setInterval(() => {
+    if (currentDate === new Date().toISOString().split('T')[0]) {
+      renderTimeline();
+    }
+  }, 60000);
+</script>
+</body>
+</html>
