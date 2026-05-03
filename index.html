@@ -22,7 +22,6 @@
     --gray: #64748B;
     --light: #F8FAFC;
     --border: #E2E8F0;
-    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 
   * { box-sizing: border-box; }
@@ -51,10 +50,8 @@
   .top-header::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
+    top: -50%; right: -10%;
+    width: 400px; height: 400px;
     background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
     border-radius: 50%;
   }
@@ -81,7 +78,6 @@
     opacity: 0.92;
     font-size: 0.95rem;
     margin-top: 6px;
-    font-weight: 400;
   }
   .live-clock {
     background: rgba(255, 255, 255, 0.18);
@@ -104,7 +100,28 @@
     border-left: 3px solid #FBBF24;
     position: relative;
     z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
   }
+  .notif-btn {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .notif-btn:hover { background: rgba(255,255,255,0.3); }
+  .notif-btn.granted { background: rgba(16, 185, 129, 0.3); border-color: rgba(16, 185, 129, 0.5); }
+  .notif-btn.denied { background: rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.5); }
 
   /* WEEK SELECTOR */
   .week-selector {
@@ -141,14 +158,11 @@
     box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
     transform: translateY(-2px);
   }
-  .day-card.today {
-    border-color: var(--accent);
-  }
+  .day-card.today { border-color: var(--accent); }
   .day-card.today::after {
     content: 'BUGÜN';
     position: absolute;
-    top: -8px;
-    right: -4px;
+    top: -8px; right: -4px;
     background: var(--accent);
     color: white;
     font-size: 0.6rem;
@@ -205,10 +219,7 @@
     cursor: pointer;
   }
   .week-nav-btn:hover { background: var(--primary-light); color: var(--primary); }
-  .week-title {
-    font-weight: 700;
-    color: var(--dark);
-  }
+  .week-title { font-weight: 700; color: var(--dark); }
 
   /* STAT CARDS */
   .stat-card {
@@ -275,9 +286,8 @@
   .icon-bg-danger { background: #FEE2E2; color: var(--danger); }
   .icon-bg-info { background: #CFFAFE; color: var(--info); }
   .icon-bg-accent { background: #FCE7F3; color: var(--accent); }
-  .icon-bg-purple { background: #EDE9FE; color: var(--purple); }
 
-  /* QUICK ADD ACTIVITIES */
+  /* QUICK ADD */
   .quick-add-section {
     background: white;
     border-radius: 16px;
@@ -314,6 +324,7 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--dark);
+    font-family: inherit;
   }
   .quick-activity:hover {
     background: white;
@@ -394,7 +405,7 @@
     display: flex;
     border-bottom: 1px dashed var(--border);
     padding: 14px 0;
-    transition: background 0.2s;
+    transition: all 0.25s;
     border-radius: 8px;
   }
   .hour-block:last-child { border-bottom: none; }
@@ -417,6 +428,16 @@
     margin-left: 4px;
     vertical-align: middle;
   }
+  .hour-block.drag-over {
+    background: linear-gradient(90deg, rgba(236, 72, 153, 0.12), rgba(99, 102, 241, 0.08));
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+    transform: scale(1.005);
+    box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
+  }
+  .hour-block.drag-over .hour-label {
+    color: var(--accent);
+  }
   .hour-label {
     width: 95px;
     flex-shrink: 0;
@@ -424,6 +445,7 @@
     color: var(--primary);
     font-size: 1.05rem;
     padding-top: 4px;
+    transition: color 0.2s;
   }
   .hour-label .period {
     display: block;
@@ -439,6 +461,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-height: 40px;
   }
   .add-task-btn {
     background: transparent;
@@ -467,11 +490,17 @@
     border-left: 4px solid var(--primary);
     border-radius: 12px;
     padding: 12px 14px;
-    transition: all 0.25s;
+    transition: box-shadow 0.25s, transform 0.25s, opacity 0.25s;
+    cursor: grab;
+    user-select: none;
+    position: relative;
   }
-  .task-card:hover {
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
-    transform: translateX(2px);
+  .task-card:active { cursor: grabbing; }
+  .task-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.97) rotate(-1deg);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    cursor: grabbing;
   }
   .task-card.priority-high { border-left-color: var(--danger); }
   .task-card.priority-medium { border-left-color: var(--warning); }
@@ -484,16 +513,34 @@
     text-decoration: line-through;
     color: var(--gray);
   }
+  .task-card.status-scheduled {
+    background: linear-gradient(90deg, #FEF3C7, white);
+    border-left-color: var(--warning);
+    border-style: dashed;
+  }
+  .task-card.status-scheduled::after {
+    content: '⏰';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
   .task-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 10px;
   }
-  .task-emoji {
-    font-size: 1.4rem;
+  .task-emoji { font-size: 1.4rem; margin-right: 4px; }
+  .drag-handle {
+    color: var(--border);
+    cursor: grab;
     margin-right: 4px;
+    font-size: 0.8rem;
+    transition: color 0.2s;
   }
+  .task-card:hover .drag-handle { color: var(--gray); }
   .task-title {
     font-weight: 600;
     font-size: 0.95rem;
@@ -523,7 +570,7 @@
   .badge-completed { background: #D1FAE5; color: #065F46; }
   .badge-pending { background: #FEF3C7; color: #92400E; }
   .badge-progress { background: #DBEAFE; color: #1E40AF; }
-  .badge-cancelled { background: #FEE2E2; color: #991B1B; }
+  .badge-scheduled { background: #FED7AA; color: #9A3412; }
   .task-actions { display: flex; gap: 4px; }
   .task-action-btn {
     width: 30px; height: 30px;
@@ -627,7 +674,6 @@
     background: var(--light);
     border-radius: 12px;
     margin-bottom: 8px;
-    transition: all 0.2s;
   }
   .achievement.unlocked {
     background: linear-gradient(90deg, #FEF3C7, #FDE68A);
@@ -645,9 +691,7 @@
     background: linear-gradient(135deg, #F59E0B, #D97706);
     color: white;
   }
-  .achievement-info {
-    flex: 1;
-  }
+  .achievement-info { flex: 1; }
   .achievement-title {
     font-weight: 700;
     font-size: 0.85rem;
@@ -659,7 +703,7 @@
   }
   .achievement.locked { opacity: 0.5; }
 
-  /* CATEGORY ITEMS */
+  /* CATEGORY */
   .category-item {
     display: flex;
     justify-content: space-between;
@@ -698,6 +742,92 @@
     margin-bottom: 6px;
   }
 
+  /* IN-APP REMINDER POPUP */
+  .reminder-popup {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    padding: 20px;
+    min-width: 320px;
+    max-width: 380px;
+    z-index: 99999;
+    border-left: 5px solid var(--primary);
+    animation: slideInRight 0.4s ease;
+  }
+  .reminder-popup.completed { border-left-color: var(--success); }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .reminder-popup .reminder-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .reminder-popup .reminder-time {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .reminder-popup .reminder-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .reminder-popup .reminder-desc {
+    color: var(--gray);
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+  .reminder-popup .reminder-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .reminder-popup .reminder-actions button {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .reminder-popup .btn-complete {
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: white;
+  }
+  .reminder-popup .btn-complete:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.35); }
+  .reminder-popup .btn-snooze {
+    background: var(--light);
+    color: var(--dark);
+  }
+  .reminder-popup .btn-snooze:hover { background: var(--border); }
+  .reminder-popup .btn-dismiss {
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid var(--border);
+  }
+
+  /* TOAST */
+  .toast-msg {
+    position: fixed; bottom: 30px; right: 30px;
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: white; padding: 14px 22px; border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 9999; font-weight: 600; font-size: 0.9rem;
+    animation: slideInRight 0.3s ease;
+  }
+
   /* RESPONSIVE */
   @media (max-width: 768px) {
     .top-header h1 { font-size: 1.3rem; }
@@ -706,22 +836,15 @@
     .hour-label { width: 65px; font-size: 0.85rem; }
     .day-card .day-number { font-size: 1.1rem; }
     .day-card { padding: 8px 4px; }
+    .reminder-popup { right: 10px; left: 10px; min-width: auto; max-width: none; top: 10px; }
   }
 
-  /* ANIMATIONS */
   @keyframes slideIn {
     from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .task-card { animation: slideIn 0.3s ease; }
 
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-  .pulse { animation: pulse 2s infinite; }
-
-  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: var(--light); }
   ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
@@ -746,9 +869,14 @@
         <div style="font-size:0.8rem;opacity:0.85" id="todayLabel"></div>
       </div>
     </div>
-    <div class="motivation-banner" id="dailyMotivation">
-      <i class="fas fa-fire" style="color:#FBBF24"></i>
-      <span id="motivationText">Bugün harika bir gün için yola çıkıyorsun!</span>
+    <div class="motivation-banner">
+      <div>
+        <i class="fas fa-fire" style="color:#FBBF24"></i>
+        <span id="motivationText">Bugün harika bir gün için yola çıkıyorsun!</span>
+      </div>
+      <button class="notif-btn" id="notifBtn" onclick="requestNotificationPermission()">
+        <i class="fas fa-bell"></i> <span id="notifBtnText">Bildirimleri Etkinleştir</span>
+      </button>
     </div>
   </div>
 </div>
@@ -758,13 +886,9 @@
   <!-- WEEK SELECTOR -->
   <div class="week-selector">
     <div class="week-nav">
-      <button class="week-nav-btn" onclick="changeWeek(-1)" title="Önceki Hafta">
-        <i class="fas fa-chevron-left"></i>
-      </button>
+      <button class="week-nav-btn" onclick="changeWeek(-1)" title="Önceki Hafta"><i class="fas fa-chevron-left"></i></button>
       <div class="week-title" id="weekTitle">Bu Hafta</div>
-      <button class="week-nav-btn" onclick="changeWeek(1)" title="Sonraki Hafta">
-        <i class="fas fa-chevron-right"></i>
-      </button>
+      <button class="week-nav-btn" onclick="changeWeek(1)" title="Sonraki Hafta"><i class="fas fa-chevron-right"></i></button>
     </div>
     <div class="week-days" id="weekDays"></div>
   </div>
@@ -809,7 +933,7 @@
   <div class="quick-add-section">
     <div class="section-title">
       <i class="fas fa-bolt text-warning"></i> Hızlı Aktivite Ekle
-      <small style="font-weight:400;color:var(--gray);font-size:0.8rem">— Tek tıkla şu an yaptığını ekle</small>
+      <small style="font-weight:400;color:var(--gray);font-size:0.8rem">— Tek tıkla şu an yaptığını ekle, sonra sürükleyerek başka saate taşı</small>
     </div>
     <div class="quick-activities" id="quickActivities"></div>
   </div>
@@ -822,6 +946,7 @@
         <select class="form-select" id="filterStatus">
           <option value="all">Tüm Durumlar</option>
           <option value="pending">Bekleyen</option>
+          <option value="scheduled">Planlanmış</option>
           <option value="progress">Devam Eden</option>
           <option value="completed">Tamamlanan</option>
         </select>
@@ -847,7 +972,6 @@
 
   <!-- MAIN CONTENT -->
   <div class="row g-3">
-    <!-- TIMELINE -->
     <div class="col-lg-8">
       <div class="timeline-container">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -859,19 +983,20 @@
             <i class="fas fa-location-crosshairs"></i> Şu An
           </button>
         </div>
+        <div class="alert" style="background:#EEF2FF;border:1px solid #C7D2FE;color:#3730A3;border-radius:12px;font-size:0.85rem;padding:10px 14px;margin-bottom:18px">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>İpucu:</strong> Aktivite kartlarını başka bir saate <strong>sürükleyip bırakarak</strong> taşıyabilirsin. İleri saatlere planladığın işler için <i class="fas fa-bell"></i> bildirim gönderilir.
+        </div>
         <div class="timeline" id="timeline"></div>
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <div class="col-lg-4">
-      <!-- MOTIVATION CARD -->
       <div class="motivation-card">
         <p class="quote" id="motivationQuote">Başarı, küçük çabaların her gün tekrarlanmasıdır.</p>
         <div class="quote-author" id="motivationAuthor">— Robert Collier</div>
       </div>
 
-      <!-- DAILY PROGRESS -->
       <div class="side-section">
         <h5><i class="fas fa-chart-line text-primary"></i> Günlük İlerleme</h5>
         <div class="d-flex justify-content-between mb-2">
@@ -886,38 +1011,22 @@
         </div>
       </div>
 
-      <!-- ACHIEVEMENTS -->
+      <div class="side-section">
+        <h5><i class="fas fa-bell text-warning"></i> Yaklaşan Hatırlatıcılar</h5>
+        <div id="upcomingReminders">
+          <div class="text-center text-muted py-3" style="font-size:0.85rem">Yaklaşan hatırlatıcı yok</div>
+        </div>
+      </div>
+
       <div class="side-section">
         <h5><i class="fas fa-medal text-warning"></i> Başarımlar</h5>
         <div id="achievements"></div>
       </div>
 
-      <!-- CATEGORY BREAKDOWN -->
       <div class="side-section">
-        <h5><i class="fas fa-layer-group text-purple" style="color:var(--purple)"></i> Kategori Dağılımı</h5>
+        <h5><i class="fas fa-layer-group" style="color:var(--purple)"></i> Kategori Dağılımı</h5>
         <div id="categoryBreakdown">
           <div class="text-center text-muted py-3" style="font-size:0.85rem">Henüz veri yok</div>
-        </div>
-      </div>
-
-      <!-- WEEKLY SUMMARY -->
-      <div class="side-section">
-        <h5><i class="fas fa-calendar-week text-info"></i> Haftalık Özet</h5>
-        <div class="d-flex justify-content-between py-2 border-bottom">
-          <span style="font-size:0.88rem">Bu hafta toplam</span>
-          <strong id="weekTotal">0</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2 border-bottom">
-          <span style="font-size:0.88rem">Tamamlanma oranı</span>
-          <strong id="weekCompletion">0%</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2 border-bottom">
-          <span style="font-size:0.88rem">En verimli gün</span>
-          <strong id="bestDay">-</strong>
-        </div>
-        <div class="d-flex justify-content-between py-2">
-          <span style="font-size:0.88rem">Aktif kategoriler</span>
-          <strong id="activeCategoryCount">0</strong>
         </div>
       </div>
     </div>
@@ -975,6 +1084,7 @@
             <div class="col-md-4">
               <label class="form-label">Durum</label>
               <select class="form-select" id="taskStatus">
+                <option value="scheduled">⏰ Planlandı (Hatırlat)</option>
                 <option value="pending">Bekliyor</option>
                 <option value="progress">Devam Ediyor</option>
                 <option value="completed" selected>Tamamlandı</option>
@@ -993,7 +1103,7 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
+<!-- DELETE MODAL -->
 <div class="modal fade" id="confirmModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -1015,10 +1125,19 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // ============= STATE =============
-  let tasks = JSON.parse(localStorage.getItem('personalTasks_v2') || '[]');
+  let tasks = JSON.parse(localStorage.getItem('personalTasks_v3') || '[]');
   let currentDate = new Date().toISOString().split('T')[0];
   let currentWeekStart = getMonday(new Date());
   let pendingDeleteId = null;
+  let draggedTaskId = null;
+  let firedReminders = JSON.parse(localStorage.getItem('firedReminders_v3') || '[]');
+
+  // Migrate old data if exists
+  const oldData = localStorage.getItem('personalTasks_v2');
+  if (oldData && tasks.length === 0) {
+    tasks = JSON.parse(oldData);
+    saveTasks();
+  }
 
   // ============= CATEGORIES =============
   const categories = [
@@ -1035,7 +1154,6 @@
     { name: 'Diğer', icon: '📌', color: '#94A3B8' }
   ];
 
-  // ============= QUICK ACTIVITIES (PRESETS) =============
   const quickActivityPresets = [
     { title: 'Uyandım', emoji: '☀️', category: 'Uyku', priority: 'medium' },
     { title: 'Diş fırçaladım', emoji: '🪥', category: 'Kişisel Bakım', priority: 'medium' },
@@ -1057,7 +1175,6 @@
     { title: 'Uyumaya gittim', emoji: '😴', category: 'Uyku', priority: 'high' }
   ];
 
-  // ============= MOTIVATIONAL QUOTES =============
   const quotes = [
     { text: 'Başarı, küçük çabaların her gün tekrarlanmasıdır.', author: 'Robert Collier' },
     { text: 'Bir yolculuk bin mil bile olsa tek bir adımla başlar.', author: 'Lao Tzu' },
@@ -1071,12 +1188,10 @@
     { text: 'Başarısızlık, başarının tohumudur.', author: 'Anonim' }
   ];
 
-  // ============= DAY NAMES =============
   const dayNames = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
   const dayNamesShort = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
   const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
 
-  // ============= ACHIEVEMENTS =============
   const achievementsList = [
     { id: 'first_task', icon: '🎯', title: 'İlk Adım', desc: 'İlk aktiviteni ekle' },
     { id: 'five_done', icon: '⭐', title: 'Verimli Gün', desc: 'Bir günde 5 aktivite tamamla' },
@@ -1085,7 +1200,7 @@
     { id: 'streak_7', icon: '💎', title: 'Bir Hafta Devam', desc: '7 gün üst üste aktivite ekle' },
     { id: 'all_categories', icon: '🌈', title: 'Çok Yönlü', desc: 'Tüm kategorilerde aktivite ekle' },
     { id: 'morning_routine', icon: '☀️', title: 'Erken Kuş', desc: 'Sabah 7 öncesi aktivite ekle' },
-    { id: 'high_priority', icon: '⚡', title: 'Önemli İşler', desc: '5 yüksek öncelikli aktivite tamamla' }
+    { id: 'planner', icon: '📅', title: 'İyi Planlayıcı', desc: '5 aktivite önceden planla' }
   ];
 
   // ============= INIT =============
@@ -1095,12 +1210,215 @@
     renderWeekDays();
     startClock();
     loadDailyMotivation();
+    updateNotificationButton();
     renderAll();
+    startReminderChecker();
 
     document.getElementById('filterStatus').addEventListener('change', renderTimeline);
     document.getElementById('filterCategory').addEventListener('change', renderTimeline);
     document.getElementById('searchInput').addEventListener('input', renderTimeline);
   });
+
+  // ============= NOTIFICATIONS =============
+  function updateNotificationButton() {
+    const btn = document.getElementById('notifBtn');
+    const text = document.getElementById('notifBtnText');
+    if (!('Notification' in window)) {
+      btn.style.display = 'none';
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      btn.classList.add('granted');
+      text.textContent = 'Bildirimler Aktif';
+      btn.innerHTML = '<i class="fas fa-bell"></i> <span>Bildirimler Aktif</span>';
+    } else if (Notification.permission === 'denied') {
+      btn.classList.add('denied');
+      text.textContent = 'Bildirimler Engellendi';
+      btn.innerHTML = '<i class="fas fa-bell-slash"></i> <span>Bildirimler Engellendi</span>';
+    }
+  }
+
+  function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+      alert('Bu tarayıcı bildirim desteklemiyor.');
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      // Test notification
+      new Notification('🌱 Kişisel Gelişim Paneli', {
+        body: 'Bildirimler zaten aktif! Planladığın işler vakti gelince hatırlatılacak.',
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🌱</text></svg>'
+      });
+      showToast('🔔 Bildirimler zaten aktif!');
+      return;
+    }
+    Notification.requestPermission().then(perm => {
+      updateNotificationButton();
+      if (perm === 'granted') {
+        new Notification('✅ Bildirimler Etkinleştirildi!', {
+          body: 'Artık planladığın aktiviteleri saati geldiğinde hatırlatacağım.',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🔔</text></svg>'
+        });
+        showToast('🔔 Bildirimler etkinleştirildi!');
+      } else {
+        showToast('❌ Bildirim izni verilmedi');
+      }
+    });
+  }
+
+  function startReminderChecker() {
+    // Check every 20 seconds
+    setInterval(checkReminders, 20000);
+    // Initial check
+    setTimeout(checkReminders, 1000);
+  }
+
+  function checkReminders() {
+    const now = new Date();
+    const today = formatDate(now);
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    tasks.forEach(task => {
+      if (task.date !== today) return;
+      if (task.status === 'completed' || task.status === 'cancelled') return;
+      if (firedReminders.includes(task.id)) return;
+
+      const [h, m] = task.startTime.split(':').map(Number);
+      const taskMinutes = h * 60 + m;
+      // Trigger if task time has arrived (and not more than 2 minutes late)
+      if (taskMinutes <= currentMinutes && currentMinutes - taskMinutes <= 2) {
+        fireReminder(task);
+      }
+    });
+  }
+
+  function fireReminder(task) {
+    firedReminders.push(task.id);
+    localStorage.setItem('firedReminders_v3', JSON.stringify(firedReminders));
+
+    // Browser notification
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const notif = new Notification(`${task.emoji || '🔔'} ${task.title}`, {
+        body: `Saat ${task.startTime} — ${task.description || 'Bu aktivitenin zamanı geldi!'}\n\nTıklayarak tamamlandı işaretle.`,
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">' + (task.emoji || '🔔') + '</text></svg>',
+        tag: task.id,
+        requireInteraction: true
+      });
+      notif.onclick = () => {
+        window.focus();
+        completeFromReminder(task.id);
+        notif.close();
+      };
+    }
+
+    // In-app popup (always show, even if browser notif is allowed)
+    showReminderPopup(task);
+
+    // Play sound
+    playReminderSound();
+  }
+
+  function showReminderPopup(task) {
+    // Remove existing popup for same task
+    const existing = document.getElementById('reminder-' + task.id);
+    if (existing) existing.remove();
+
+    const cat = categories.find(c => c.name === task.category) || categories[categories.length-1];
+    const popup = document.createElement('div');
+    popup.id = 'reminder-' + task.id;
+    popup.className = 'reminder-popup';
+    popup.innerHTML = `
+      <div class="reminder-header">
+        <span style="font-size:2rem">${task.emoji || '🔔'}</span>
+        <span class="reminder-time">${task.startTime}</span>
+        <span style="font-size:0.75rem;color:var(--gray);margin-left:auto">${cat.icon} ${cat.name}</span>
+      </div>
+      <div class="reminder-title">${escapeHtml(task.title)}</div>
+      ${task.description ? `<div class="reminder-desc">${escapeHtml(task.description)}</div>` : '<div class="reminder-desc">Bu aktivitenin zamanı geldi!</div>'}
+      <div class="reminder-actions">
+        <button class="btn-complete" onclick="completeFromReminder('${task.id}')"><i class="fas fa-check"></i> Tamamladım</button>
+        <button class="btn-snooze" onclick="snoozeReminder('${task.id}', 5)"><i class="fas fa-clock"></i> 5 dk</button>
+        <button class="btn-dismiss" onclick="dismissReminder('${task.id}')"><i class="fas fa-times"></i></button>
+      </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Auto-dismiss after 60 seconds if not interacted with
+    setTimeout(() => {
+      if (document.getElementById('reminder-' + task.id)) {
+        popup.style.opacity = '0';
+        popup.style.transition = 'opacity 0.5s';
+        setTimeout(() => popup.remove(), 500);
+      }
+    }, 60000);
+  }
+
+  function completeFromReminder(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      task.status = 'completed';
+      saveTasks();
+      renderAll();
+      const popup = document.getElementById('reminder-' + taskId);
+      if (popup) {
+        popup.classList.add('completed');
+        popup.querySelector('.reminder-title').innerHTML += ' ✅';
+        setTimeout(() => popup.remove(), 1500);
+      }
+      showToast(`✅ ${task.title} tamamlandı!`);
+    }
+  }
+
+  function snoozeReminder(taskId, minutes) {
+    // Remove from fired list, update time +5 min
+    firedReminders = firedReminders.filter(id => id !== taskId);
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      const [h, m] = task.startTime.split(':').map(Number);
+      const total = h * 60 + m + minutes;
+      const newH = Math.floor(total / 60) % 24;
+      const newM = total % 60;
+      task.startTime = `${String(newH).padStart(2,'0')}:${String(newM).padStart(2,'0')}`;
+      saveTasks();
+      renderAll();
+    }
+    localStorage.setItem('firedReminders_v3', JSON.stringify(firedReminders));
+    const popup = document.getElementById('reminder-' + taskId);
+    if (popup) popup.remove();
+    showToast(`⏰ ${minutes} dakika sonra tekrar hatırlatılacak`);
+  }
+
+  function dismissReminder(taskId) {
+    const popup = document.getElementById('reminder-' + taskId);
+    if (popup) popup.remove();
+  }
+
+  function playReminderSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+      // Second tone
+      setTimeout(() => {
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.frequency.value = 1100;
+        gain2.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc2.start();
+        osc2.stop(ctx.currentTime + 0.3);
+      }, 200);
+    } catch (e) {}
+  }
 
   // ============= UTILITIES =============
   function getMonday(d) {
@@ -1126,7 +1444,7 @@
     return div.innerHTML;
   }
 
-  // ============= POPULATE CATEGORIES =============
+  // ============= POPULATE =============
   function populateCategorySelects() {
     const taskCat = document.getElementById('taskCategory');
     const filterCat = document.getElementById('filterCategory');
@@ -1137,7 +1455,6 @@
     });
   }
 
-  // ============= QUICK ACTIVITIES =============
   function renderQuickActivities() {
     const container = document.getElementById('quickActivities');
     container.innerHTML = quickActivityPresets.map((q, i) => {
@@ -1178,14 +1495,7 @@
 
   function showToast(message) {
     const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed; bottom: 30px; right: 30px;
-      background: linear-gradient(135deg, var(--success), #059669);
-      color: white; padding: 14px 22px; border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      z-index: 9999; font-weight: 600; font-size: 0.9rem;
-      animation: slideIn 0.3s ease;
-    `;
+    toast.className = 'toast-msg';
     toast.innerHTML = `<i class="fas fa-check-circle me-2"></i>${message}`;
     document.body.appendChild(toast);
     setTimeout(() => {
@@ -1201,22 +1511,19 @@
       const now = new Date();
       const time = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       document.getElementById('liveClock').innerHTML = `<i class="far fa-clock me-2"></i>${time}`;
-
       const dayName = dayNames[(now.getDay()+6)%7];
-      const dateStr = `${dayName}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
-      document.getElementById('todayLabel').textContent = dateStr;
+      document.getElementById('todayLabel').textContent =
+        `${dayName}, ${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
     };
     update();
     setInterval(update, 1000);
   }
 
-  // ============= MOTIVATION =============
   function loadDailyMotivation() {
     const dayIdx = new Date().getDate() % quotes.length;
     const q = quotes[dayIdx];
     document.getElementById('motivationQuote').textContent = `"${q.text}"`;
     document.getElementById('motivationAuthor').textContent = `— ${q.author}`;
-
     const hour = new Date().getHours();
     let msg = '';
     if (hour < 6) msg = 'Erken saatlerdesin! Hayırlı geceler 🌙';
@@ -1227,7 +1534,7 @@
     document.getElementById('motivationText').textContent = msg;
   }
 
-  // ============= WEEK DAYS =============
+  // ============= WEEK =============
   function renderWeekDays() {
     const container = document.getElementById('weekDays');
     const today = new Date();
@@ -1253,7 +1560,6 @@
       `;
     }
     container.innerHTML = html;
-
     const endOfWeek = new Date(currentWeekStart);
     endOfWeek.setDate(endOfWeek.getDate() + 6);
     document.getElementById('weekTitle').innerHTML = `
@@ -1289,6 +1595,11 @@
     prepareNewTask();
     document.getElementById('taskStartTime').value = `${String(hour).padStart(2,'0')}:00`;
     document.getElementById('taskEndTime').value = `${String((hour+1)%24).padStart(2,'0')}:00`;
+    // If hour is in future today, default to scheduled
+    const now = new Date();
+    if (currentDate === formatDate(now) && hour > now.getHours()) {
+      document.getElementById('taskStatus').value = 'scheduled';
+    }
     new bootstrap.Modal(document.getElementById('taskModal')).show();
   }
 
@@ -1330,12 +1641,23 @@
       status: document.getElementById('taskStatus').value,
       createdAt: id ? tasks.find(t=>t.id===id).createdAt : new Date().toISOString()
     };
-    if (id) tasks = tasks.map(t => t.id === id ? taskData : t);
-    else tasks.push(taskData);
+    if (id) {
+      tasks = tasks.map(t => t.id === id ? taskData : t);
+      // If time changed, allow re-firing reminder
+      firedReminders = firedReminders.filter(fid => fid !== id);
+      localStorage.setItem('firedReminders_v3', JSON.stringify(firedReminders));
+    } else {
+      tasks.push(taskData);
+    }
     saveTasks();
     bootstrap.Modal.getInstance(document.getElementById('taskModal')).hide();
     renderAll();
-    if (!id) showToast(`${taskData.emoji} ${taskData.title} eklendi!`);
+    if (!id) {
+      const msg = taskData.status === 'scheduled'
+        ? `${taskData.emoji} ${taskData.title} planlandı! Saati gelince hatırlatılacak ⏰`
+        : `${taskData.emoji} ${taskData.title} eklendi!`;
+      showToast(msg);
+    }
   }
 
   function deleteTask(id) {
@@ -1364,7 +1686,63 @@
   }
 
   function saveTasks() {
-    localStorage.setItem('personalTasks_v2', JSON.stringify(tasks));
+    localStorage.setItem('personalTasks_v3', JSON.stringify(tasks));
+  }
+
+  // ============= DRAG & DROP =============
+  function handleDragStart(e, taskId) {
+    draggedTaskId = taskId;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', taskId);
+    e.target.classList.add('dragging');
+  }
+
+  function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    document.querySelectorAll('.hour-block').forEach(b => b.classList.remove('drag-over'));
+    draggedTaskId = null;
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const block = e.currentTarget;
+    document.querySelectorAll('.hour-block').forEach(b => b.classList.remove('drag-over'));
+    block.classList.add('drag-over');
+  }
+
+  function handleDragLeave(e) {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+  }
+
+  function handleDrop(e, newHour) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    const taskId = e.dataTransfer.getData('text/plain') || draggedTaskId;
+    if (!taskId) return;
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    const oldHour = parseInt(task.startTime.split(':')[0]);
+    if (oldHour === newHour) return;
+
+    // Preserve minute, change hour
+    const [, m] = task.startTime.split(':');
+    task.startTime = `${String(newHour).padStart(2,'0')}:${m}`;
+    if (task.endTime) {
+      const [eh, em] = task.endTime.split(':');
+      const diff = newHour - oldHour;
+      const newEh = (parseInt(eh) + diff + 24) % 24;
+      task.endTime = `${String(newEh).padStart(2,'0')}:${em}`;
+    }
+    // Reset reminder fire status if moved to future
+    firedReminders = firedReminders.filter(id => id !== taskId);
+    localStorage.setItem('firedReminders_v3', JSON.stringify(firedReminders));
+
+    saveTasks();
+    renderAll();
+    showToast(`⏱️ ${task.emoji} ${task.title} → ${task.startTime}`);
   }
 
   // ============= RENDER =============
@@ -1375,7 +1753,7 @@
     renderProgress();
     renderCategories();
     renderAchievements();
-    renderWeeklySummary();
+    renderUpcomingReminders();
     updateTimelineLabel();
   }
 
@@ -1412,7 +1790,10 @@
       const period = h < 6 ? 'Gece' : h < 12 ? 'Sabah' : h < 17 ? 'Öğleden Sonra' : h < 21 ? 'Akşam' : 'Gece';
       const isCurrent = isToday && h === currentHour;
       html += `
-        <div class="hour-block ${isCurrent ? 'current-hour' : ''}" data-hour="${h}">
+        <div class="hour-block ${isCurrent ? 'current-hour' : ''}" data-hour="${h}"
+             ondragover="handleDragOver(event)"
+             ondragleave="handleDragLeave(event)"
+             ondrop="handleDrop(event, ${h})">
           <div class="hour-label">${String(h).padStart(2,'0')}:00<span class="period">${period}</span></div>
           <div class="hour-tasks">
       `;
@@ -1438,14 +1819,19 @@
     const statusBadges = {
       'completed': '<span class="task-badge badge-completed"><i class="fas fa-check"></i> Tamamlandı</span>',
       'pending': '<span class="task-badge badge-pending"><i class="fas fa-clock"></i> Bekliyor</span>',
-      'progress': '<span class="task-badge badge-progress"><i class="fas fa-spinner"></i> Devam</span>'
+      'progress': '<span class="task-badge badge-progress"><i class="fas fa-spinner"></i> Devam</span>',
+      'scheduled': '<span class="task-badge badge-scheduled"><i class="fas fa-bell"></i> Planlandı</span>'
     };
     const timeRange = task.endTime ? `${task.startTime} - ${task.endTime}` : task.startTime;
     return `
-      <div class="task-card priority-${task.priority} status-${task.status}">
+      <div class="task-card priority-${task.priority} status-${task.status}"
+           draggable="true"
+           ondragstart="handleDragStart(event, '${task.id}')"
+           ondragend="handleDragEnd(event)">
         <div class="task-header">
           <div style="flex:1">
             <div>
+              <i class="fas fa-grip-vertical drag-handle" title="Sürükleyerek başka saate taşı"></i>
               <span class="task-emoji">${task.emoji || '📌'}</span>
               <span class="task-title">${escapeHtml(task.title)}</span>
             </div>
@@ -1476,7 +1862,6 @@
     const total = dayTasks.length;
     const percent = total > 0 ? Math.round((completed/total)*100) : 0;
 
-    // Score: completed*10 + high priority bonus + variety bonus
     let score = completed * 10;
     score += dayTasks.filter(t => t.priority === 'high' && t.status === 'completed').length * 5;
     const cats = new Set(dayTasks.filter(t => t.status === 'completed').map(t => t.category));
@@ -1504,11 +1889,10 @@
     });
     document.getElementById('statHours').textContent = `${Math.floor(totalMinutes/60)}s ${totalMinutes%60}d`;
 
-    // Streak calculation
     const dates = [...new Set(tasks.map(t => t.date))].sort().reverse();
     let streak = 0;
-    const today = formatDate(new Date());
     let checkDate = new Date();
+    const today = formatDate(new Date());
     while (true) {
       const d = formatDate(checkDate);
       if (dates.includes(d)) {
@@ -1566,7 +1950,6 @@
     const dayCompleted = tasks.filter(t => t.date === currentDate && t.status === 'completed').length;
     const dates = [...new Set(allTasks.map(t => t.date))].sort();
 
-    // Calculate streak
     let maxStreak = 0, currentStreak = 0;
     let prev = null;
     dates.forEach(d => {
@@ -1581,7 +1964,7 @@
 
     const usedCats = new Set(allTasks.map(t => t.category));
     const earlyTasks = allTasks.filter(t => parseInt(t.startTime.split(':')[0]) < 7).length;
-    const highCompleted = allTasks.filter(t => t.priority === 'high' && t.status === 'completed').length;
+    const scheduledCount = allTasks.filter(t => t.status === 'scheduled').length;
 
     const unlocked = {
       first_task: allTasks.length >= 1,
@@ -1591,7 +1974,7 @@
       streak_7: maxStreak >= 7,
       all_categories: usedCats.size >= categories.length,
       morning_routine: earlyTasks >= 1,
-      high_priority: highCompleted >= 5
+      planner: scheduledCount >= 5
     };
 
     container.innerHTML = achievementsList.map(a => `
@@ -1606,33 +1989,38 @@
     `).join('');
   }
 
-  function renderWeeklySummary() {
-    const weekDates = [];
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(currentWeekStart);
-      d.setDate(d.getDate() + i);
-      weekDates.push(formatDate(d));
-    }
-    const weekTasks = tasks.filter(t => weekDates.includes(t.date));
-    const weekCompleted = weekTasks.filter(t => t.status === 'completed').length;
-    const weekPercent = weekTasks.length > 0 ? Math.round((weekCompleted/weekTasks.length)*100) : 0;
+  function renderUpcomingReminders() {
+    const now = new Date();
+    const today = formatDate(now);
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const upcoming = tasks.filter(t => {
+      if (t.date !== today) return false;
+      if (t.status === 'completed') return false;
+      const [h, m] = t.startTime.split(':').map(Number);
+      return (h * 60 + m) > currentMinutes;
+    }).sort((a,b) => a.startTime.localeCompare(b.startTime)).slice(0, 5);
 
-    const dayCounts = {};
-    weekTasks.forEach(t => { dayCounts[t.date] = (dayCounts[t.date]||0) + 1; });
-    let bestDate = null, bestCount = 0;
-    Object.entries(dayCounts).forEach(([d, c]) => {
-      if (c > bestCount) { bestCount = c; bestDate = d; }
-    });
-    let bestDayLabel = '-';
-    if (bestDate) {
-      const d = new Date(bestDate);
-      bestDayLabel = `${dayNamesShort[(d.getDay()+6)%7]} (${bestCount})`;
+    const container = document.getElementById('upcomingReminders');
+    if (upcoming.length === 0) {
+      container.innerHTML = '<div class="text-center text-muted py-3" style="font-size:0.85rem">Yaklaşan hatırlatıcı yok</div>';
+      return;
     }
-
-    document.getElementById('weekTotal').textContent = weekTasks.length;
-    document.getElementById('weekCompletion').textContent = weekPercent + '%';
-    document.getElementById('bestDay').textContent = bestDayLabel;
-    document.getElementById('activeCategoryCount').textContent = new Set(weekTasks.map(t=>t.category)).size;
+    container.innerHTML = upcoming.map(t => {
+      const [h, m] = t.startTime.split(':').map(Number);
+      const diffMin = (h*60+m) - currentMinutes;
+      let timeLeft;
+      if (diffMin < 60) timeLeft = `${diffMin} dk sonra`;
+      else timeLeft = `${Math.floor(diffMin/60)}s ${diffMin%60}dk sonra`;
+      return `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:1.4rem">${t.emoji || '📌'}</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:0.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(t.title)}</div>
+            <div style="font-size:0.75rem;color:var(--gray)"><i class="far fa-clock"></i> ${t.startTime} • ${timeLeft}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
   }
 
   function scrollToCurrentHour() {
@@ -1655,8 +2043,16 @@
 
   // Refresh time-based UI every minute
   setInterval(() => {
-    if (currentDate === formatDate(new Date())) renderTimeline();
+    if (currentDate === formatDate(new Date())) {
+      renderTimeline();
+      renderUpcomingReminders();
+    }
   }, 60000);
+
+  // Page visibility - check missed reminders when tab regains focus
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') checkReminders();
+  });
 </script>
 </body>
 </html>
