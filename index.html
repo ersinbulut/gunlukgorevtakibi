@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gelişim">
+<meta name="theme-color" content="#6366F1">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366F1'/><text x='50' y='72' font-size='60' text-anchor='middle'>🌱</text></svg>">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Kişisel Gelişim Paneli","short_name":"Gelişim","start_url":"./","display":"standalone","background_color":"%23F1F5F9","theme_color":"%236366F1","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><rect width=%27100%27 height=%27100%27 rx=%2722%27 fill=%27%236366F1%27/><text x=%2750%27 y=%2772%27 font-size=%2760%27 text-anchor=%27middle%27>🌱</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
 <title>Kişisel Gelişim Takip Paneli</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -874,9 +881,63 @@
         <i class="fas fa-fire" style="color:#FBBF24"></i>
         <span id="motivationText">Bugün harika bir gün için yola çıkıyorsun!</span>
       </div>
-      <button class="notif-btn" id="notifBtn" onclick="requestNotificationPermission()">
-        <i class="fas fa-bell"></i> <span id="notifBtnText">Bildirimleri Etkinleştir</span>
-      </button>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="notif-btn" id="notifBtn" onclick="requestNotificationPermission()">
+          <i class="fas fa-bell"></i> <span id="notifBtnText">Bildirimleri Etkinleştir</span>
+        </button>
+        <button class="notif-btn" id="wakeLockBtn" onclick="toggleWakeLock()" title="Ekranı uyutma">
+          <i class="fas fa-mobile-screen"></i> <span>Ekranı Açık Tut</span>
+        </button>
+        <button class="notif-btn" id="iosHelpBtn" onclick="showIosHelp()" style="display:none">
+          <i class="fab fa-apple"></i> <span>iOS Kurulum</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- iOS HELP MODAL -->
+<div class="modal fade" id="iosHelpModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background:linear-gradient(135deg,#000,#333)">
+        <h5 class="modal-title"><i class="fab fa-apple me-2"></i>iOS'ta Bildirim Kurulumu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="font-size:0.92rem;line-height:1.6">
+        <div class="alert" style="background:#FEF3C7;border:1px solid #FCD34D;color:#92400E;border-radius:12px">
+          <strong>⚠️ Önemli:</strong> iOS Safari, ekran kapalıyken normal web sayfalarına bildirim gönderilmesine izin vermez. Bu bir sistem kısıtlamasıdır. Aşağıdaki adımları yaparak bildirimleri çalışır hale getirebilirsin.
+        </div>
+
+        <h6 style="color:var(--primary);margin-top:18px;font-weight:700">📱 1. Ana Ekran'a Ekle (Zorunlu)</h6>
+        <ol style="padding-left:20px">
+          <li>Bu sayfayı <strong>Safari</strong>'de aç (Chrome'da çalışmaz)</li>
+          <li>Alt çubukta <strong>Paylaş</strong> simgesine (📤) bas</li>
+          <li>Aşağı kaydır → <strong>"Ana Ekrana Ekle"</strong> seçeneğine bas</li>
+          <li>Sağ üst köşeden <strong>"Ekle"</strong> butonuna bas</li>
+          <li>Artık ana ekranda <strong>"Gelişim"</strong> uygulamasın olacak — onu aç</li>
+        </ol>
+
+        <h6 style="color:var(--primary);margin-top:18px;font-weight:700">🔔 2. Bildirim İzni Ver</h6>
+        <ol style="padding-left:20px">
+          <li>Ana ekrandan açtığın PWA'da <strong>"Bildirimleri Etkinleştir"</strong> butonuna bas</li>
+          <li>iOS'un bildirim iznini kabul et</li>
+          <li>Ayarlar → Bildirimler → <strong>Gelişim</strong>'i aç → "Bildirimlere İzin Ver" açık olsun</li>
+        </ol>
+
+        <h6 style="color:var(--primary);margin-top:18px;font-weight:700">⚡ 3. Sınırlamalar (Dürüst Bilgi)</h6>
+        <div style="background:#F8FAFC;padding:14px;border-radius:10px;border-left:3px solid var(--accent)">
+          <p style="margin:0 0 8px 0"><strong>iOS 16.4+ gereklidir.</strong> Daha eski sürümlerde bildirimler hiç çalışmaz.</p>
+          <p style="margin:0 0 8px 0"><strong>Tam arka plan bildirim için sunucu gerekir.</strong> Bu lokal panel sunucusuz çalıştığı için, PWA arka planda da olsa belirli bir süre sonra iOS uygulamayı askıya alabilir.</p>
+          <p style="margin:0"><strong>En güvenilir yöntem:</strong> "Ekranı Açık Tut" butonunu aktifleştir ve PWA'yı açık bırak. Bu durumda hatırlatıcılar saati saatine çalışır.</p>
+        </div>
+
+        <h6 style="color:var(--primary);margin-top:18px;font-weight:700">💡 4. Alternatif Çözüm: iOS Kısayollar</h6>
+        <p>Eğer kritik hatırlatıcılar istiyorsan, iOS'un <strong>Saat → Alarm</strong> veya <strong>Hatırlatıcılar</strong> uygulamasını kullanabilirsin. Bu panel zaman çizelgeni planlamak için kullanılır, kritik alarmlar için yerel uygulamalar daha güvenilirdir.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary-custom" data-bs-dismiss="modal">Anladım</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1131,6 +1192,11 @@
   let pendingDeleteId = null;
   let draggedTaskId = null;
   let firedReminders = JSON.parse(localStorage.getItem('firedReminders_v3') || '[]');
+  let wakeLock = null;
+  let scheduledTimeouts = {};
+  let serviceWorkerReg = null;
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
   // Migrate old data if exists
   const oldData = localStorage.getItem('personalTasks_v2');
@@ -1213,11 +1279,146 @@
     updateNotificationButton();
     renderAll();
     startReminderChecker();
+    registerServiceWorker();
+    setupIosUI();
+    scheduleAllUpcomingReminders();
+    autoEnableWakeLock();
 
     document.getElementById('filterStatus').addEventListener('change', renderTimeline);
     document.getElementById('filterCategory').addEventListener('change', renderTimeline);
     document.getElementById('searchInput').addEventListener('input', renderTimeline);
   });
+
+  // ============= iOS DETECTION & UI =============
+  function setupIosUI() {
+    if (isIOS) {
+      document.getElementById('iosHelpBtn').style.display = '';
+      // Show iOS install banner if not installed as PWA
+      if (!isStandalone) {
+        const banner = document.createElement('div');
+        banner.style.cssText = `
+          background: linear-gradient(135deg, #000, #1F2937);
+          color: white; padding: 14px 20px; border-radius: 14px;
+          margin: 0 1rem 18px 1rem; display: flex; align-items: center; gap: 12px;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        `;
+        banner.innerHTML = `
+          <i class="fab fa-apple" style="font-size:1.8rem"></i>
+          <div style="flex:1;font-size:0.88rem;line-height:1.4">
+            <strong>iOS'ta bildirimlerin çalışması için:</strong> Bu sayfayı Safari'de aç → Paylaş (📤) → "Ana Ekrana Ekle" yap, sonra ana ekrandan aç.
+          </div>
+          <button onclick="showIosHelp()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:8px 14px;border-radius:8px;font-weight:600;cursor:pointer;font-family:inherit;font-size:0.82rem">Detaylar</button>
+        `;
+        document.querySelector('.container-fluid').insertBefore(banner, document.querySelector('.container-fluid').firstChild);
+      }
+    }
+  }
+
+  function showIosHelp() {
+    new bootstrap.Modal(document.getElementById('iosHelpModal')).show();
+  }
+
+  // ============= SERVICE WORKER (PWA SUPPORT) =============
+  function registerServiceWorker() {
+    if (!('serviceWorker' in navigator)) return;
+    // Inline service worker via Blob URL
+    const swCode = `
+      self.addEventListener('install', e => self.skipWaiting());
+      self.addEventListener('activate', e => self.clients.claim());
+      self.addEventListener('notificationclick', e => {
+        e.notification.close();
+        e.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+          for (const c of list) { if ('focus' in c) { c.postMessage({ type: 'completeTask', taskId: e.notification.tag }); return c.focus(); } }
+          if (clients.openWindow) return clients.openWindow('/');
+        }));
+      });
+      self.addEventListener('message', e => {
+        if (e.data && e.data.type === 'showNotification') {
+          self.registration.showNotification(e.data.title, e.data.options);
+        }
+      });
+    `;
+    try {
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(url).then(reg => {
+        serviceWorkerReg = reg;
+        console.log('SW registered');
+      }).catch(err => console.log('SW registration failed (normal for file://):', err.message));
+
+      navigator.serviceWorker.addEventListener('message', e => {
+        if (e.data && e.data.type === 'completeTask') {
+          completeFromReminder(e.data.taskId);
+        }
+      });
+    } catch (e) { console.log('SW unavailable:', e.message); }
+  }
+
+  // ============= WAKE LOCK (KEEP SCREEN ON) =============
+  async function toggleWakeLock() {
+    const btn = document.getElementById('wakeLockBtn');
+    if (wakeLock) {
+      await wakeLock.release();
+      wakeLock = null;
+      btn.classList.remove('granted');
+      btn.innerHTML = '<i class="fas fa-mobile-screen"></i> <span>Ekranı Açık Tut</span>';
+      showToast('🌙 Ekran uyuyabilir');
+      return;
+    }
+    if (!('wakeLock' in navigator)) {
+      alert('Bu tarayıcı Wake Lock desteklemiyor.\n\niOS Safari için: Sayfayı Ana Ekran\'a ekleyip oradan açman ve iOS 16.4+ kullanman gerekir.');
+      return;
+    }
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      btn.classList.add('granted');
+      btn.innerHTML = '<i class="fas fa-mobile-screen"></i> <span>Ekran Açık ✓</span>';
+      showToast('☀️ Ekran açık tutulacak');
+      wakeLock.addEventListener('release', () => {
+        btn.classList.remove('granted');
+        btn.innerHTML = '<i class="fas fa-mobile-screen"></i> <span>Ekranı Açık Tut</span>';
+        wakeLock = null;
+      });
+    } catch (e) {
+      alert('Ekran açık tutulamadı: ' + e.message);
+    }
+  }
+
+  function autoEnableWakeLock() {
+    // Try to re-acquire wake lock when page becomes visible again
+    document.addEventListener('visibilitychange', async () => {
+      if (wakeLock !== null && document.visibilityState === 'visible') {
+        try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e) {}
+      }
+    });
+  }
+
+  // ============= PRE-SCHEDULE REMINDERS WITH setTimeout =============
+  function scheduleAllUpcomingReminders() {
+    // Clear existing scheduled timeouts
+    Object.values(scheduledTimeouts).forEach(t => clearTimeout(t));
+    scheduledTimeouts = {};
+
+    const now = new Date();
+    const today = formatDate(now);
+
+    tasks.forEach(task => {
+      if (task.date !== today) return;
+      if (task.status === 'completed' || task.status === 'cancelled') return;
+      if (firedReminders.includes(task.id)) return;
+
+      const [h, m] = task.startTime.split(':').map(Number);
+      const taskTime = new Date();
+      taskTime.setHours(h, m, 0, 0);
+      const ms = taskTime - now;
+      // Only schedule if in future and within 24 hours
+      if (ms > 0 && ms < 86400000) {
+        scheduledTimeouts[task.id] = setTimeout(() => {
+          fireReminder(task);
+        }, ms);
+      }
+    });
+  }
 
   // ============= NOTIFICATIONS =============
   function updateNotificationButton() {
@@ -1240,7 +1441,16 @@
 
   function requestNotificationPermission() {
     if (!('Notification' in window)) {
+      if (isIOS && !isStandalone) {
+        showIosHelp();
+        return;
+      }
       alert('Bu tarayıcı bildirim desteklemiyor.');
+      return;
+    }
+    // iOS only allows notifications when added to Home Screen as PWA
+    if (isIOS && !isStandalone) {
+      showIosHelp();
       return;
     }
     if (Notification.permission === 'granted') {
@@ -1293,28 +1503,44 @@
   }
 
   function fireReminder(task) {
+    if (firedReminders.includes(task.id)) return;
     firedReminders.push(task.id);
     localStorage.setItem('firedReminders_v3', JSON.stringify(firedReminders));
 
-    // Browser notification
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const notif = new Notification(`${task.emoji || '🔔'} ${task.title}`, {
-        body: `Saat ${task.startTime} — ${task.description || 'Bu aktivitenin zamanı geldi!'}\n\nTıklayarak tamamlandı işaretle.`,
-        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">' + (task.emoji || '🔔') + '</text></svg>',
-        tag: task.id,
-        requireInteraction: true
-      });
-      notif.onclick = () => {
-        window.focus();
-        completeFromReminder(task.id);
-        notif.close();
-      };
+    const title = `${task.emoji || '🔔'} ${task.title}`;
+    const body = `Saat ${task.startTime} — ${task.description || 'Bu aktivitenin zamanı geldi!'}`;
+    const iconSvg = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">' + (task.emoji || '🔔') + '</text></svg>';
+    const options = {
+      body, icon: iconSvg, badge: iconSvg, tag: task.id,
+      requireInteraction: true,
+      vibrate: [300, 150, 300, 150, 600],
+      data: { taskId: task.id }
+    };
+
+    // Prefer service worker notification (works better in PWA + supports actions)
+    let usedSW = false;
+    if (serviceWorkerReg && 'showNotification' in serviceWorkerReg) {
+      try {
+        serviceWorkerReg.showNotification(title, options);
+        usedSW = true;
+      } catch(e) { console.log('SW notif failed:', e.message); }
+    }
+    // Fallback: regular Notification API
+    if (!usedSW && 'Notification' in window && Notification.permission === 'granted') {
+      try {
+        const notif = new Notification(title, options);
+        notif.onclick = () => { window.focus(); completeFromReminder(task.id); notif.close(); };
+      } catch(e) { console.log('Notification failed:', e.message); }
     }
 
-    // In-app popup (always show, even if browser notif is allowed)
-    showReminderPopup(task);
+    // Vibrate device (Android works, iOS PWA partial)
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate([300, 150, 300, 150, 600]); } catch(e) {}
+    }
 
-    // Play sound
+    // In-app popup
+    showReminderPopup(task);
+    // Strong audible alarm
     playReminderSound();
   }
 
@@ -1396,27 +1622,22 @@
   function playReminderSound() {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.value = 880;
-      gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.3);
-      // Second tone
-      setTimeout(() => {
-        const osc2 = ctx.createOscillator();
-        const gain2 = ctx.createGain();
-        osc2.connect(gain2);
-        gain2.connect(ctx.destination);
-        osc2.frequency.value = 1100;
-        gain2.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-        osc2.start();
-        osc2.stop(ctx.currentTime + 0.3);
-      }, 200);
+      // Stronger alarm: 5 beeps with rising tone
+      const tones = [880, 1100, 880, 1100, 1320];
+      tones.forEach((freq, i) => {
+        setTimeout(() => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.4);
+        }, i * 250);
+      });
     } catch (e) {}
   }
 
@@ -1687,6 +1908,8 @@
 
   function saveTasks() {
     localStorage.setItem('personalTasks_v3', JSON.stringify(tasks));
+    // Re-schedule all upcoming reminders whenever tasks change
+    if (typeof scheduleAllUpcomingReminders === 'function') scheduleAllUpcomingReminders();
   }
 
   // ============= DRAG & DROP =============
