@@ -2,6 +2,10 @@ Yapay zeka (openai) destekli kişisel gelişim takip paneli
 -------------
 <img width="1908" height="941" alt="image" src="https://github.com/user-attachments/assets/947bb8c6-c566-4b30-ab8a-1d8fdeb316a3" />
 
+Yapay zeka desteği için API key alanı
+-----------------
+<img width="1897" height="940" alt="image" src="https://github.com/user-attachments/assets/34441a72-c073-43e4-ba21-85e8306f8beb" />
+
 Görsel Analatik
 ---------------------
 <img width="1911" height="947" alt="image" src="https://github.com/user-attachments/assets/9049c654-256e-4891-a37b-2f5dd71ab2e7" />
