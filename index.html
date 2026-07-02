@@ -1,354 +1,818 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DEV/LIFE — Gelişim Aktivite Tracker + Kitap Sayacı</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0a0a0f;--bg2:#0f0f1a;--bg3:#141422;--surface:#1a1a2e;--surface2:#20203a;--border:#292947;--border2:#37375f;--accent:#7c3aed;--accent2:#6d28d9;--cyan:#06b6d4;--green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--blue:#3b82f6;--text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--mono:'JetBrains Mono',monospace;--sans:'Syne',sans-serif;--radius:12px;--shadow:0 18px 55px rgba(0,0,0,.35)}
-*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden}body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 10% 10%,rgba(124,58,237,.16),transparent 32%),radial-gradient(circle at 85% 20%,rgba(6,182,212,.1),transparent 30%),radial-gradient(circle at 50% 85%,rgba(16,185,129,.08),transparent 35%),linear-gradient(rgba(124,58,237,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.035) 1px,transparent 1px);background-size:auto,auto,auto,44px 44px,44px 44px;pointer-events:none;z-index:-2}body:after{content:"";position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:-1}.app{max-width:1500px;margin:auto;padding:18px}.topbar{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.88);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:18px;padding:12px 14px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}.brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:800;letter-spacing:-.04em;white-space:nowrap}.brand .dot{width:9px;height:9px;background:var(--green);border-radius:50%;box-shadow:0 0 18px rgba(16,185,129,.8);animation:pulse 1.8s infinite}.brand b:first-child{color:var(--accent)}.brand b:last-child{color:var(--green)}.nav{display:flex;gap:6px;overflow:auto;scrollbar-width:none;flex:1}.nav::-webkit-scrollbar{display:none}.nav button,.icon-btn,.btn,.ghost,.danger-btn{font-family:var(--mono);font-weight:700;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:.18s ease}.nav button{background:transparent;color:var(--text3);padding:8px 12px;font-size:.72rem;text-transform:uppercase;white-space:nowrap}.nav button:hover,.nav button.active{color:var(--accent);border-color:rgba(124,58,237,.42);background:rgba(124,58,237,.1)}.clock{font-family:var(--mono);font-size:.78rem;color:var(--cyan);padding:8px 10px;border:1px solid rgba(6,182,212,.25);border-radius:10px;background:rgba(6,182,212,.08);white-space:nowrap}.grid{display:grid;grid-template-columns:280px minmax(0,1fr) 330px;gap:16px;margin-top:16px}.panel{background:rgba(26,26,46,.9);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.18)}.panel.pad{padding:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}.panel-title{font-family:var(--mono);font-size:.72rem;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;font-weight:800;display:flex;gap:8px;align-items:center}.panel-title:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}.stat{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px;min-height:86px}.stat small{font-family:var(--mono);font-size:.62rem;color:var(--text3);font-weight:800;text-transform:uppercase}.stat strong{display:block;font-family:var(--mono);font-size:1.65rem;margin-top:8px}.accent{color:var(--accent)}.cyan{color:var(--cyan)}.green{color:var(--green)}.orange{color:var(--orange)}.week{display:grid;grid-template-columns:34px repeat(7,1fr) 34px;gap:8px;margin-bottom:16px}.day,.week-arrow{border:1px solid var(--border);background:rgba(26,26,46,.88);color:var(--text2);border-radius:14px;min-height:70px;cursor:pointer;transition:.18s ease}.week-arrow{min-height:auto;font-size:1rem}.day:hover,.day.active{border-color:var(--accent);background:rgba(124,58,237,.11);transform:translateY(-1px)}.day.today{box-shadow:inset 0 -3px 0 var(--cyan)}.day span{display:block;font-family:var(--mono)}.day .name{font-size:.62rem;color:var(--text3);font-weight:800;text-transform:uppercase;margin-top:10px}.day .num{font-size:1.3rem;font-weight:900;margin-top:3px}.bar{height:4px;background:var(--bg2);border-radius:5px;margin:8px 10px 0;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.input,.select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--mono);font-size:.78rem;padding:10px 12px;outline:none}.input:focus,.select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.11)}.toolbar .input{flex:1;min-width:190px}.toolbar .select{width:auto;min-width:155px}.btn{background:var(--accent);color:#fff;padding:10px 14px;text-transform:uppercase;font-size:.72rem;border:none;display:inline-flex;gap:8px;align-items:center;justify-content:center}.btn:hover{background:var(--accent2);box-shadow:0 0 24px rgba(124,58,237,.28);transform:translateY(-1px)}.ghost{background:var(--bg3);color:var(--text2);border-color:var(--border);padding:9px 12px;font-size:.72rem}.ghost:hover{color:var(--text);border-color:var(--border2)}.danger-btn{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.28);color:var(--red);padding:9px 12px;font-size:.72rem}.timeline{display:flex;flex-direction:column;gap:4px}.hour{display:grid;grid-template-columns:70px minmax(0,1fr);gap:0;border-radius:14px}.hour.now{background:rgba(124,58,237,.055)}.hour-label{font-family:var(--mono);font-size:.72rem;font-weight:800;color:var(--text3);text-align:right;padding:14px 12px 0 0;border-right:1px solid var(--border)}.hour.now .hour-label{color:var(--accent)}.hour-content{min-height:48px;padding:6px 0 6px 12px;display:flex;flex-direction:column;gap:7px}.hour-add{font-family:var(--mono);font-size:.68rem;color:var(--text3);border:1px dashed transparent;background:transparent;text-align:left;border-radius:10px;padding:9px;cursor:pointer}.hour-add:hover{border-color:rgba(124,58,237,.35);color:var(--accent);background:rgba(124,58,237,.05)}.activity{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;animation:enter .25s ease}.activity.done{border-left-color:var(--green);opacity:.78}.activity.done .activity-title{text-decoration:line-through;color:var(--text3)}.activity.high{border-left-color:var(--red)}.activity.medium{border-left-color:var(--orange)}.activity.low{border-left-color:var(--blue)}.activity .emoji{font-size:1.3rem}.activity-title{font-size:.94rem;font-weight:700}.activity-desc{font-family:var(--mono);font-size:.68rem;color:var(--text3);line-height:1.45;margin-top:3px}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{font-family:var(--mono);font-size:.58rem;font-weight:800;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:rgba(124,58,237,.12);color:var(--accent);border:1px solid rgba(124,58,237,.25)}.tag.ok{background:rgba(16,185,129,.12);color:var(--green);border-color:rgba(16,185,129,.25)}.tag.warn{background:rgba(245,158,11,.12);color:var(--orange);border-color:rgba(245,158,11,.25)}.actions{display:flex;gap:5px}.mini{width:30px;height:30px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--text3);cursor:pointer}.mini:hover{border-color:var(--border2);background:var(--surface2);color:var(--text)}.mini.ok:hover{color:var(--green)}.mini.del:hover{color:var(--red)}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px}.quick{background:var(--bg3);border:1px solid var(--border);border-radius:13px;padding:10px;text-align:left;color:var(--text2);font-family:var(--mono);font-size:.68rem;font-weight:700;cursor:pointer;display:flex;gap:7px;align-items:center}.quick:hover,.quick.done{border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.07);color:var(--text)}.cat-list{padding:8px 16px 16px;display:flex;flex-direction:column;gap:9px}.cat{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:.74rem;color:var(--text2)}.cat i{width:8px;height:8px;border-radius:50%;display:block}.cat b{margin-left:auto;color:var(--text3);font-size:.68rem}.quote{padding:16px;font-style:italic;color:var(--text2);line-height:1.55}.quote small{display:block;text-align:right;font-family:var(--mono);color:var(--text3);margin-top:10px}.view{display:none}.view.active{display:block}.book-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:16px}.timer-card{text-align:center;padding:26px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(6,182,212,.06));border:1px solid var(--border);border-radius:18px;position:relative;overflow:hidden}.timer-status{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.2em;color:var(--text3);font-weight:800}.timer-status.active{color:var(--green)}.timer-display{font-family:var(--mono);font-size:clamp(3rem,10vw,7rem);font-weight:300;letter-spacing:-.08em;line-height:1;margin:20px 0;color:var(--text);font-variant-numeric:tabular-nums}.timer-display .sep{color:var(--accent)}.timer-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}.timer-controls button:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none}.book-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:14px}.list{display:flex;flex-direction:column;gap:9px}.book,.session{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center}.book.active{border-color:var(--accent);background:rgba(124,58,237,.1)}.book-info,.session-info{min-width:0;flex:1}.book-title,.session-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.book-meta,.session-meta{font-family:var(--mono);font-size:.68rem;color:var(--text3);margin-top:3px}.empty{border:1px dashed var(--border2);border-radius:16px;padding:28px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:.78rem}.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.modal,.confirm{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.modal.show,.confirm.show{display:flex}.modal-box,.confirm-box{width:min(620px,100%);background:var(--surface);border:1px solid var(--border2);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;animation:pop .22s ease;max-height:calc(100dvh - 36px);display:flex;flex-direction:column;margin:auto 0}.modal-head,.modal-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border)}.modal-foot{border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end}.modal-body{padding:18px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;min-height:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.field label{display:block;font-family:var(--mono);font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:6px}.autocomplete-wrap{position:relative}.autocomplete-list{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:1200;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;box-shadow:var(--shadow);max-height:260px;overflow:auto;padding:6px}.autocomplete-list.show{display:block}.autocomplete-item{width:100%;display:flex;align-items:center;gap:9px;text-align:left;background:transparent;border:0;border-radius:10px;color:var(--text2);font-family:var(--mono);font-size:.72rem;font-weight:700;padding:9px 10px;cursor:pointer}.autocomplete-item:hover,.autocomplete-item.active{background:rgba(124,58,237,.12);color:var(--text)}.autocomplete-item small{margin-left:auto;color:var(--text3);font-size:.6rem}.quick-grid{max-height:520px;overflow:auto}.quick-grid::-webkit-scrollbar,.autocomplete-list::-webkit-scrollbar{width:5px}.quick-grid::-webkit-scrollbar-thumb,.autocomplete-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px}.toast-wrap{position:fixed;right:22px;bottom:22px;z-index:200;display:flex;flex-direction:column;gap:8px}.toast{background:var(--surface2);border:1px solid var(--border2);border-left:4px solid var(--green);border-radius:14px;padding:12px 14px;font-family:var(--mono);font-size:.74rem;box-shadow:var(--shadow);animation:enter .24s ease}.toast.err{border-left-color:var(--red)}@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}@keyframes pulse{50%{opacity:.55;box-shadow:0 0 0 8px rgba(16,185,129,0)}}@media(max-width:1150px){.grid{grid-template-columns:1fr}.left,.right{display:grid;grid-template-columns:1fr 1fr;gap:16px}.book-grid,.data-grid{grid-template-columns:1fr}}@media(max-width:720px){.app{padding:10px}.topbar{align-items:flex-start;flex-wrap:wrap}.clock{margin-left:auto}.week{grid-template-columns:30px repeat(7,minmax(40px,1fr)) 30px;gap:5px;overflow:auto}.day{min-height:58px}.grid,.left,.right{display:block}.left>.panel,.right>.panel{margin-bottom:14px}.toolbar .select{width:100%}.form-grid,.book-form{grid-template-columns:1fr}.book-grid{display:block}.book-grid>.panel{margin-top:14px}.activity{grid-template-columns:auto 1fr}.actions{grid-column:1/-1}.timer-display{font-size:3rem}.stats{grid-template-columns:1fr 1fr}}
-
-.ai-box{margin-top:12px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.22);border-radius:14px;padding:12px}.ai-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ai-hint{font-family:var(--mono);font-size:.66rem;color:var(--text3);line-height:1.45;margin-top:8px}.ai-suggest{margin-top:10px;border-top:1px solid rgba(6,182,212,.14);padding-top:10px;display:none}.ai-suggest.show{display:block}.ai-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(124,58,237,.32);background:rgba(124,58,237,.1);color:var(--text2);font-family:var(--mono);font-size:.65rem;font-weight:800;border-radius:999px;padding:5px 8px;margin:2px}.ai-status{font-family:var(--mono);font-size:.68rem;color:var(--cyan);min-height:18px}.key-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}.muted-link{font-family:var(--mono);font-size:.66rem;color:var(--text3);line-height:1.5}.toggle-line{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;color:var(--text2);margin-top:8px}.toggle-line input{accent-color:var(--accent)}
-
-.collapsible .panel-head{cursor:pointer;user-select:none}.collapse-icon{font-family:var(--mono);color:var(--text3);transition:.2s}.collapsible.open .collapse-icon{transform:rotate(180deg);color:var(--accent)}.collapse-body{display:none}.collapsible.open .collapse-body{display:block}.analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.analysis-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:14px}.analysis-card small{display:block;font-family:var(--mono);font-size:.62rem;color:var(--text3);text-transform:uppercase;font-weight:800;letter-spacing:.12em}.analysis-card strong{display:block;font-family:var(--mono);font-size:1.55rem;margin-top:8px}.chart-box{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:12px}.chart-row{display:grid;grid-template-columns:110px minmax(0,1fr) 48px;gap:10px;align-items:center;margin:10px 0;font-family:var(--mono);font-size:.72rem;color:var(--text2)}.chart-bar{height:12px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;overflow:hidden}.chart-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));border-radius:999px}.analysis-list{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow:auto;padding-right:4px}.analysis-item{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.analysis-meta{font-family:var(--mono);font-size:.66rem;color:var(--text3);margin-top:3px}.prayer-tools{display:flex;gap:8px;padding:0 14px 12px}.prayer-list{padding:0 14px 14px;display:grid;grid-template-columns:1fr;gap:8px}.prayer-item{display:flex;justify-content:space-between;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:13px;padding:10px 12px;font-family:var(--mono);font-size:.74rem;color:var(--text2)}.prayer-item b{color:var(--cyan)}.prayer-status{font-family:var(--mono);font-size:.64rem;color:var(--text3);padding:0 14px 12px;line-height:1.45}.prayer-status.ok{color:var(--green)}.prayer-status.err{color:var(--red)}@media(max-width:720px){.analysis-grid{grid-template-columns:1fr 1fr}.chart-row{grid-template-columns:82px 1fr 38px}}
-
-/* v4 düzenleme: namaz vakitleri hızlı aktivitenin içinde, mobilde takvim altı */
-.quick-prayer-box{padding:14px 14px 0;border-bottom:1px solid var(--border);background:rgba(6,182,212,.025)}
-.prayer-list.compact{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 14px}
-.prayer-list.compact .prayer-item{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:9px;text-align:center;font-family:var(--mono)}
-.prayer-list.compact .prayer-item span{display:block;color:var(--text3);font-size:.6rem;font-weight:800;text-transform:uppercase;margin-bottom:4px}
-.prayer-list.compact .prayer-item b{color:var(--cyan);font-size:.84rem}
-.quick.prayer-quick{border-color:rgba(245,158,11,.32);background:rgba(245,158,11,.06)}
-.quick.prayer-quick:hover,.quick.prayer-quick.done{border-color:rgba(245,158,11,.55);background:rgba(245,158,11,.12)}
-@media(max-width:720px){#quickPanel{margin:0 0 14px}.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:420px;overflow:auto}.prayer-list.compact{grid-template-columns:repeat(3,1fr)}#quickPanel .panel-head{position:sticky;top:0;background:rgba(26,26,46,.96);z-index:3}}
-
-@media (max-width:720px){.modal,.confirm{padding:10px;align-items:flex-start}.modal.show,.confirm.show{display:flex}.modal-box,.confirm-box{width:100%;max-height:calc(100dvh - 20px);margin:0}.modal-body{max-height:calc(100dvh - 145px);padding:14px}.modal-foot{position:sticky;bottom:0;background:var(--surface);z-index:2;flex-wrap:wrap}.modal-foot .btn,.modal-foot .ghost{flex:1}.form-grid{grid-template-columns:1fr!important}.ai-key-row{grid-template-columns:1fr!important}.autocomplete-list{max-height:180px;overflow:auto}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEV/LIFE — Gelişim Aktivite Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0a0f;--bg2:#0f0f1a;--bg3:#141422;--surface:#1a1a2e;--surface2:#20203a;
+      --border:#292947;--border2:#37375f;--accent:#7c3aed;--accent2:#6d28d9;--cyan:#06b6d4;
+      --green:#10b981;--orange:#f59e0b;--red:#ef4444;--pink:#ec4899;--blue:#3b82f6;
+      --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;--mono:'JetBrains Mono',monospace;--sans:'Syne',sans-serif;
+      --shadow:0 18px 55px rgba(0,0,0,.35)
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{min-height:100vh;background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+      radial-gradient(circle at 10% 10%,rgba(124,58,237,.18),transparent 32%),
+      radial-gradient(circle at 86% 20%,rgba(6,182,212,.12),transparent 30%),
+      radial-gradient(circle at 50% 88%,rgba(16,185,129,.08),transparent 35%),
+      linear-gradient(rgba(124,58,237,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,.035) 1px,transparent 1px);
+      background-size:auto,auto,auto,44px 44px,44px 44px}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:1500px;margin:auto;padding:18px}
+    .topbar{position:sticky;top:0;z-index:50;background:rgba(10,10,15,.88);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:18px;padding:12px 14px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+    .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:800;letter-spacing:-.04em;white-space:nowrap}.brand b:first-child{color:var(--accent)}.brand b:last-child{color:var(--green)}.dot{width:9px;height:9px;background:var(--green);border-radius:50%;box-shadow:0 0 18px rgba(16,185,129,.8);animation:pulse 1.8s infinite}
+    .nav{display:flex;gap:6px;overflow:auto;scrollbar-width:none;flex:1}.nav::-webkit-scrollbar{display:none}.nav button{font-family:var(--mono);font-weight:800;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--text3);padding:8px 12px;font-size:.72rem;text-transform:uppercase;white-space:nowrap}.nav button:hover,.nav button.active{color:var(--accent);border-color:rgba(124,58,237,.42);background:rgba(124,58,237,.1)}
+    .clock{font-family:var(--mono);font-size:.78rem;color:var(--cyan);padding:8px 10px;border:1px solid rgba(6,182,212,.25);border-radius:10px;background:rgba(6,182,212,.08);white-space:nowrap}
+    .grid{display:grid;grid-template-columns:280px minmax(0,1fr) 330px;gap:16px;margin-top:16px}
+    .panel{background:rgba(26,26,46,.9);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.18)}.panel.pad{padding:16px}.panel + .panel{margin-top:16px}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border)}.panel-title{font-family:var(--mono);font-size:.72rem;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;font-weight:800;display:flex;gap:8px;align-items:center}.panel-title:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+    .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px}.stat{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px;min-height:86px}.stat small{font-family:var(--mono);font-size:.62rem;color:var(--text3);font-weight:800;text-transform:uppercase}.stat strong{display:block;font-family:var(--mono);font-size:1.65rem;margin-top:8px}.accent{color:var(--accent)}.cyan{color:var(--cyan)}.green{color:var(--green)}.orange{color:var(--orange)}
+    .week{display:grid;grid-template-columns:34px repeat(7,1fr) 34px;gap:8px;margin-bottom:16px}.day,.week-arrow{border:1px solid var(--border);background:rgba(26,26,46,.88);color:var(--text2);border-radius:14px;min-height:70px;transition:.18s ease}.week-arrow{min-height:auto;font-size:1rem}.day:hover,.day.active,.week-arrow:hover{border-color:var(--accent);background:rgba(124,58,237,.11);transform:translateY(-1px)}.day.today{box-shadow:inset 0 -3px 0 var(--cyan)}.day span{display:block;font-family:var(--mono)}.day .name{font-size:.62rem;color:var(--text3);font-weight:800;text-transform:uppercase;margin-top:10px}.day .num{font-size:1.3rem;font-weight:900;margin-top:3px}.bar{height:4px;background:var(--bg2);border-radius:5px;margin:8px 10px 0;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));width:0}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.input,.select,textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--mono);font-size:.78rem;padding:10px 12px;outline:none}.input:focus,.select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.11)}.toolbar .input{flex:1;min-width:190px}.toolbar .select{width:auto;min-width:155px}
+    .btn,.ghost,.danger-btn{font-family:var(--mono);font-weight:800;border-radius:10px;border:1px solid transparent;padding:10px 14px;text-transform:uppercase;font-size:.72rem;display:inline-flex;gap:8px;align-items:center;justify-content:center;transition:.18s ease}.btn{background:var(--accent);color:#fff;border-color:var(--accent)}.btn:hover{background:var(--accent2);box-shadow:0 0 24px rgba(124,58,237,.28);transform:translateY(-1px)}.ghost{background:var(--bg3);color:var(--text2);border-color:var(--border)}.ghost:hover{color:var(--text);border-color:var(--border2)}.danger-btn{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.28);color:var(--red)}button:disabled{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+    .timeline{display:flex;flex-direction:column;gap:4px}.hour{display:grid;grid-template-columns:70px minmax(0,1fr);border-radius:14px}.hour.now{background:rgba(124,58,237,.055)}.hour-label{font-family:var(--mono);font-size:.72rem;font-weight:800;color:var(--text3);text-align:right;padding:14px 12px 0 0;border-right:1px solid var(--border)}.hour.now .hour-label{color:var(--accent)}.hour-content{min-height:48px;padding:6px 0 6px 12px;display:flex;flex-direction:column;gap:7px}.hour-add{font-family:var(--mono);font-size:.68rem;color:var(--text3);border:1px dashed transparent;background:transparent;text-align:left;border-radius:10px;padding:9px}.hour-add:hover{border-color:rgba(124,58,237,.35);color:var(--accent);background:rgba(124,58,237,.05)}
+    .activity{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;animation:enter .25s ease}.activity.done{border-left-color:var(--green);opacity:.78}.activity.done .activity-title{text-decoration:line-through;color:var(--text3)}.activity.high{border-left-color:var(--red)}.activity.medium{border-left-color:var(--orange)}.activity.low{border-left-color:var(--blue)}.emoji{font-size:1.3rem}.activity-title{font-size:.94rem;font-weight:800}.activity-desc{font-family:var(--mono);font-size:.68rem;color:var(--text3);line-height:1.45;margin-top:3px}.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tag{font-family:var(--mono);font-size:.58rem;font-weight:800;text-transform:uppercase;border-radius:6px;padding:3px 7px;background:rgba(124,58,237,.12);color:var(--accent);border:1px solid rgba(124,58,237,.25)}.tag.ok{background:rgba(16,185,129,.12);color:var(--green);border-color:rgba(16,185,129,.25)}.tag.warn{background:rgba(245,158,11,.12);color:var(--orange);border-color:rgba(245,158,11,.25)}.actions{display:flex;gap:5px}.mini{width:30px;height:30px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--text3)}.mini:hover{border-color:var(--border2);background:var(--surface2);color:var(--text)}.mini.ok:hover{color:var(--green)}.mini.del:hover{color:var(--red)}
+    .quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:14px;max-height:520px;overflow:auto}.quick{background:var(--bg3);border:1px solid var(--border);border-radius:13px;padding:10px;text-align:left;color:var(--text2);font-family:var(--mono);font-size:.68rem;font-weight:800;display:flex;gap:7px;align-items:center}.quick:hover,.quick.done{border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.07);color:var(--text)}.quick.prayer{border-color:rgba(245,158,11,.32);background:rgba(245,158,11,.06)}
+    .cat-list{padding:8px 16px 16px;display:flex;flex-direction:column;gap:9px}.cat{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:.74rem;color:var(--text2)}.cat i{width:8px;height:8px;border-radius:50%;display:block}.cat b{margin-left:auto;color:var(--text3);font-size:.68rem}.quote{padding:16px;font-style:italic;color:var(--text2);line-height:1.55}.quote small{display:block;text-align:right;font-family:var(--mono);color:var(--text3);margin-top:10px}
+    .view{display:none}.view.active{display:block}.book-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:16px}.timer-card{text-align:center;padding:26px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(6,182,212,.06));border:1px solid var(--border);border-radius:18px}.timer-status{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.2em;color:var(--text3);font-weight:800}.timer-status.active{color:var(--green)}.timer-display{font-family:var(--mono);font-size:clamp(3rem,10vw,7rem);font-weight:300;letter-spacing:-.08em;line-height:1;margin:20px 0;font-variant-numeric:tabular-nums}.timer-display .sep{color:var(--accent)}.timer-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}.book-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:14px}.list{display:flex;flex-direction:column;gap:9px}.book,.session{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center}.book.active{border-color:var(--accent);background:rgba(124,58,237,.1)}.book-info,.session-info{min-width:0;flex:1}.book-title,.session-title{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.book-meta,.session-meta{font-family:var(--mono);font-size:.68rem;color:var(--text3);margin-top:3px}.empty{border:1px dashed var(--border2);border-radius:16px;padding:28px;text-align:center;color:var(--text3);font-family:var(--mono);font-size:.78rem}
+    .analysis-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.analysis-card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:14px}.analysis-card small{display:block;font-family:var(--mono);font-size:.62rem;color:var(--text3);text-transform:uppercase;font-weight:800;letter-spacing:.12em}.analysis-card strong{display:block;font-family:var(--mono);font-size:1.55rem;margin-top:8px}.chart-box{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:14px;margin-top:12px}.chart-row{display:grid;grid-template-columns:110px minmax(0,1fr) 48px;gap:10px;align-items:center;margin:10px 0;font-family:var(--mono);font-size:.72rem;color:var(--text2)}.chart-bar{height:12px;background:var(--bg2);border:1px solid var(--border);border-radius:999px;overflow:hidden}.chart-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--cyan));border-radius:999px}.analysis-list{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow:auto;padding-right:4px}.analysis-item{background:var(--bg3);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:14px;padding:10px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center}.analysis-meta{font-family:var(--mono);font-size:.66rem;color:var(--text3);margin-top:3px}
+    .data-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.ai-box{margin-top:12px;background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.22);border-radius:14px;padding:12px}.ai-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.ai-status{font-family:var(--mono);font-size:.68rem;color:var(--cyan)}.ai-suggest{margin-top:10px;border-top:1px solid rgba(6,182,212,.14);padding-top:10px;display:none}.ai-suggest.show{display:block}.ai-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(124,58,237,.32);background:rgba(124,58,237,.1);color:var(--text2);font-family:var(--mono);font-size:.65rem;font-weight:800;border-radius:999px;padding:5px 8px;margin:2px}.muted{font-family:var(--mono);font-size:.68rem;color:var(--text3);line-height:1.5;margin-top:8px}
+    .prayer-tools{display:flex;gap:8px;padding:14px 14px 0}.prayer-status{font-family:var(--mono);font-size:.64rem;color:var(--text3);padding:10px 14px 0;line-height:1.45}.prayer-status.ok{color:var(--green)}.prayer-status.err{color:var(--red)}.prayer-list{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 14px 14px;border-bottom:1px solid var(--border)}.prayer-item{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:9px;text-align:center;font-family:var(--mono)}.prayer-item span{display:block;color:var(--text3);font-size:.6rem;font-weight:800;text-transform:uppercase;margin-bottom:4px}.prayer-item b{color:var(--cyan);font-size:.84rem}
+    .modal,.confirm{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto}.modal.show,.confirm.show{display:flex}.modal-box,.confirm-box{width:min(640px,100%);background:var(--surface);border:1px solid var(--border2);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;animation:pop .22s ease;max-height:calc(100dvh - 36px);display:flex;flex-direction:column;margin:auto 0}.modal-head,.modal-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border)}.modal-foot{border-top:1px solid var(--border);border-bottom:0;justify-content:flex-end}.modal-body{padding:18px;overflow:auto}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}.field label{display:block;font-family:var(--mono);font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin-bottom:6px}.autocomplete-wrap{position:relative}.autocomplete-list{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:1200;background:var(--surface2);border:1px solid var(--border2);border-radius:14px;box-shadow:var(--shadow);max-height:260px;overflow:auto;padding:6px}.autocomplete-list.show{display:block}.autocomplete-item{width:100%;display:flex;align-items:center;gap:9px;text-align:left;background:transparent;border:0;border-radius:10px;color:var(--text2);font-family:var(--mono);font-size:.72rem;font-weight:800;padding:9px 10px}.autocomplete-item:hover{background:rgba(124,58,237,.12);color:var(--text)}.autocomplete-item small{margin-left:auto;color:var(--text3);font-size:.6rem}
+    .toast-wrap{position:fixed;right:22px;bottom:22px;z-index:200;display:flex;flex-direction:column;gap:8px}.toast{background:var(--surface2);border:1px solid var(--border2);border-left:4px solid var(--green);border-radius:14px;padding:12px 14px;font-family:var(--mono);font-size:.74rem;box-shadow:var(--shadow);animation:enter .24s ease}.toast.err{border-left-color:var(--red)}
+    .collapse-body{display:none}.collapsible.open .collapse-body{display:block}.collapsible .panel-head{cursor:pointer;user-select:none}.collapse-icon{font-family:var(--mono);color:var(--text3);transition:.2s}.collapsible.open .collapse-icon{transform:rotate(180deg);color:var(--accent)}
+    @keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}@keyframes pulse{50%{opacity:.55;box-shadow:0 0 0 8px rgba(16,185,129,0)}}
+    @media(max-width:1150px){.grid{grid-template-columns:1fr}.left,.right{display:grid;grid-template-columns:1fr 1fr;gap:16px}.book-grid,.data-grid{grid-template-columns:1fr}.panel + .panel{margin-top:0}}
+    @media(max-width:720px){.app{padding:10px}.topbar{align-items:flex-start;flex-wrap:wrap}.clock{margin-left:auto}.week{grid-template-columns:30px repeat(7,minmax(40px,1fr)) 30px;gap:5px;overflow:auto}.day{min-height:58px}.grid,.left,.right{display:block}.left>.panel,.right>.panel{margin-bottom:14px}.toolbar .select{width:100%}.form-grid,.book-form{grid-template-columns:1fr}.book-grid{display:block}.book-grid>.panel{margin-top:14px}.activity{grid-template-columns:auto 1fr}.actions{grid-column:1/-1}.timer-display{font-size:3rem}.analysis-grid{grid-template-columns:1fr 1fr}.chart-row{grid-template-columns:82px 1fr 38px}.modal,.confirm{padding:10px}.modal-box,.confirm-box{width:100%;max-height:calc(100dvh - 20px);margin:0}.modal-body{max-height:calc(100dvh - 145px);padding:14px}.modal-foot{position:sticky;bottom:0;background:var(--surface);z-index:2;flex-wrap:wrap}.modal-foot .btn,.modal-foot .ghost{flex:1}.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:420px}.prayer-list{grid-template-columns:repeat(3,1fr)}#quickPanel{margin:0 0 14px}}
+  </style>
 </head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand"><span class="dot"></span><span><b>DEV</b>/<b>LIFE</b></span></div>
-    <nav class="nav" id="nav">
-      <button class="active" data-view="dashboard">Dashboard</button>
-      <button data-view="activitys">Aktivite CRUD</button>
-      <button data-view="books">Kitap Sayacı</button>
-      <button data-view="graphs">Grafik / Analiz</button>
-      <button data-view="data">Veri / Platform</button>
-    </nav>
-    <div class="clock" id="clock">--:--</div>
-  </header>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><span class="dot"></span><span><b>DEV</b>/<b>LIFE</b></span></div>
+      <nav class="nav" id="nav">
+        <button class="active" data-view="dashboard">Dashboard</button>
+        <button data-view="activities">Aktivite CRUD</button>
+        <button data-view="books">Kitap Sayacı</button>
+        <button data-view="graphs">Grafik / Analiz</button>
+        <button data-view="data">Veri</button>
+      </nav>
+      <div class="clock" id="clock">--:--</div>
+    </header>
 
-  <main class="grid">
-    <aside class="left">
-      <section class="panel collapsible" data-collapse="summary">
-        <div class="panel-head" data-collapse-head><div class="panel-title">Gün Özeti</div><span class="collapse-icon">⌄</span></div>
-        <div class="collapse-body"><div class="stats">
-          <div class="stat"><small>Bugün</small><strong id="statToday" class="accent">0</strong></div>
-          <div class="stat"><small>Tamamlanan</small><strong id="statDone" class="green">0</strong></div>
-          <div class="stat"><small>Okuma</small><strong id="statRead" class="cyan">0dk</strong></div>
-          <div class="stat"><small>Seri</small><strong id="statStreak" class="orange">0</strong></div>
-        </div></div>
-      </section>
-      <section class="panel collapsible" data-collapse="categories">
-        <div class="panel-head" data-collapse-head><div class="panel-title">Kategoriler</div><span class="collapse-icon">⌄</span></div>
-        <div class="collapse-body"><div class="cat-list" id="categoryList"></div></div>
-      </section>
-    </aside>
-
-    <section class="center" id="centerCol">
-      <div class="week" id="week"></div>
-
-      <div id="dashboard" class="view active">
-        <div class="panel pad" style="margin-bottom:16px">
-          <div class="toolbar">
-            <input class="input" id="searchInput" placeholder="Aktivite, açıklama veya kategori ara...">
-            <select class="select" id="filterCat"></select>
-            <select class="select" id="filterStatus">
-              <option value="all">Tüm durumlar</option><option value="pending">Bekleyen</option><option value="completed">Tamamlanan</option>
-            </select>
-            <button class="btn" id="btnAddActivity">+ Aktivite</button>
-          </div>
-          <div class="timeline" id="timeline"></div>
-        </div>
-      </div>
-
-      <div id="activitys" class="view">
-        <section class="panel pad">
-          <div class="toolbar">
-            <button class="btn" id="btnAddActivity2">+ Yeni Kayıt</button>
-            <button class="ghost" id="btnSeed">Örnek Veri Ekle</button>
-            <button class="danger-btn" id="btnClearActivitys">Aktiviteleri Temizle</button>
-          </div>
-          <div id="activityTable"></div>
+    <main class="grid">
+      <aside class="left">
+        <section class="panel collapsible open" data-collapse="summary">
+          <div class="panel-head" data-collapse-head><div class="panel-title">Gün Özeti</div><span class="collapse-icon">⌄</span></div>
+          <div class="collapse-body"><div class="stats">
+            <div class="stat"><small>Bugün</small><strong id="statToday" class="accent">0</strong></div>
+            <div class="stat"><small>Tamamlanan</small><strong id="statDone" class="green">0</strong></div>
+            <div class="stat"><small>Okuma</small><strong id="statRead" class="cyan">0dk</strong></div>
+            <div class="stat"><small>Seri</small><strong id="statStreak" class="orange">0</strong></div>
+          </div></div>
         </section>
-      </div>
+        <section class="panel collapsible open" data-collapse="categories">
+          <div class="panel-head" data-collapse-head><div class="panel-title">Kategoriler</div><span class="collapse-icon">⌄</span></div>
+          <div class="collapse-body"><div class="cat-list" id="categoryList"></div></div>
+        </section>
+      </aside>
 
-      <div id="books" class="view">
-        <section class="book-grid">
-          <div class="timer-card">
-            <div class="timer-status" id="timerStatus">Başlamaya Hazır</div>
-            <div class="timer-display" id="timerDisplay">00<span class="sep">:</span>00<span class="sep">:</span>00</div>
-            <select class="select" id="activeBookSelect" style="max-width:430px;margin:auto"></select>
-            <div class="timer-controls">
-              <button class="btn" id="btnTimerStart">▶ Başlat</button>
-              <button class="ghost" id="btnTimerPause" disabled>⏸ Duraklat</button>
-              <button class="ghost" id="btnTimerStop" disabled>■ Bitir & Kaydet</button>
-              <button class="danger-btn" id="btnTimerReset" disabled>Sıfırla</button>
-            </div>
-            <div class="stats" style="padding:0;margin-top:18px">
-              <div class="stat"><small>Bugün</small><strong id="bookToday" class="accent">0dk</strong></div>
-              <div class="stat"><small>Bu Hafta</small><strong id="bookWeek" class="cyan">0dk</strong></div>
-              <div class="stat"><small>Toplam</small><strong id="bookTotal" class="green">0dk</strong></div>
-              <div class="stat"><small>Seans</small><strong id="bookCount" class="orange">0</strong></div>
-            </div>
-          </div>
+      <section class="center" id="centerCol">
+        <div class="week" id="week"></div>
+
+        <div id="dashboard" class="view active">
           <div class="panel pad">
-            <div class="panel-title" style="margin-bottom:12px">Kitap CRUD</div>
-            <form class="book-form" id="bookForm">
-              <input class="input" id="bookTitle" placeholder="Kitap adı" required>
-              <input class="input" id="bookAuthor" placeholder="Yazar" required>
-              <button class="btn" type="submit">Ekle</button>
-            </form>
-            <div class="list" id="bookList" style="margin-top:14px"></div>
-          </div>
-        </section>
-        <section class="panel pad" style="margin-top:16px">
-          <div class="panel-title" style="margin-bottom:12px">Okuma Seansları</div>
-          <div class="list" id="sessionList"></div>
-        </section>
-      </div>
-
-
-      <div id="graphs" class="view">
-        <section class="panel pad">
-          <div class="panel-title" style="margin-bottom:12px">Grafik / Aktivite Analizi</div>
-          <div class="toolbar">
-            <select class="select" id="analysisRange">
-              <option value="today">Bugün</option>
-              <option value="week" selected>Bu Hafta</option>
-              <option value="month">Bu Ay</option>
-              <option value="all">Tümü</option>
-            </select>
-            <select class="select" id="analysisCat"></select>
-            <select class="select" id="analysisStatus">
-              <option value="all">Tüm durumlar</option>
-              <option value="completed">Tamamlanan</option>
-              <option value="pending">Bekleyen</option>
-            </select>
-          </div>
-          <div class="analysis-grid" id="analysisCards"></div>
-          <div class="chart-box">
-            <div class="panel-title" style="margin-bottom:10px">Kategori Dağılımı</div>
-            <div id="categoryChart"></div>
-          </div>
-          <div class="chart-box">
-            <div class="panel-title" style="margin-bottom:10px">Günlere Göre Aktivite</div>
-            <div id="dailyChart"></div>
-          </div>
-          <div class="chart-box">
-            <div class="panel-title" style="margin-bottom:10px">Analizlenen Aktivite Listesi</div>
-            <div class="analysis-list" id="analysisList"></div>
-          </div>
-        </section>
-      </div>
-
-      <div id="data" class="view">
-        <section class="panel pad">
-          <div class="panel-title" style="margin-bottom:12px">Platform.openai Uyumlu Veri Yönetimi</div>
-          <p class="activity-desc" style="font-size:.78rem;margin-bottom:14px">Bu dosya normal tarayıcıda, local dosyada ve platform.openai/iframe ortamında çalışacak şekilde güvenli depolama adaptörü kullanır. localStorage kapalıysa veriler oturum içi bellekte tutulur; dışa aktar/içe aktar ile yedek alabilirsiniz.</p>
-          <div class="ai-box" style="margin-bottom:14px">
-            <div class="panel-title" style="margin-bottom:10px">AI Otomatik Tamamlama</div>
-            <div class="key-row">
-              <input class="input" id="openaiApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="platform.openai.com API key — sk-...">
-              <button class="ghost" id="btnToggleKey" type="button">Göster</button>
+            <div class="toolbar">
+              <input class="input" id="searchInput" placeholder="Aktivite, açıklama veya kategori ara...">
+              <select class="select" id="filterCat"></select>
+              <select class="select" id="filterStatus">
+                <option value="all">Tüm durumlar</option>
+                <option value="pending">Bekleyen</option>
+                <option value="completed">Tamamlanan</option>
+              </select>
+              <button class="btn" id="btnAddActivity">+ Aktivite</button>
             </div>
-            <label class="toggle-line"><input type="checkbox" id="rememberApiKey"> API key bu tarayıcıda saklansın</label>
-            <p class="muted-link">Aktivite eklerken başlığı yazınca AI; başlığı, açıklamayı, emoji/kategoriyi ve önceliği tahmin eder. Key sadece bu sayfadan OpenAI API isteği için kullanılır; yedek JSON’a eklenmez.</p>
+            <div class="timeline" id="timeline"></div>
           </div>
-          <div class="data-grid">
-            <button class="btn" id="btnExport">JSON Dışa Aktar</button>
-            <label class="ghost" style="text-align:center;cursor:pointer">JSON İçe Aktar<input type="file" id="importFile" accept="application/json" hidden></label>
-            <button class="ghost" id="btnDownloadHtml">HTML Yedeği İndir</button>
-            <button class="danger-btn" id="btnFactoryReset">Tüm Verileri Sıfırla</button>
-          </div>
-          <textarea id="jsonBox" rows="12" style="margin-top:14px" placeholder="Dışa aktarılan JSON burada görünür..."></textarea>
-        </section>
-      </div>
-    </section>
-
-    <aside class="right" id="rightCol">
-      <section class="panel collapsible open" id="quickPanel" data-collapse="quick">
-        <div class="panel-head" data-collapse-head><div class="panel-title">Hızlı Aktivite</div><span class="tag">Namaz + rutin</span><span class="collapse-icon">⌄</span></div>
-        <div class="collapse-body">
-        <div class="quick-prayer-box">
-          <div class="prayer-tools">
-            <select class="select" id="prayerCity"></select>
-            <button class="ghost" id="btnPrayerRefresh" type="button">Yenile</button>
-          </div>
-          <div class="prayer-status" id="prayerStatus">Şehir seçip yenileyin.</div>
-          <div class="prayer-list compact" id="prayerList"></div>
         </div>
-        <div class="quick-grid" id="quickGrid"></div>
+
+        <div id="activities" class="view">
+          <section class="panel pad">
+            <div class="toolbar">
+              <button class="btn" id="btnAddActivity2">+ Yeni Kayıt</button>
+              <button class="ghost" id="btnSeed">Örnek Veri Ekle</button>
+              <button class="danger-btn" id="btnClearActivities">Aktiviteleri Temizle</button>
+            </div>
+            <div id="activityTable"></div>
+          </section>
+        </div>
+
+        <div id="books" class="view">
+          <section class="book-grid">
+            <div class="timer-card">
+              <div class="timer-status" id="timerStatus">Başlamaya Hazır</div>
+              <div class="timer-display" id="timerDisplay">00<span class="sep">:</span>00<span class="sep">:</span>00</div>
+              <select class="select" id="activeBookSelect" style="max-width:430px;margin:auto"></select>
+              <div class="timer-controls">
+                <button class="btn" id="btnTimerStart">▶ Başlat</button>
+                <button class="ghost" id="btnTimerPause" disabled>⏸ Duraklat</button>
+                <button class="ghost" id="btnTimerStop" disabled>■ Bitir & Kaydet</button>
+                <button class="danger-btn" id="btnTimerReset" disabled>Sıfırla</button>
+              </div>
+              <div class="stats" style="padding:0;margin-top:18px">
+                <div class="stat"><small>Bugün</small><strong id="bookToday" class="accent">0dk</strong></div>
+                <div class="stat"><small>Bu Hafta</small><strong id="bookWeek" class="cyan">0dk</strong></div>
+                <div class="stat"><small>Toplam</small><strong id="bookTotal" class="green">0dk</strong></div>
+                <div class="stat"><small>Seans</small><strong id="bookCount" class="orange">0</strong></div>
+              </div>
+            </div>
+            <div class="panel pad">
+              <div class="panel-title">Kitap CRUD</div>
+              <form class="book-form" id="bookForm">
+                <input class="input" id="bookTitle" placeholder="Kitap adı" required>
+                <input class="input" id="bookAuthor" placeholder="Yazar" required>
+                <button class="btn" type="submit">Ekle</button>
+              </form>
+              <div class="list" id="bookList" style="margin-top:14px"></div>
+            </div>
+          </section>
+          <section class="panel pad" style="margin-top:16px">
+            <div class="panel-title" style="margin-bottom:12px">Okuma Seansları</div>
+            <div class="list" id="sessionList"></div>
+          </section>
+        </div>
+
+        <div id="graphs" class="view">
+          <section class="panel pad">
+            <div class="panel-title" style="margin-bottom:12px">Grafik / Aktivite Analizi</div>
+            <div class="toolbar">
+              <select class="select" id="analysisRange">
+                <option value="today">Bugün</option>
+                <option value="week" selected>Bu Hafta</option>
+                <option value="month">Bu Ay</option>
+                <option value="all">Tümü</option>
+              </select>
+              <select class="select" id="analysisCat"></select>
+              <select class="select" id="analysisStatus">
+                <option value="all">Tüm durumlar</option>
+                <option value="completed">Tamamlanan</option>
+                <option value="pending">Bekleyen</option>
+              </select>
+            </div>
+            <div class="analysis-grid" id="analysisCards"></div>
+            <div class="chart-box"><div class="panel-title">Kategori Dağılımı</div><div id="categoryChart"></div></div>
+            <div class="chart-box"><div class="panel-title">Günlere Göre Aktivite</div><div id="dailyChart"></div></div>
+            <div class="chart-box"><div class="panel-title">Analizlenen Aktivite Listesi</div><div class="analysis-list" id="analysisList"></div></div>
+          </section>
+        </div>
+
+        <div id="data" class="view">
+          <section class="panel pad">
+            <div class="panel-title" style="margin-bottom:12px">Veri Yönetimi</div>
+            <p class="activity-desc" style="font-size:.78rem;margin-bottom:14px">Veriler tarayıcı localStorage alanında tutulur. localStorage kapalıysa aynı oturum içinde bellek kullanılır. JSON ile yedek alıp geri yükleyebilirsin.</p>
+            <div class="ai-box" style="margin-bottom:14px">
+              <div class="panel-title">Akıllı Otomatik Tamamlama</div>
+              <p class="muted">Aktivite başlığını yazınca kategori, açıklama, emoji ve öncelik otomatik tahmin edilir. Dış API gerekmez.</p>
+            </div>
+            <div class="data-grid">
+              <button class="btn" id="btnExport">JSON Dışa Aktar</button>
+              <label class="ghost" style="text-align:center;cursor:pointer">JSON İçe Aktar<input type="file" id="importFile" accept="application/json" hidden></label>
+              <button class="ghost" id="btnDownloadHtml">HTML Yedeği İndir</button>
+              <button class="danger-btn" id="btnFactoryReset">Tüm Verileri Sıfırla</button>
+            </div>
+            <textarea id="jsonBox" rows="12" style="margin-top:14px" placeholder="Dışa aktarılan JSON burada görünür..."></textarea>
+          </section>
         </div>
       </section>
 
-      <section class="panel">
-        <div class="panel-head"><div class="panel-title">Motivasyon</div></div>
-        <div class="quote" id="quoteBox"></div>
-      </section>
-    </aside>
-  </main>
-</div>
-
-<div class="modal" id="activityModal" aria-hidden="true">
-  <div class="modal-box">
-    <div class="modal-head"><b id="modalTitle">Aktivite Ekle</b><button class="mini del" id="modalClose">✕</button></div>
-    <div class="modal-body">
-      <input type="hidden" id="activityId">
-      <div class="form-grid">
-        <div class="field full autocomplete-wrap"><label>Aktivite</label><input class="input" id="activityTitle" autocomplete="off" placeholder="Örn. uyandım, diş fırçaladım, 30 dk kitap oku"><div class="autocomplete-list" id="activityAutocomplete"></div></div>
-        <div class="field full">
-          <div class="ai-box">
-            <div class="ai-row">
-              <button class="ghost" id="btnAiComplete" type="button">✨ AI ile Tamamla</button>
-              <button class="ghost" id="btnApplyAi" type="button" disabled>Öneriyi Uygula</button>
-              <span class="ai-status" id="aiStatus"></span>
+      <aside class="right" id="rightCol">
+        <section class="panel collapsible open" id="quickPanel" data-collapse="quick">
+          <div class="panel-head" data-collapse-head><div class="panel-title">Hızlı Aktivite</div><span class="tag">Namaz + rutin</span><span class="collapse-icon">⌄</span></div>
+          <div class="collapse-body">
+            <div class="prayer-tools">
+              <select class="select" id="prayerCity"></select>
+              <button class="ghost" id="btnPrayerRefresh" type="button">Yenile</button>
             </div>
-            <div class="ai-suggest" id="aiSuggest"></div>
-            <div class="ai-hint">Başlığa örn. “akşam react çalış” yaz; AI uygun kategori, açıklama, emoji ve önceliği otomatik hazırlasın.</div>
+            <div class="prayer-status" id="prayerStatus">Şehir seçip yenileyin.</div>
+            <div class="prayer-list" id="prayerList"></div>
+            <div class="quick-grid" id="quickGrid"></div>
           </div>
-        </div>
-        <div class="field"><label>Kategori</label><select class="select" id="activityCat"></select></div>
-        <div class="field"><label>Öncelik</label><select class="select" id="activityPriority"><option value="low">Düşük</option><option value="medium">Orta</option><option value="high">Yüksek</option></select></div>
-        <div class="field"><label>Tarih</label><input class="input" type="date" id="activityDate"></div>
-        <div class="field"><label>Saat</label><input class="input" type="time" id="activityTime"></div>
-        <div class="field"><label>Emoji</label><input class="input" id="activityEmoji" maxlength="3" placeholder="⚡"></div>
-        <div class="field"><label>Durum</label><select class="select" id="activityStatus"><option value="pending">Bekliyor</option><option value="completed">Tamamlandı</option></select></div>
-        <div class="field full"><label>Açıklama</label><textarea id="activityDesc" rows="3" placeholder="Not ekle..."></textarea></div>
-      </div>
-    </div>
-    <div class="modal-foot"><button class="ghost" id="modalCancel">Vazgeç</button><button class="btn" id="modalSave">Kaydet</button></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div class="panel-title">Motivasyon</div></div>
+          <div class="quote" id="quoteBox"></div>
+        </section>
+      </aside>
+    </main>
   </div>
-</div>
 
-<div class="confirm" id="confirmBox"><div class="confirm-box panel pad"><b id="confirmText">Emin misin?</b><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="ghost" id="confirmNo">Vazgeç</button><button class="danger-btn" id="confirmYes">Sil</button></div></div></div>
-<div class="toast-wrap" id="toasts"></div>
+  <div class="modal" id="activityModal" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head"><b id="modalTitle">Aktivite Ekle</b><button class="mini del" id="modalClose" type="button">✕</button></div>
+      <div class="modal-body">
+        <input type="hidden" id="activityId">
+        <div class="form-grid">
+          <div class="field full autocomplete-wrap">
+            <label>Aktivite</label>
+            <input class="input" id="activityTitle" autocomplete="off" placeholder="Örn. uyandım, diş fırçaladım, 30 dk kitap oku">
+            <div class="autocomplete-list" id="activityAutocomplete"></div>
+          </div>
+          <div class="field full">
+            <div class="ai-box">
+              <div class="ai-row">
+                <button class="ghost" id="btnAiComplete" type="button">✨ Akıllı Tamamla</button>
+                <button class="ghost" id="btnApplyAi" type="button" disabled>Öneriyi Uygula</button>
+                <span class="ai-status" id="aiStatus"></span>
+              </div>
+              <div class="ai-suggest" id="aiSuggest"></div>
+            </div>
+          </div>
+          <div class="field"><label>Kategori</label><select class="select" id="activityCat"></select></div>
+          <div class="field"><label>Öncelik</label><select class="select" id="activityPriority"><option value="low">Düşük</option><option value="medium">Orta</option><option value="high">Yüksek</option></select></div>
+          <div class="field"><label>Tarih</label><input class="input" type="date" id="activityDate"></div>
+          <div class="field"><label>Saat</label><input class="input" type="time" id="activityTime"></div>
+          <div class="field"><label>Emoji</label><input class="input" id="activityEmoji" maxlength="3" placeholder="⚡"></div>
+          <div class="field"><label>Durum</label><select class="select" id="activityStatus"><option value="pending">Bekliyor</option><option value="completed">Tamamlandı</option></select></div>
+          <div class="field full"><label>Açıklama</label><textarea id="activityDesc" rows="3" placeholder="Not ekle..."></textarea></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="ghost" id="modalCancel" type="button">Vazgeç</button><button class="btn" id="modalSave" type="button">Kaydet</button></div>
+    </div>
+  </div>
 
-<script>
-(function(){
-'use strict';
-const APP_KEY='devlife_platform_openai_v4_aktivite_ai';
-const isOpenAIPlatform=Boolean(window.openai)||/chatgpt|openai/i.test(navigator.userAgent)||window.self!==window.top;
-const memoryStore={};
-const storage={get(k,fallback){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fallback}catch(_){return memoryStore[k]||fallback}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){memoryStore[k]=v}},remove(k){try{localStorage.removeItem(k)}catch(_){delete memoryStore[k]}}};
-const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-const pad=n=>String(n).padStart(2,'0');
-const todayStr=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
-const fmtDate=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-const parseDate=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-const CATS=[['Yazılım','💻','#7c3aed'],['Spor','🏋️','#10b981'],['Kitap','📚','#06b6d4'],['İbadet','🕌','#f59e0b'],['Sağlık','🧘','#3b82f6'],['İş','🧩','#ec4899'],['Kişisel','✨','#8b5cf6'],['Diğer','📝','#64748b']];
-const QUICK=[
-['🕌','Sabah namazı','İbadet',6],['🕌','Öğle namazı','İbadet',13],['🕌','İkindi namazı','İbadet',16],['🕌','Akşam namazı','İbadet',20],['🕌','Yatsı namazı','İbadet',22],['🤲','Dua ettim','İbadet',22],['📿','Tesbih çektim','İbadet',22],
-['🌅','Uyandım','Kişisel',7],['🛏️','Yatağımı topladım','Kişisel',7],['🪥','Diş fırçaladım','Sağlık',7],['🚿','Duş aldım','Sağlık',8],['👕','Hazırlandım','Kişisel',8],['🥣','Kahvaltı yaptım','Sağlık',8],['💧','Su içtim','Sağlık',9],['☕','Kahve içtim','Kişisel',9],['🧘','Meditasyon yaptım','Sağlık',7],['🌬️','Nefes egzersizi yaptım','Sağlık',7],
-['🏃','Yürüyüş yaptım','Spor',18],['🏋️','Spor yaptım','Spor',19],['🤸','Esneme yaptım','Spor',8],['🚴','Bisiklet sürdüm','Spor',18],['🔥','Kardiyo yaptım','Spor',19],['⚖️','Kilo ölçtüm','Sağlık',8],['💊','Vitaminimi aldım','Sağlık',9],['🍎','Sağlıklı öğün yedim','Sağlık',13],['🥗','Diyet planına uydum','Sağlık',20],['😴','Erken uyudum','Sağlık',23],
-['📚','Kitap okudum','Kitap',21],['📖','20 sayfa okudum','Kitap',21],['📝','Okuma notu aldım','Kitap',22],['🧠','Yeni konu öğrendim','Yazılım',20],['💻','Kod yazdım','Yazılım',20],['🐞','Bug çözdüm','Yazılım',16],['📦','Projeye commit attım','Yazılım',18],['🎨','Tasarım geliştirdim','Yazılım',15],['🧪','Test yaptım','Yazılım',17],['📺','Eğitim videosu izledim','Yazılım',22],
-['📌','Günlük plan yaptım','İş',9],['✅','Planımı kontrol ettim','İş',18],['📧','Mailleri kontrol ettim','İş',10],['📞','Telefon görüşmesi yaptım','İş',14],['🧩','Toplantıya katıldım','İş',11],['📊','Rapor hazırladım','İş',15],['🗂️','Dosyaları düzenledim','İş',16],
-['🧹','Oda toparladım','Kişisel',18],['🧺','Çamaşır işini hallettim','Kişisel',19],['🧽','Temizlik yaptım','Kişisel',18],['🛒','Alışveriş yaptım','Kişisel',17],['🍳','Yemek hazırladım','Kişisel',19],['👨‍👩‍👧','Aileyi aradım','Kişisel',20],['💰','Harcamaları kontrol ettim','Kişisel',21],['🧾','Fatura/ödeme kontrol ettim','Kişisel',21],['📓','Günlük yazdım','Kişisel',22]
-];
-const QUOTES=['Bugün küçük bir adım, yarın güçlü bir alışkanlık olur.','Disiplin motivasyonun bittiği yerde başlar.','Kod da hayat da küçük tekrarlarla güzelleşir.','Okunan her sayfa zihne atılan sessiz bir commit gibidir.','Mükemmel zamanı bekleme; sistemi çalıştır.'];
-const PRAYER_CITIES=['İstanbul','Ankara','İzmir','Bursa','Antalya','Konya','Adana','Gaziantep','Şanlıurfa','Kocaeli','Mersin','Diyarbakır','Hatay','Manisa','Kayseri','Samsun','Balıkesir','Kahramanmaraş','Van','Aydın','Denizli','Sakarya','Tekirdağ','Muğla','Eskişehir','Mardin','Trabzon','Ordu','Malatya','Erzurum','Afyonkarahisar','Sivas','Tokat','Kastamonu','Tosya'];
+  <div class="confirm" id="confirmBox"><div class="confirm-box panel pad"><b id="confirmText">Emin misin?</b><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="ghost" id="confirmNo" type="button">Vazgeç</button><button class="danger-btn" id="confirmYes" type="button">Sil</button></div></div></div>
+  <div class="toast-wrap" id="toasts"></div>
 
-let state=storage.get(APP_KEY,{activitys:[],books:[],sessions:[],activeBookId:'',selectedDate:todayStr(),weekStart:null,lastSelectedHour:null,settings:{rememberApiKey:false,apiKey:''}});
-if(!Array.isArray(state.activitys))state.activitys=[]; if(!Array.isArray(state.books))state.books=[]; if(!Array.isArray(state.sessions))state.sessions=[]; state.settings=state.settings||{}; if(!state.settings.prayerCity)state.settings.prayerCity='İstanbul';
-let timer={interval:null,startAt:0,accumulated:0,running:false,has:false};
-let pendingAction=null;
-function save(){storage.set(APP_KEY,state)}
-function toast(msg,type='ok'){const t=document.createElement('div');t.className='toast '+(type==='err'?'err':'');t.textContent=msg;$('#toasts').appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)';setTimeout(()=>t.remove(),250)},2600)}
-function confirmDo(text,fn){pendingAction=fn;$('#confirmText').textContent=text;$('#confirmBox').classList.add('show')}
-function getMonday(d){const x=new Date(d);const day=x.getDay()||7;x.setDate(x.getDate()-day+1);x.setHours(0,0,0,0);return x}
-function currentWeekStart(){return state.weekStart?parseDate(state.weekStart):getMonday(parseDate(state.selectedDate))}
-function setWeekStart(d){state.weekStart=fmtDate(d);save()}
-function selectedActivitys(){return state.activitys.filter(t=>t.date===state.selectedDate)}
-function catInfo(name){return CATS.find(c=>c[0]===name)||CATS[CATS.length-1]}
-function mins(ms){return Math.max(0,Math.round(ms/60000))}
-function hms(ms){const s=Math.floor(ms/1000);return `${pad(Math.floor(s/3600))}<span class="sep">:</span>${pad(Math.floor((s%3600)/60))}<span class="sep">:</span>${pad(s%60)}`}
-function msNow(){return timer.running?timer.accumulated+(Date.now()-timer.startAt):timer.accumulated}
-function timeForHour(hour){const m=pad(new Date().getMinutes());if(!hour)return new Date().toTimeString().slice(0,5);const h=String(hour).slice(0,2).padStart(2,'0');return `${h}:${m}`}
-function weekRangeMs(){const d=getMonday(new Date());const a=d.getTime();d.setDate(d.getDate()+7);return [a,d.getTime()]}
-function renderClock(){const d=new Date();$('#clock').textContent=d.toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'}).replace(',','')}
-function renderNav(view){$$('.view').forEach(v=>v.classList.toggle('active',v.id===view));$$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));}
-function renderWeek(){const ws=currentWeekStart();const today=todayStr();let html='<button class="week-arrow" data-week="-1">‹</button>';['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].forEach((n,i)=>{const d=new Date(ws);d.setDate(ws.getDate()+i);const ds=fmtDate(d);const arr=state.activitys.filter(t=>t.date===ds);const done=arr.filter(t=>t.status==='completed').length;const pct=arr.length?Math.round(done/arr.length*100):0;html+=`<button class="day ${ds===state.selectedDate?'active':''} ${ds===today?'today':''}" data-date="${ds}"><span class="name">${n}</span><span class="num">${d.getDate()}</span><div class="bar"><i style="width:${pct}%"></i></div></button>`});html+='<button class="week-arrow" data-week="1">›</button>';$('#week').innerHTML=html}
-function renderFilters(){const opts='<option value="all">Tüm kategoriler</option>'+CATS.map(c=>`<option>${c[0]}</option>`).join('');$('#filterCat').innerHTML=opts;$('#activityCat').innerHTML=CATS.map(c=>`<option value="${c[0]}">${c[1]} ${c[0]}</option>`).join('')}
-function filteredActivitys(){const q=$('#searchInput').value.trim().toLowerCase();const c=$('#filterCat').value;const s=$('#filterStatus').value;return selectedActivitys().filter(t=>(c==='all'||t.category===c)&&(s==='all'||t.status===s)&&(!q||[t.title,t.desc,t.category].some(x=>String(x||'').toLowerCase().includes(q))))}
-function activityHtml(t){const ci=catInfo(t.category);return `<article class="activity ${t.status==='completed'?'done':''} ${t.priority||'low'}"><div class="emoji">${esc(t.emoji||ci[1])}</div><div><div class="activity-title">${esc(t.title)}</div>${t.desc?`<div class="activity-desc">${esc(t.desc)}</div>`:''}<div class="tags"><span class="tag">${esc(t.category)}</span><span class="tag warn">${esc(t.time||'Saat yok')}</span><span class="tag ${t.status==='completed'?'ok':''}">${t.status==='completed'?'Tamamlandı':'Bekliyor'}</span></div></div><div class="actions"><button class="mini ok" title="Tamamla" data-done="${t.id}">✓</button><button class="mini" title="Düzenle" data-edit="${t.id}">✎</button><button class="mini del" title="Sil" data-del="${t.id}">🗑</button></div></article>`}
-function renderTimeline(){const nowH=new Date().getHours();let html='';const activitys=filteredActivitys();for(let h=5;h<=23;h++){const hh=pad(h)+':00';const arr=activitys.filter(t=>parseInt((t.time||'99').slice(0,2),10)===h);html+=`<div class="hour ${h===nowH&&state.selectedDate===todayStr()?'now':''}"><div class="hour-label">${hh}</div><div class="hour-content">${arr.map(activityHtml).join('')}<button class="hour-add" data-hour="${pad(h)}:00">+ Bu saate aktivite ekle</button></div></div>`}$('#timeline').innerHTML=html}
-function renderActivityTable(){const all=[...state.activitys].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));$('#activityTable').innerHTML=all.length?`<div class="list">${all.map(activityHtml).join('')}</div>`:'<div class="empty">Henüz aktivite yok. Yeni kayıt ekleyebilirsin.</div>'}
-function renderQuick(){const doneSet=new Set(selectedActivitys().filter(t=>t.status==='completed').map(t=>t.title+'|'+t.category));$('#quickGrid').innerHTML=QUICK.map((q,i)=>`<button class="quick ${q[2]==='İbadet'?'prayer-quick':''} ${doneSet.has(q[1]+'|'+q[2])?'done':''}" data-quick="${i}"><span>${q[0]}</span><span>${q[1]}</span></button>`).join('')}
-function renderCats(){const arr=CATS.map(c=>{const count=selectedActivitys().filter(t=>t.category===c[0]).length;return `<div class="cat"><i style="background:${c[2]}"></i><span>${c[1]} ${c[0]}</span><b>${count}</b></div>`}).join('');$('#categoryList').innerHTML=arr}
-function renderStats(){const st=selectedActivitys();const done=st.filter(t=>t.status==='completed').length;$('#statToday').textContent=st.length;$('#statDone').textContent=done;const todayMs=state.sessions.filter(s=>new Date(s.endedAt).toDateString()===new Date().toDateString()).reduce((a,s)=>a+s.durationMs,0);$('#statRead').textContent=mins(todayMs)+'dk';$('#statStreak').textContent=calcStreak();}
-function calcStreak(){let n=0;const d=new Date();for(;;){const key=fmtDate(d);const has=state.activitys.some(t=>t.date===key&&t.status==='completed')||state.sessions.some(s=>fmtDate(new Date(s.endedAt))===key);if(!has)break;n++;d.setDate(d.getDate()-1)}return n}
-function renderQuote(){const q=QUOTES[new Date().getDate()%QUOTES.length];$('#quoteBox').innerHTML=`${esc(q)}<small>— DEV/LIFE</small>`}
-function openActivity(id,hour){const t=id?state.activitys.find(x=>x.id===id):null;if(hour){state.lastSelectedHour=String(hour).slice(0,2);save()}const selectedTime=t?.time||timeForHour(hour||state.lastSelectedHour);$('#modalTitle').textContent=t?'Aktivite Düzenle':'Aktivite Ekle';$('#activityId').value=t?.id||'';$('#activityTitle').value=t?.title||'';$('#activityCat').value=t?.category||'Yazılım';$('#activityPriority').value=t?.priority||'medium';$('#activityDate').value=t?.date||state.selectedDate;$('#activityTime').value=selectedTime;$('#activityEmoji').value=t?.emoji||'';$('#activityStatus').value=t?.status||'pending';$('#activityDesc').value=t?.desc||'';$('#activityModal').classList.add('show');setTimeout(()=>$('#activityTitle').focus(),50)}
-function closeActivity(){$('#activityModal').classList.remove('show')}
-function saveActivity(){const title=$('#activityTitle').value.trim();if(!title){toast('Başlık boş olamaz','err');return}const id=$('#activityId').value;const data={id:id||uid(),title,category:$('#activityCat').value,priority:$('#activityPriority').value,date:$('#activityDate').value||todayStr(),time:$('#activityTime').value,emoji:$('#activityEmoji').value.trim(),status:$('#activityStatus').value,desc:$('#activityDesc').value.trim(),updatedAt:Date.now(),createdAt:Date.now()};if(id){const ix=state.activitys.findIndex(t=>t.id===id);data.createdAt=state.activitys[ix]?.createdAt||Date.now();state.activitys[ix]=data;toast('Aktivite güncellendi')}else{state.activitys.push(data);toast('Aktivite eklendi')}state.selectedDate=data.date;save();closeActivity();renderAll()}
-function toggleDone(id){const t=state.activitys.find(x=>x.id===id);if(!t)return;t.status=t.status==='completed'?'pending':'completed';t.updatedAt=Date.now();save();renderAll();toast(t.status==='completed'?'Tamamlandı':'Beklemeye alındı')}
-function deleteActivity(id){confirmDo('Bu aktiviteyi silmek istiyor musun?',()=>{state.activitys=state.activitys.filter(t=>t.id!==id);save();renderAll();toast('Aktivite silindi')})}
-function addQuick(i){const q=QUICK[i];const selectedTime=state.lastSelectedHour?timeForHour(state.lastSelectedHour):new Date().toTimeString().slice(0,5);const exist=state.activitys.find(t=>t.date===state.selectedDate&&t.title===q[1]&&t.category===q[2]&&t.time===selectedTime);if(exist){exist.status=exist.status==='completed'?'pending':'completed';exist.updatedAt=Date.now()}else{state.activitys.push({id:uid(),title:q[1],category:q[2],priority:'low',date:state.selectedDate,time:selectedTime,emoji:q[0],status:'completed',desc:'Hızlı aktivite ile eklendi',createdAt:Date.now(),updatedAt:Date.now()})}save();renderAll();toast(`Hızlı aktivite ${selectedTime} saatine işlendi`)}
-function seed(){if(state.activitys.length&& !confirm('Mevcut aktivitelerin yanına örnek veri eklensin mi?'))return;[['💻','OpenAI API notlarını düzenle','Yazılım','09:00'],['📚','20 sayfa kitap oku','Kitap','21:00'],['🏋️','45 dk spor','Spor','19:00'],['🧘','Nefes egzersizi','Sağlık','08:00']].forEach(x=>state.activitys.push({id:uid(),emoji:x[0],title:x[1],category:x[2],time:x[3],date:state.selectedDate,priority:'medium',status:'pending',desc:'Örnek kayıt',createdAt:Date.now(),updatedAt:Date.now()}));save();renderAll();toast('Örnek veri eklendi')}
-function renderBooks(){const opts='<option value="">— Kitap seç / opsiyonel —</option>'+state.books.map(b=>`<option value="${b.id}" ${b.id===state.activeBookId?'selected':''}>${esc(b.title)} — ${esc(b.author)}</option>`).join('');$('#activeBookSelect').innerHTML=opts;$('#bookList').innerHTML=state.books.length?state.books.map(b=>`<div class="book ${b.id===state.activeBookId?'active':''}"><div class="book-info"><div class="book-title">${esc(b.title)}</div><div class="book-meta">${esc(b.author)} · ${bookTotal(b.id)} dk</div></div><button class="mini ok" data-book-active="${b.id}">✓</button><button class="mini" data-book-edit="${b.id}">✎</button><button class="mini del" data-book-del="${b.id}">🗑</button></div>`).join(''):'<div class="empty">Henüz kitap yok. İlk kitabını ekle.</div>';renderSessions();renderBookStats();updateTimer()}
-function bookTotal(id){return mins(state.sessions.filter(s=>s.bookId===id).reduce((a,s)=>a+s.durationMs,0))}
-function addBook(e){e.preventDefault();const title=$('#bookTitle').value.trim();const author=$('#bookAuthor').value.trim();if(!title||!author)return toast('Kitap adı ve yazar gerekli','err');const b={id:uid(),title,author,addedAt:Date.now()};state.books.push(b);state.activeBookId=b.id;$('#bookForm').reset();save();renderBooks();toast('Kitap eklendi')}
-function editBook(id){const b=state.books.find(x=>x.id===id);if(!b)return;const title=prompt('Kitap adı',b.title);if(title===null)return;const author=prompt('Yazar',b.author);if(author===null)return;b.title=title.trim()||b.title;b.author=author.trim()||b.author;b.updatedAt=Date.now();save();renderBooks();toast('Kitap güncellendi')}
-function delBook(id){confirmDo('Kitap silinsin mi? Seanslar kalır fakat kitap bağlantısı boşalır.',()=>{state.books=state.books.filter(b=>b.id!==id);state.sessions.forEach(s=>{if(s.bookId===id){s.bookId='';s.bookTitle='Kitapsız seans'}});if(state.activeBookId===id)state.activeBookId='';save();renderBooks();toast('Kitap silindi')})}
-function updateTimer(){const ms=msNow();$('#timerDisplay').innerHTML=hms(ms);$('#timerStatus').textContent=timer.running?'Okuma devam ediyor':(timer.has?'Duraklatıldı':'Başlamaya Hazır');$('#timerStatus').classList.toggle('active',timer.running);$('#btnTimerStart').disabled=timer.running;$('#btnTimerPause').disabled=!timer.running;$('#btnTimerStop').disabled=!timer.has;$('#btnTimerReset').disabled=!timer.has}
-function startTimer(){if(timer.running)return;timer.startAt=Date.now();timer.running=true;timer.has=true;timer.interval=setInterval(updateTimer,500);updateTimer();toast('Sayaç başladı')}
-function pauseTimer(){if(!timer.running)return;timer.accumulated+=Date.now()-timer.startAt;timer.running=false;clearInterval(timer.interval);updateTimer();toast('Sayaç duraklatıldı')}
-function resetTimer(){timer={interval:null,startAt:0,accumulated:0,running:false,has:false};updateTimer();toast('Sayaç sıfırlandı')}
-function stopTimer(){if(timer.running)pauseTimer();const duration=timer.accumulated;if(duration<10000)return toast('10 saniyeden kısa seans kaydedilmez','err');const b=state.books.find(x=>x.id===state.activeBookId);state.sessions.push({id:uid(),bookId:b?.id||'',bookTitle:b?.title||'Kitapsız seans',author:b?.author||'',durationMs:duration,endedAt:Date.now()});save();resetTimer();renderAll();toast('Okuma seansı kaydedildi')}
-function renderSessions(){const arr=[...state.sessions].sort((a,b)=>b.endedAt-a.endedAt);$('#sessionList').innerHTML=arr.length?arr.map(s=>`<div class="session"><strong class="cyan" style="font-family:var(--mono);min-width:70px">${mins(s.durationMs)}dk</strong><div class="session-info"><div class="session-title">${esc(s.bookTitle)}</div><div class="session-meta">${new Date(s.endedAt).toLocaleString('tr-TR')} ${s.author?'· '+esc(s.author):''}</div></div><button class="mini del" data-session-del="${s.id}">🗑</button></div>`).join(''):'<div class="empty">Henüz okuma seansı yok.</div>'}
-function renderBookStats(){const [w1,w2]=weekRangeMs();const today=new Date().toDateString();let td=0,w=0,total=0;state.sessions.forEach(s=>{total+=s.durationMs;if(new Date(s.endedAt).toDateString()===today)td+=s.durationMs;if(s.endedAt>=w1&&s.endedAt<w2)w+=s.durationMs});$('#bookToday').textContent=mins(td)+'dk';$('#bookWeek').textContent=mins(w)+'dk';$('#bookTotal').textContent=mins(total)+'dk';$('#bookCount').textContent=state.sessions.length}
-function delSession(id){confirmDo('Bu okuma seansı silinsin mi?',()=>{state.sessions=state.sessions.filter(s=>s.id!==id);save();renderAll();toast('Seans silindi')})}
-function exportJson(){const cleanState=JSON.parse(JSON.stringify(state)); if(cleanState.settings) cleanState.settings.apiKey=''; const data={version:4,platformOpenAISupport:isOpenAIPlatform,exportedAt:new Date().toISOString(),state:cleanState};const txt=JSON.stringify(data,null,2);$('#jsonBox').value=txt;const blob=new Blob([txt],{type:'application/json'});downloadBlob(blob,'devlife-yedek.json')}
-function importJson(file){const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);if(!data.state)throw new Error('state yok');state=data.state;save();renderAll();toast('Veriler içe aktarıldı')}catch(e){toast('JSON okunamadı: '+e.message,'err')}};r.readAsText(file)}
-function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},100)}
-function downloadHtml(){downloadBlob(new Blob([document.documentElement.outerHTML],{type:'text/html'}),'devlife-gelisim-tracker.html')}
-let lastAiSuggestion=null;
-function apiKey(){return ($('#openaiApiKey')?.value||'').trim()}
-function syncAiSettings(){const key=$('#openaiApiKey');const remember=$('#rememberApiKey');if(key)key.value=state.settings?.rememberApiKey?state.settings.apiKey||'':'';if(remember)remember.checked=!!state.settings?.rememberApiKey}
-function persistAiSettings(){state.settings=state.settings||{};state.settings.rememberApiKey=!!$('#rememberApiKey')?.checked;state.settings.apiKey=state.settings.rememberApiKey?apiKey():'';save()}
-function localSuggest(raw){const text=(raw||'').toLowerCase();let category='Diğer',emoji='📝',priority='medium';const rules=[['Yazılım','💻',/(kod|react|mvc|api|sql|openai|javascript|python|c#|proje|bug|debug|tasarım|html|css)/],['Kitap','📚',/(kitap|oku|sayfa|roman|makale|özet)/],['Spor','🏋️',/(spor|yürü|koş|fitness|antrenman|kardiyo|egzersiz)/],['Sağlık','🧘',/(su iç|uyku|nefes|meditasyon|diyet|kalori|sağlık)/],['İbadet','🕌',/(namaz|dua|ibadet|cami|sure)/],['İş','🧩',/(iş|toplantı|mail|müşteri|rapor|sunum|ofis)/],['Kişisel','✨',/(oda|temizlik|aile|alışveriş|plan|kişisel)/]];for(const [c,e,r] of rules){if(r.test(text)){category=c;emoji=e;break}}if(/acil|önemli|bitir|deadline|teslim/.test(text))priority='high';if(/basit|hafif|kısa|5 dk|10 dk/.test(text))priority='low';return {title:raw.trim().replace(/^./,m=>m.toLocaleUpperCase('tr-TR')),description:`${raw.trim()} için odaklı bir aktivite kaydı. Tamamlandığında ilerleme istatistiklerine işlenir.`,category,emoji,priority}}
+  <script>
+  (function(){
+    'use strict';
 
-function normalizeText(x){return String(x||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function quickToSuggestion(q){return {title:q[1],description:`${q[1]} aktivitesi hızlı öneriden seçildi.`,category:q[2],emoji:q[0],priority:'low'}}
-function applySuggestionToForm(s,keepTitle=false){if(!s)return;if(!keepTitle)$('#activityTitle').value=s.title||$('#activityTitle').value;$('#activityDesc').value=s.description||'';$('#activityCat').value=s.category||'Diğer';$('#activityPriority').value=s.priority||'medium';$('#activityEmoji').value=s.emoji||''}
-function renderAutocomplete(){const input=$('#activityTitle');const box=$('#activityAutocomplete');if(!input||!box)return;const raw=input.value.trim();if(!raw){box.classList.remove('show');box.innerHTML='';return}const n=normalizeText(raw);const matches=QUICK.map((q,i)=>({q,i,score:normalizeText(q[1]).startsWith(n)?0:normalizeText(q[1]).includes(n)?1:normalizeText(q[2]).includes(n)?2:9})).filter(x=>x.score<9).sort((a,b)=>a.score-b.score||a.q[1].localeCompare(b.q[1],'tr')).slice(0,8);if(!matches.length){box.classList.remove('show');box.innerHTML='';return}box.innerHTML=matches.map(x=>`<button class="autocomplete-item" type="button" data-auto="${x.i}"><span>${esc(x.q[0])}</span><span>${esc(x.q[1])}</span><small>${esc(x.q[2])}</small></button>`).join('');box.classList.add('show')}
-function chooseAutocomplete(i){const q=QUICK[Number(i)];if(!q)return;const s=quickToSuggestion(q);applySuggestionToForm(s,false);$('#activityAutocomplete')?.classList.remove('show');showAiSuggestion(s);setAiStatus('Hızlı aktivite önerisi uygulandı','ok')}
+    const APP_KEY = 'devlife_tracker_v5_fixed_today';
+    const OLD_KEYS = [APP_KEY,'devlife_platform_openai_v4_aktivite_ai','devlife_tracker_v4'];
+    const memoryStore = {};
+    const storage = {
+      get(key, fallback = null){try{const v = localStorage.getItem(key);return v ? JSON.parse(v) : fallback}catch(_){return memoryStore[key] ?? fallback}},
+      set(key, value){try{localStorage.setItem(key, JSON.stringify(value))}catch(_){memoryStore[key] = value}},
+      remove(key){try{localStorage.removeItem(key)}catch(_){delete memoryStore[key]}}
+    };
 
-function setAiStatus(msg,type='info'){const el=$('#aiStatus');if(!el)return;el.textContent=msg||'';el.style.color=type==='err'?'var(--red)':type==='ok'?'var(--green)':'var(--cyan)'}
-function showAiSuggestion(sug){lastAiSuggestion=sug;const box=$('#aiSuggest');if(!box)return;box.classList.add('show');box.innerHTML=`<div class="activity-title">${esc(sug.emoji||'✨')} ${esc(sug.title||'')}</div><div class="activity-desc">${esc(sug.description||'')}</div><div style="margin-top:8px"><span class="ai-pill">Kategori: ${esc(sug.category||'Diğer')}</span><span class="ai-pill">Öncelik: ${esc(sug.priority||'medium')}</span><span class="ai-pill">Saat: formdaki seçili saat korunur</span></div>`;$('#btnApplyAi').disabled=false}
-async function aiComplete(){const raw=$('#activityTitle').value.trim();if(!raw){toast('Önce aktivite başlığı yaz','err');return}const key=apiKey();setAiStatus('AI hazırlanıyor...');$('#btnAiComplete').disabled=true;try{let suggestion;if(key){const categories=CATS.map(c=>c[0]).join(', ');const res=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify({model:'gpt-4.1-mini',input:[{role:'system',content:'Sen Türkçe kişisel gelişim aktivite takip uygulaması için otomatik tamamlama motorusun. Sadece geçerli JSON döndür.'},{role:'user',content:`Kullanıcının aktivite metni: "${raw}". Kategoriler: ${categories}. Şu alanlarla JSON üret: title, description, category, emoji, priority(low|medium|high). Saat üretme; uygulama kullanıcının seçtiği saati koruyacak. Kategori mutlaka listeden olsun.`}],text:{format:{type:'json_object'}}})});if(!res.ok){const err=await res.text();throw new Error(err.slice(0,220)||'OpenAI isteği başarısız')}const data=await res.json();const content=(data.output_text)||data.output?.flatMap(o=>o.content||[]).map(c=>c.text||'').join('')||'';suggestion=JSON.parse(content)}else{suggestion=localSuggest(raw);setAiStatus('API key yok, yerel tahmin kullanıldı','info')}suggestion={...localSuggest(raw),...suggestion};delete suggestion.time;if(!CATS.some(c=>c[0]===suggestion.category))suggestion.category=localSuggest(raw).category;showAiSuggestion(suggestion);setAiStatus('Öneri hazır','ok')}catch(err){console.error(err);const fallback=localSuggest(raw);showAiSuggestion(fallback);setAiStatus('API hatası: yerel öneri kullanıldı','err');toast('OpenAI isteği çalışmadı; yerel öneri gösterildi','err')}finally{$('#btnAiComplete').disabled=false;persistAiSettings()}}
-function applyAiSuggestion(){const s=lastAiSuggestion;if(!s)return;applySuggestionToForm(s,false);toast('AI önerisi uygulandı')}
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    const pad = n => String(n).padStart(2,'0');
+    const todayStr = () => {const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+    const fmtDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    const parseDate = s => {const [y,m,d] = String(s || todayStr()).split('-').map(Number); return new Date(y || new Date().getFullYear(), (m || 1) - 1, d || 1)};
+    const esc = s => String(s ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+    const getMonday = d => {const x = new Date(d); const day = x.getDay() || 7; x.setDate(x.getDate() - day + 1); x.setHours(0,0,0,0); return x};
+    const isSameDate = (a,b) => fmtDate(a) === fmtDate(b);
+    const minutes = ms => Math.max(0, Math.round(Number(ms || 0) / 60000));
+    const timeNow = () => new Date().toTimeString().slice(0,5);
+    const timeForHour = hour => `${String(hour).slice(0,2).padStart(2,'0')}:${pad(new Date().getMinutes())}`;
 
-function initAnalysisFilters(){const cat='<option value="all">Tüm kategoriler</option>'+CATS.map(c=>`<option>${c[0]}</option>`).join('');const ac=$('#analysisCat');if(ac)ac.innerHTML=cat}
-function inAnalysisRange(t){const r=$('#analysisRange')?.value||'week';const d=parseDate(t.date);const now=new Date();if(r==='all')return true;if(r==='today')return t.date===todayStr();if(r==='month')return d.getFullYear()===now.getFullYear()&&d.getMonth()===now.getMonth();const ws=getMonday(now);const we=new Date(ws);we.setDate(we.getDate()+7);return d>=ws&&d<we}
-function analysisFiltered(){const cat=$('#analysisCat')?.value||'all';const status=$('#analysisStatus')?.value||'all';return state.activitys.filter(t=>inAnalysisRange(t)&&(cat==='all'||t.category===cat)&&(status==='all'||t.status===status)).sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||'')))}
-function renderAnalysis(){if(!$('#analysisCards'))return;const arr=analysisFiltered();const done=arr.filter(t=>t.status==='completed').length;const pending=arr.length-done;const rate=arr.length?Math.round(done/arr.length*100):0;const topCat=CATS.map(c=>[c[0],arr.filter(t=>t.category===c[0]).length]).sort((a,b)=>b[1]-a[1])[0]||['-',0];$('#analysisCards').innerHTML=`<div class="analysis-card"><small>Toplam</small><strong class="accent">${arr.length}</strong></div><div class="analysis-card"><small>Tamamlanan</small><strong class="green">${done}</strong></div><div class="analysis-card"><small>Bekleyen</small><strong class="orange">${pending}</strong></div><div class="analysis-card"><small>Başarı</small><strong class="cyan">%${rate}</strong></div>`;const catCounts=CATS.map(c=>({name:c[0],emoji:c[1],color:c[2],count:arr.filter(t=>t.category===c[0]).length})).filter(x=>x.count>0);const maxCat=Math.max(1,...catCounts.map(x=>x.count));$('#categoryChart').innerHTML=catCounts.length?catCounts.map(x=>`<div class="chart-row"><span>${x.emoji} ${esc(x.name)}</span><div class="chart-bar"><i style="width:${Math.round(x.count/maxCat*100)}%;background:linear-gradient(90deg,${x.color},var(--cyan))"></i></div><b>${x.count}</b></div>`).join(''):'<div class="empty">Bu filtrede kategori verisi yok.</div>';let days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=fmtDate(d);days.push({key,label:d.toLocaleDateString('tr-TR',{weekday:'short'}),count:arr.filter(t=>t.date===key).length,done:arr.filter(t=>t.date===key&&t.status==='completed').length})}const maxDay=Math.max(1,...days.map(x=>x.count));$('#dailyChart').innerHTML=days.map(x=>`<div class="chart-row"><span>${x.label}</span><div class="chart-bar"><i style="width:${Math.round(x.count/maxDay*100)}%"></i></div><b>${x.done}/${x.count}</b></div>`).join('');$('#analysisList').innerHTML=arr.length?arr.map(t=>{const ci=catInfo(t.category);return `<div class="analysis-item" style="border-left-color:${ci[2]}"><span>${esc(t.emoji||ci[1])}</span><div><b>${esc(t.title)}</b><div class="analysis-meta">${esc(t.date)} · ${esc(t.time||'--:--')} · ${esc(t.category)} · ${t.status==='completed'?'Tamamlandı':'Bekliyor'}</div></div><button class="mini" data-edit="${t.id}">✎</button></div>`}).join(''):'<div class="empty">Bu filtrede aktivite yok.</div>'}
-function initPrayerCities(){const sel=$('#prayerCity');if(!sel)return;sel.innerHTML=PRAYER_CITIES.map(c=>`<option value="${esc(c)}" ${c===state.settings.prayerCity?'selected':''}>${esc(c)}</option>`).join('')}
-function prayerCityForApi(city){return city==='Tosya'?'Kastamonu':city}
-async function fetchPrayerTimes(){const city=$('#prayerCity')?.value||state.settings.prayerCity||'İstanbul';state.settings.prayerCity=city;save();const status=$('#prayerStatus'),list=$('#prayerList');if(!status||!list)return;status.className='prayer-status';status.textContent='Güncel vakitler çekiliyor...';list.innerHTML='';try{const apiCity=encodeURIComponent(prayerCityForApi(city));const url=`https://api.aladhan.com/v1/timingsByCity?city=${apiCity}&country=Turkey&method=13&school=1`;const res=await fetch(url);if(!res.ok)throw new Error('Servis yanıt vermedi');const data=await res.json();const t=data?.data?.timings;if(!t)throw new Error('Vakit bilgisi bulunamadı');const rows=[['İmsak',t.Fajr],['Güneş',t.Sunrise],['Öğle',t.Dhuhr],['İkindi',t.Asr],['Akşam',t.Maghrib],['Yatsı',t.Isha]];list.innerHTML=rows.map(r=>`<div class="prayer-item"><span>${r[0]}</span><b>${String(r[1]).slice(0,5)}</b></div>`).join('');status.className='prayer-status ok';status.textContent=`${city} için güncel vakitler yüklendi. Kaynak: Aladhan API / Turkey method.`}catch(e){status.className='prayer-status err';status.textContent='Vakitler çekilemedi. İnternet/CORS engeli olabilir. Şehir seçimini kontrol edip tekrar deneyin.';list.innerHTML=''}}
-function bindCollapses(){document.body.addEventListener('click',e=>{const h=e.target.closest('[data-collapse-head]');if(!h)return;h.closest('.collapsible')?.classList.toggle('open')})}
+    const CATS = [
+      ['Yazılım','💻','#7c3aed'],['Spor','🏋️','#10b981'],['Kitap','📚','#06b6d4'],['İbadet','🕌','#f59e0b'],
+      ['Sağlık','🧘','#3b82f6'],['İş','🧩','#ec4899'],['Kişisel','✨','#8b5cf6'],['Diğer','📝','#64748b']
+    ];
+    const QUICK = [
+      ['🕌','Sabah namazı','İbadet',6],['🕌','Öğle namazı','İbadet',13],['🕌','İkindi namazı','İbadet',16],['🕌','Akşam namazı','İbadet',20],['🕌','Yatsı namazı','İbadet',22],['🤲','Dua ettim','İbadet',22],['📿','Tesbih çektim','İbadet',22],
+      ['🌅','Uyandım','Kişisel',7],['🛏️','Yatağımı topladım','Kişisel',7],['🪥','Diş fırçaladım','Sağlık',7],['🚿','Duş aldım','Sağlık',8],['👕','Hazırlandım','Kişisel',8],['🥣','Kahvaltı yaptım','Sağlık',8],['💧','Su içtim','Sağlık',9],['☕','Kahve içtim','Kişisel',9],['🧘','Meditasyon yaptım','Sağlık',7],['🌬️','Nefes egzersizi yaptım','Sağlık',7],
+      ['🏃','Yürüyüş yaptım','Spor',18],['🏋️','Spor yaptım','Spor',19],['🤸','Esneme yaptım','Spor',8],['🚴','Bisiklet sürdüm','Spor',18],['🔥','Kardiyo yaptım','Spor',19],['⚖️','Kilo ölçtüm','Sağlık',8],['💊','Vitaminimi aldım','Sağlık',9],['🍎','Sağlıklı öğün yedim','Sağlık',13],['🥗','Diyet planına uydum','Sağlık',20],['😴','Erken uyudum','Sağlık',23],
+      ['📚','Kitap okudum','Kitap',21],['📖','20 sayfa okudum','Kitap',21],['📝','Okuma notu aldım','Kitap',22],['🧠','Yeni konu öğrendim','Yazılım',20],['💻','Kod yazdım','Yazılım',20],['🐞','Bug çözdüm','Yazılım',16],['📦','Projeye commit attım','Yazılım',18],['🎨','Tasarım geliştirdim','Yazılım',15],['🧪','Test yaptım','Yazılım',17],['📺','Eğitim videosu izledim','Yazılım',22],
+      ['📌','Günlük plan yaptım','İş',9],['✅','Planımı kontrol ettim','İş',18],['📧','Mailleri kontrol ettim','İş',10],['📞','Telefon görüşmesi yaptım','İş',14],['🧩','Toplantıya katıldım','İş',11],['📊','Rapor hazırladım','İş',15],['🗂️','Dosyaları düzenledim','İş',16],
+      ['🧹','Oda toparladım','Kişisel',18],['🧺','Çamaşır işini hallettim','Kişisel',19],['🧽','Temizlik yaptım','Kişisel',18],['🛒','Alışveriş yaptım','Kişisel',17],['🍳','Yemek hazırladım','Kişisel',19],['👨‍👩‍👧','Aileyi aradım','Kişisel',20],['💰','Harcamaları kontrol ettim','Kişisel',21],['🧾','Fatura/ödeme kontrol ettim','Kişisel',21],['📓','Günlük yazdım','Kişisel',22]
+    ];
+    const QUOTES = ['Bugün küçük bir adım, yarın güçlü bir alışkanlık olur.','Disiplin motivasyonun bittiği yerde başlar.','Kod da hayat da küçük tekrarlarla güzelleşir.','Okunan her sayfa zihne atılan sessiz bir commit gibidir.','Mükemmel zamanı bekleme; sistemi çalıştır.'];
+    const PRAYER_CITIES = ['İstanbul','Ankara','İzmir','Bursa','Antalya','Konya','Adana','Gaziantep','Şanlıurfa','Kocaeli','Mersin','Diyarbakır','Hatay','Manisa','Kayseri','Samsun','Balıkesir','Kahramanmaraş','Van','Aydın','Denizli','Sakarya','Tekirdağ','Muğla','Eskişehir','Mardin','Trabzon','Ordu','Malatya','Erzurum','Afyonkarahisar','Sivas','Tokat','Kastamonu','Tosya'];
 
-function renderAll(){renderClock();renderWeek();renderTimeline();renderActivityTable();renderQuick();renderCats();renderStats();renderBooks();renderQuote();renderAnalysis()}
-function relocateQuickPanel(){const panel=$('#quickPanel'),right=$('#rightCol'),week=$('#week');if(!panel||!right||!week)return;const mobile=window.matchMedia('(max-width:720px)').matches;if(mobile){if(panel.previousElementSibling!==week)week.insertAdjacentElement('afterend',panel)}else{if(panel.parentElement!==right)right.insertBefore(panel,right.firstElementChild)}}
-function bind(){setInterval(renderClock,1000);window.addEventListener('resize',relocateQuickPanel);bindCollapses();$('#nav').addEventListener('click',e=>{const b=e.target.closest('button[data-view]');if(b){renderNav(b.dataset.view);if(b.dataset.view==='graphs')renderAnalysis()}});$('#week').addEventListener('click',e=>{const d=e.target.closest('[data-date]');const w=e.target.closest('[data-week]');if(d){state.selectedDate=d.dataset.date;save();renderAll()}if(w){const ws=currentWeekStart();ws.setDate(ws.getDate()+Number(w.dataset.week)*7);setWeekStart(ws);renderAll()}});['#searchInput','#filterCat','#filterStatus'].forEach(s=>$(s).addEventListener('input',renderTimeline));['#analysisRange','#analysisCat','#analysisStatus'].forEach(s=>$(s)?.addEventListener('input',renderAnalysis));$('#prayerCity')?.addEventListener('change',fetchPrayerTimes);$('#btnPrayerRefresh')?.addEventListener('click',fetchPrayerTimes);$('#btnAddActivity').onclick=()=>openActivity();$('#btnAddActivity2').onclick=()=>openActivity();$('#modalClose').onclick=closeActivity;$('#modalCancel').onclick=closeActivity;$('#modalSave').onclick=saveActivity;$('#activityModal').addEventListener('click',e=>{if(e.target.id==='activityModal')closeActivity()});document.body.addEventListener('click',e=>{const edit=e.target.closest('[data-edit]');const del=e.target.closest('[data-del]');const done=e.target.closest('[data-done]');const hour=e.target.closest('[data-hour]');const quick=e.target.closest('[data-quick]');const be=e.target.closest('[data-book-edit]');const bd=e.target.closest('[data-book-del]');const ba=e.target.closest('[data-book-active]');const sd=e.target.closest('[data-session-del]');if(edit)openActivity(edit.dataset.edit);if(del)deleteActivity(del.dataset.del);if(done)toggleDone(done.dataset.done);if(hour)openActivity(null,hour.dataset.hour);if(quick)addQuick(Number(quick.dataset.quick));if(be)editBook(be.dataset.bookEdit);if(bd)delBook(bd.dataset.bookDel);if(ba){state.activeBookId=ba.dataset.bookActive;save();renderBooks();toast('Aktif kitap seçildi')}if(sd)delSession(sd.dataset.sessionDel)});$('#btnAiComplete').onclick=aiComplete;$('#btnApplyAi').onclick=applyAiSuggestion;$('#activityTitle').addEventListener('input',()=>{renderAutocomplete();const raw=$('#activityTitle').value.trim();if(raw.length>=2){const sug=localSuggest(raw);applySuggestionToForm(sug,true)}});$('#activityTitle').addEventListener('focus',renderAutocomplete);document.addEventListener('click',e=>{const auto=e.target.closest('[data-auto]');if(auto)chooseAutocomplete(auto.dataset.auto);else if(!e.target.closest('.autocomplete-wrap'))$('#activityAutocomplete')?.classList.remove('show')});$('#openaiApiKey')?.addEventListener('input',persistAiSettings);$('#rememberApiKey')?.addEventListener('change',persistAiSettings);$('#btnToggleKey')?.addEventListener('click',()=>{const k=$('#openaiApiKey');k.type=k.type==='password'?'text':'password';$('#btnToggleKey').textContent=k.type==='password'?'Göster':'Gizle'});$('#btnSeed').onclick=seed;$('#btnClearActivitys').onclick=()=>confirmDo('Tüm aktivite kayıtları silinsin mi?',()=>{state.activitys=[];save();renderAll();toast('Aktiviteler temizlendi')});$('#bookForm').addEventListener('submit',addBook);$('#activeBookSelect').addEventListener('change',e=>{state.activeBookId=e.target.value;save();renderBooks()});$('#btnTimerStart').onclick=startTimer;$('#btnTimerPause').onclick=pauseTimer;$('#btnTimerReset').onclick=resetTimer;$('#btnTimerStop').onclick=stopTimer;$('#btnExport').onclick=exportJson;$('#importFile').addEventListener('change',e=>e.target.files[0]&&importJson(e.target.files[0]));$('#btnDownloadHtml').onclick=downloadHtml;$('#btnFactoryReset').onclick=()=>confirmDo('Tüm aktivite, kitap ve seans verileri silinsin mi?',()=>{storage.remove(APP_KEY);state={activitys:[],books:[],sessions:[],activeBookId:'',selectedDate:todayStr(),weekStart:null,lastSelectedHour:null,settings:{rememberApiKey:false,apiKey:''}};renderAll();toast('Tüm veriler sıfırlandı')});$('#confirmNo').onclick=()=>$('#confirmBox').classList.remove('show');$('#confirmYes').onclick=()=>{if(pendingAction)pendingAction();pendingAction=null;$('#confirmBox').classList.remove('show')};document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeActivity();$('#confirmBox').classList.remove('show')}})}
-function init(){syncAiSettings();if(!state.weekStart)state.weekStart=fmtDate(getMonday(parseDate(state.selectedDate)));renderFilters();initAnalysisFilters();initPrayerCities();bind();relocateQuickPanel();renderAll();fetchPrayerTimes();if(isOpenAIPlatform)toast('Platform.openai uyum modu aktif')}init();
-})();
-</script>
+    function findSavedState(){
+      for(const key of OLD_KEYS){
+        const data = storage.get(key, null);
+        if(data && typeof data === 'object') return data.state || data;
+      }
+      return null;
+    }
+
+    function normalizeState(raw){
+      const today = todayStr();
+      const activities = Array.isArray(raw?.activities) ? raw.activities : (Array.isArray(raw?.activitys) ? raw.activitys : []);
+      const books = Array.isArray(raw?.books) ? raw.books : [];
+      const sessions = Array.isArray(raw?.sessions) ? raw.sessions : [];
+      const settings = raw?.settings && typeof raw.settings === 'object' ? raw.settings : {};
+      return {
+        activities: activities.map(a => ({
+          id: a.id || uid(),
+          title: String(a.title || '').trim() || 'İsimsiz aktivite',
+          category: CATS.some(c => c[0] === a.category) ? a.category : 'Diğer',
+          priority: ['low','medium','high'].includes(a.priority) ? a.priority : 'medium',
+          date: /^\d{4}-\d{2}-\d{2}$/.test(a.date || '') ? a.date : today,
+          time: /^\d{2}:\d{2}$/.test(a.time || '') ? a.time : '',
+          emoji: a.emoji || '',
+          status: a.status === 'completed' ? 'completed' : 'pending',
+          desc: a.desc || a.description || '',
+          createdAt: Number(a.createdAt || Date.now()),
+          updatedAt: Number(a.updatedAt || Date.now())
+        })),
+        books: books.map(b => ({id:b.id || uid(), title:b.title || 'İsimsiz kitap', author:b.author || 'Bilinmeyen', addedAt:Number(b.addedAt || Date.now())})),
+        sessions: sessions.map(s => ({id:s.id || uid(), bookId:s.bookId || '', bookTitle:s.bookTitle || 'Kitapsız seans', author:s.author || '', durationMs:Number(s.durationMs || 0), endedAt:Number(s.endedAt || Date.now())})).filter(s => s.durationMs > 0),
+        activeBookId: raw?.activeBookId || '',
+        selectedDate: today,
+        weekStart: fmtDate(getMonday(parseDate(today))),
+        lastSelectedHour: null,
+        settings: {prayerCity: settings.prayerCity || 'İstanbul'}
+      };
+    }
+
+    let state = normalizeState(findSavedState());
+    let timer = {interval:null,startAt:0,accumulated:0,running:false,has:false};
+    let pendingAction = null;
+    let lastAiSuggestion = null;
+
+    function save(){storage.set(APP_KEY,state)}
+    function toast(msg,type='ok'){
+      const t = document.createElement('div');
+      t.className = 'toast ' + (type === 'err' ? 'err' : '');
+      t.textContent = msg;
+      $('#toasts').appendChild(t);
+      setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)';setTimeout(()=>t.remove(),250)},2600);
+    }
+    function confirmDo(text,fn){pendingAction=fn;$('#confirmText').textContent=text;$('#confirmBox').classList.add('show')}
+    function catInfo(name){return CATS.find(c=>c[0]===name) || CATS[CATS.length-1]}
+    function selectedActivities(){return state.activities.filter(a=>a.date===state.selectedDate)}
+    function currentWeekStart(){return parseDate(state.weekStart || fmtDate(getMonday(parseDate(state.selectedDate))))}
+
+    function renderClock(){
+      const d = new Date();
+      $('#clock').textContent = d.toLocaleString('tr-TR',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(',','');
+    }
+    function renderNav(view){
+      $$('.view').forEach(v=>v.classList.toggle('active',v.id===view));
+      $$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+    }
+    function renderWeek(){
+      const ws = currentWeekStart();
+      const today = todayStr();
+      let html = '<button class="week-arrow" data-week="-1">‹</button>';
+      ['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].forEach((name,i)=>{
+        const d = new Date(ws); d.setDate(ws.getDate()+i);
+        const ds = fmtDate(d);
+        const arr = state.activities.filter(a=>a.date===ds);
+        const done = arr.filter(a=>a.status==='completed').length;
+        const pct = arr.length ? Math.round(done / arr.length * 100) : 0;
+        html += `<button class="day ${ds===state.selectedDate?'active':''} ${ds===today?'today':''}" data-date="${ds}"><span class="name">${name}</span><span class="num">${d.getDate()}</span><div class="bar"><i style="width:${pct}%"></i></div></button>`;
+      });
+      html += '<button class="week-arrow" data-week="1">›</button>';
+      $('#week').innerHTML = html;
+    }
+    function renderFilters(){
+      const catOptions = '<option value="all">Tüm kategoriler</option>' + CATS.map(c=>`<option value="${c[0]}">${c[1]} ${c[0]}</option>`).join('');
+      $('#filterCat').innerHTML = catOptions;
+      $('#activityCat').innerHTML = CATS.map(c=>`<option value="${c[0]}">${c[1]} ${c[0]}</option>`).join('');
+      $('#analysisCat').innerHTML = catOptions;
+    }
+    function filteredActivities(){
+      const q = ($('#searchInput').value || '').trim().toLocaleLowerCase('tr-TR');
+      const cat = $('#filterCat').value;
+      const status = $('#filterStatus').value;
+      return selectedActivities().filter(a =>
+        (cat === 'all' || a.category === cat) &&
+        (status === 'all' || a.status === status) &&
+        (!q || [a.title,a.desc,a.category].some(x => String(x || '').toLocaleLowerCase('tr-TR').includes(q)))
+      );
+    }
+    function activityHtml(a){
+      const ci = catInfo(a.category);
+      return `<article class="activity ${a.status==='completed'?'done':''} ${a.priority}">
+        <div class="emoji">${esc(a.emoji || ci[1])}</div>
+        <div><div class="activity-title">${esc(a.title)}</div>${a.desc ? `<div class="activity-desc">${esc(a.desc)}</div>` : ''}
+          <div class="tags"><span class="tag">${esc(a.category)}</span><span class="tag warn">${esc(a.time || 'Saat yok')}</span><span class="tag ${a.status==='completed'?'ok':''}">${a.status==='completed'?'Tamamlandı':'Bekliyor'}</span></div>
+        </div>
+        <div class="actions"><button class="mini ok" title="Tamamla" data-done="${a.id}">✓</button><button class="mini" title="Düzenle" data-edit="${a.id}">✎</button><button class="mini del" title="Sil" data-del="${a.id}">🗑</button></div>
+      </article>`;
+    }
+    function renderTimeline(){
+      const nowH = new Date().getHours();
+      const activities = filteredActivities();
+      let html = '';
+      for(let h=5; h<=23; h++){
+        const arr = activities.filter(a => Number((a.time || '99').slice(0,2)) === h).sort((a,b)=>(a.time || '').localeCompare(b.time || ''));
+        html += `<div class="hour ${h===nowH && state.selectedDate===todayStr()?'now':''}"><div class="hour-label">${pad(h)}:00</div><div class="hour-content">${arr.map(activityHtml).join('')}<button class="hour-add" data-hour="${pad(h)}:00">+ Bu saate aktivite ekle</button></div></div>`;
+      }
+      $('#timeline').innerHTML = html;
+    }
+    function renderActivityTable(){
+      const all = [...state.activities].sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||'')));
+      $('#activityTable').innerHTML = all.length ? `<div class="list">${all.map(activityHtml).join('')}</div>` : '<div class="empty">Henüz aktivite yok. Yeni kayıt ekleyebilirsin.</div>';
+    }
+    function renderQuick(){
+      const doneSet = new Set(selectedActivities().filter(a=>a.status==='completed').map(a=>`${a.title}|${a.category}`));
+      $('#quickGrid').innerHTML = QUICK.map((q,i)=>`<button class="quick ${q[2]==='İbadet'?'prayer':''} ${doneSet.has(q[1]+'|'+q[2])?'done':''}" data-quick="${i}"><span>${q[0]}</span><span>${q[1]}</span></button>`).join('');
+    }
+    function renderCats(){
+      $('#categoryList').innerHTML = CATS.map(c=>{
+        const count = selectedActivities().filter(a=>a.category===c[0]).length;
+        return `<div class="cat"><i style="background:${c[2]}"></i><span>${c[1]} ${c[0]}</span><b>${count}</b></div>`;
+      }).join('');
+    }
+    function renderStats(){
+      const day = selectedActivities();
+      const done = day.filter(a=>a.status==='completed').length;
+      $('#statToday').textContent = day.length;
+      $('#statDone').textContent = done;
+      const todayRead = state.sessions.filter(s=>isSameDate(new Date(s.endedAt),new Date())).reduce((sum,s)=>sum+s.durationMs,0);
+      $('#statRead').textContent = minutes(todayRead) + 'dk';
+      $('#statStreak').textContent = calcStreak();
+    }
+    function calcStreak(){
+      let count = 0;
+      const d = new Date();
+      while(true){
+        const key = fmtDate(d);
+        const hasActivity = state.activities.some(a=>a.date===key && a.status==='completed');
+        const hasReading = state.sessions.some(s=>fmtDate(new Date(s.endedAt))===key);
+        if(!hasActivity && !hasReading) break;
+        count++;
+        d.setDate(d.getDate()-1);
+      }
+      return count;
+    }
+    function renderQuote(){
+      const q = QUOTES[new Date().getDate() % QUOTES.length];
+      $('#quoteBox').innerHTML = `${esc(q)}<small>— DEV/LIFE</small>`;
+    }
+
+    function openActivity(id=null,hour=null){
+      const a = id ? state.activities.find(x=>x.id===id) : null;
+      if(hour){state.lastSelectedHour = String(hour).slice(0,2); save()}
+      $('#modalTitle').textContent = a ? 'Aktivite Düzenle' : 'Aktivite Ekle';
+      $('#activityId').value = a?.id || '';
+      $('#activityTitle').value = a?.title || '';
+      $('#activityCat').value = a?.category || 'Yazılım';
+      $('#activityPriority').value = a?.priority || 'medium';
+      $('#activityDate').value = a?.date || state.selectedDate || todayStr();
+      $('#activityTime').value = a?.time || (hour ? timeForHour(hour) : (state.selectedDate === todayStr() ? timeNow() : '09:00'));
+      $('#activityEmoji').value = a?.emoji || '';
+      $('#activityStatus').value = a?.status || 'pending';
+      $('#activityDesc').value = a?.desc || '';
+      $('#aiStatus').textContent = '';
+      $('#aiSuggest').classList.remove('show');
+      $('#btnApplyAi').disabled = true;
+      $('#activityModal').classList.add('show');
+      setTimeout(()=>$('#activityTitle').focus(),50);
+    }
+    function closeActivity(){$('#activityModal').classList.remove('show')}
+    function saveActivity(){
+      const title = $('#activityTitle').value.trim();
+      if(!title){toast('Başlık boş olamaz','err');return}
+      const id = $('#activityId').value;
+      const date = $('#activityDate').value || todayStr();
+      const item = {
+        id: id || uid(),
+        title,
+        category: $('#activityCat').value || 'Diğer',
+        priority: $('#activityPriority').value || 'medium',
+        date,
+        time: $('#activityTime').value || '',
+        emoji: $('#activityEmoji').value.trim(),
+        status: $('#activityStatus').value,
+        desc: $('#activityDesc').value.trim(),
+        updatedAt: Date.now(),
+        createdAt: Date.now()
+      };
+      if(id){
+        const ix = state.activities.findIndex(a=>a.id===id);
+        item.createdAt = state.activities[ix]?.createdAt || Date.now();
+        if(ix >= 0) state.activities[ix] = item;
+      }else{
+        state.activities.push(item);
+      }
+      state.selectedDate = date;
+      state.weekStart = fmtDate(getMonday(parseDate(date)));
+      save(); closeActivity(); renderAll(); toast(id ? 'Aktivite güncellendi' : 'Aktivite eklendi');
+    }
+    function toggleDone(id){
+      const a = state.activities.find(x=>x.id===id); if(!a) return;
+      a.status = a.status === 'completed' ? 'pending' : 'completed';
+      a.updatedAt = Date.now();
+      save(); renderAll(); toast(a.status === 'completed' ? 'Tamamlandı' : 'Beklemeye alındı');
+    }
+    function deleteActivity(id){
+      confirmDo('Bu aktiviteyi silmek istiyor musun?',()=>{state.activities = state.activities.filter(a=>a.id!==id);save();renderAll();toast('Aktivite silindi')});
+    }
+    function addQuick(index){
+      const q = QUICK[index]; if(!q) return;
+      const defaultTime = `${pad(q[3])}:00`;
+      const existing = state.activities.find(a=>a.date===state.selectedDate && a.title===q[1] && a.category===q[2]);
+      if(existing){
+        existing.status = existing.status === 'completed' ? 'pending' : 'completed';
+        existing.time = existing.time || defaultTime;
+        existing.updatedAt = Date.now();
+      }else{
+        state.activities.push({id:uid(),title:q[1],category:q[2],priority:'low',date:state.selectedDate,time:defaultTime,emoji:q[0],status:'completed',desc:'Hızlı aktivite ile eklendi',createdAt:Date.now(),updatedAt:Date.now()});
+      }
+      save(); renderAll(); toast('Hızlı aktivite işlendi');
+    }
+    function seed(){
+      const examples = [['💻','OpenAI API notlarını düzenle','Yazılım','09:00'],['📚','20 sayfa kitap oku','Kitap','21:00'],['🏋️','45 dk spor','Spor','19:00'],['🧘','Nefes egzersizi','Sağlık','08:00']];
+      examples.forEach(x=>state.activities.push({id:uid(),emoji:x[0],title:x[1],category:x[2],time:x[3],date:state.selectedDate,priority:'medium',status:'pending',desc:'Örnek kayıt',createdAt:Date.now(),updatedAt:Date.now()}));
+      save(); renderAll(); toast('Örnek veri eklendi');
+    }
+
+    function bookTotal(id){return minutes(state.sessions.filter(s=>s.bookId===id).reduce((sum,s)=>sum+s.durationMs,0))}
+    function renderBooks(){
+      if(!state.books.some(b=>b.id===state.activeBookId)) state.activeBookId = '';
+      $('#activeBookSelect').innerHTML = '<option value="">— Kitap seç / opsiyonel —</option>' + state.books.map(b=>`<option value="${b.id}" ${b.id===state.activeBookId?'selected':''}>${esc(b.title)} — ${esc(b.author)}</option>`).join('');
+      $('#bookList').innerHTML = state.books.length ? state.books.map(b=>`<div class="book ${b.id===state.activeBookId?'active':''}"><div class="book-info"><div class="book-title">${esc(b.title)}</div><div class="book-meta">${esc(b.author)} · ${bookTotal(b.id)} dk</div></div><button class="mini ok" data-book-active="${b.id}">✓</button><button class="mini" data-book-edit="${b.id}">✎</button><button class="mini del" data-book-del="${b.id}">🗑</button></div>`).join('') : '<div class="empty">Henüz kitap yok. İlk kitabını ekle.</div>';
+      renderSessions(); renderBookStats(); updateTimer();
+    }
+    function addBook(e){
+      e.preventDefault();
+      const title = $('#bookTitle').value.trim();
+      const author = $('#bookAuthor').value.trim();
+      if(!title || !author){toast('Kitap adı ve yazar gerekli','err');return}
+      const b = {id:uid(), title, author, addedAt:Date.now()};
+      state.books.push(b); state.activeBookId = b.id; $('#bookForm').reset(); save(); renderBooks(); toast('Kitap eklendi');
+    }
+    function editBook(id){
+      const b = state.books.find(x=>x.id===id); if(!b) return;
+      const title = prompt('Kitap adı', b.title); if(title === null) return;
+      const author = prompt('Yazar', b.author); if(author === null) return;
+      b.title = title.trim() || b.title; b.author = author.trim() || b.author; save(); renderBooks(); toast('Kitap güncellendi');
+    }
+    function delBook(id){
+      confirmDo('Kitap silinsin mi? Seanslar kalır, kitap bağlantısı kitapsız seansa çevrilir.',()=>{
+        state.books = state.books.filter(b=>b.id!==id);
+        state.sessions.forEach(s=>{if(s.bookId===id){s.bookId='';s.bookTitle='Kitapsız seans';s.author=''}});
+        if(state.activeBookId === id) state.activeBookId = '';
+        save(); renderBooks(); toast('Kitap silindi');
+      });
+    }
+    function hms(ms){
+      const s = Math.floor(Number(ms || 0) / 1000);
+      return `${pad(Math.floor(s/3600))}<span class="sep">:</span>${pad(Math.floor((s%3600)/60))}<span class="sep">:</span>${pad(s%60)}`;
+    }
+    function timerMs(){return timer.running ? timer.accumulated + (Date.now() - timer.startAt) : timer.accumulated}
+    function updateTimer(){
+      $('#timerDisplay').innerHTML = hms(timerMs());
+      $('#timerStatus').textContent = timer.running ? 'Okuma devam ediyor' : (timer.has ? 'Duraklatıldı' : 'Başlamaya Hazır');
+      $('#timerStatus').classList.toggle('active', timer.running);
+      $('#btnTimerStart').disabled = timer.running;
+      $('#btnTimerPause').disabled = !timer.running;
+      $('#btnTimerStop').disabled = !timer.has;
+      $('#btnTimerReset').disabled = !timer.has;
+    }
+    function startTimer(){
+      if(timer.running) return;
+      timer.startAt = Date.now(); timer.running = true; timer.has = true;
+      clearInterval(timer.interval); timer.interval = setInterval(updateTimer,500); updateTimer(); toast('Sayaç başladı');
+    }
+    function pauseTimer(){
+      if(!timer.running) return;
+      timer.accumulated += Date.now() - timer.startAt;
+      timer.running = false; clearInterval(timer.interval); timer.interval = null; updateTimer(); toast('Sayaç duraklatıldı');
+    }
+    function resetTimer(){
+      clearInterval(timer.interval);
+      timer = {interval:null,startAt:0,accumulated:0,running:false,has:false};
+      updateTimer(); toast('Sayaç sıfırlandı');
+    }
+    function stopTimer(){
+      if(timer.running) pauseTimer();
+      const duration = timer.accumulated;
+      if(duration < 10000){toast('10 saniyeden kısa seans kaydedilmez','err');return}
+      const b = state.books.find(x=>x.id===state.activeBookId);
+      state.sessions.push({id:uid(),bookId:b?.id || '',bookTitle:b?.title || 'Kitapsız seans',author:b?.author || '',durationMs:duration,endedAt:Date.now()});
+      save(); resetTimer(); renderAll(); toast('Okuma seansı kaydedildi');
+    }
+    function renderSessions(){
+      const arr = [...state.sessions].sort((a,b)=>b.endedAt-a.endedAt);
+      $('#sessionList').innerHTML = arr.length ? arr.map(s=>`<div class="session"><strong class="cyan" style="font-family:var(--mono);min-width:70px">${minutes(s.durationMs)}dk</strong><div class="session-info"><div class="session-title">${esc(s.bookTitle)}</div><div class="session-meta">${new Date(s.endedAt).toLocaleString('tr-TR')} ${s.author?'· '+esc(s.author):''}</div></div><button class="mini del" data-session-del="${s.id}">🗑</button></div>`).join('') : '<div class="empty">Henüz okuma seansı yok.</div>';
+    }
+    function renderBookStats(){
+      const today = new Date();
+      const weekStart = getMonday(today).getTime();
+      const weekEnd = weekStart + 7 * 24 * 60 * 60 * 1000;
+      let todayMs = 0, weekMs = 0, totalMs = 0;
+      state.sessions.forEach(s=>{
+        totalMs += s.durationMs;
+        const ended = new Date(s.endedAt);
+        if(isSameDate(ended,today)) todayMs += s.durationMs;
+        if(s.endedAt >= weekStart && s.endedAt < weekEnd) weekMs += s.durationMs;
+      });
+      $('#bookToday').textContent = minutes(todayMs) + 'dk';
+      $('#bookWeek').textContent = minutes(weekMs) + 'dk';
+      $('#bookTotal').textContent = minutes(totalMs) + 'dk';
+      $('#bookCount').textContent = state.sessions.length;
+    }
+    function delSession(id){confirmDo('Bu okuma seansı silinsin mi?',()=>{state.sessions=state.sessions.filter(s=>s.id!==id);save();renderAll();toast('Seans silindi')})}
+
+    function inAnalysisRange(a){
+      const range = $('#analysisRange').value;
+      const d = parseDate(a.date);
+      const now = new Date();
+      if(range === 'all') return true;
+      if(range === 'today') return a.date === todayStr();
+      if(range === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      const ws = getMonday(now); const we = new Date(ws); we.setDate(we.getDate()+7);
+      return d >= ws && d < we;
+    }
+    function analysisFiltered(){
+      const cat = $('#analysisCat').value;
+      const status = $('#analysisStatus').value;
+      return state.activities.filter(a => inAnalysisRange(a) && (cat==='all'||a.category===cat) && (status==='all'||a.status===status)).sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||'')));
+    }
+    function renderAnalysis(){
+      const arr = analysisFiltered();
+      const done = arr.filter(a=>a.status==='completed').length;
+      const rate = arr.length ? Math.round(done / arr.length * 100) : 0;
+      $('#analysisCards').innerHTML = `<div class="analysis-card"><small>Toplam</small><strong class="accent">${arr.length}</strong></div><div class="analysis-card"><small>Tamamlanan</small><strong class="green">${done}</strong></div><div class="analysis-card"><small>Bekleyen</small><strong class="orange">${arr.length-done}</strong></div><div class="analysis-card"><small>Başarı</small><strong class="cyan">%${rate}</strong></div>`;
+      const catCounts = CATS.map(c=>({name:c[0],emoji:c[1],color:c[2],count:arr.filter(a=>a.category===c[0]).length})).filter(x=>x.count>0);
+      const maxCat = Math.max(1,...catCounts.map(x=>x.count));
+      $('#categoryChart').innerHTML = catCounts.length ? catCounts.map(x=>`<div class="chart-row"><span>${x.emoji} ${esc(x.name)}</span><div class="chart-bar"><i style="width:${Math.round(x.count/maxCat*100)}%;background:linear-gradient(90deg,${x.color},var(--cyan))"></i></div><b>${x.count}</b></div>`).join('') : '<div class="empty">Bu filtrede kategori verisi yok.</div>';
+      const days = [];
+      for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=fmtDate(d);days.push({key,label:d.toLocaleDateString('tr-TR',{weekday:'short'}),count:arr.filter(a=>a.date===key).length,done:arr.filter(a=>a.date===key&&a.status==='completed').length})}
+      const maxDay = Math.max(1,...days.map(x=>x.count));
+      $('#dailyChart').innerHTML = days.map(x=>`<div class="chart-row"><span>${x.label}</span><div class="chart-bar"><i style="width:${Math.round(x.count/maxDay*100)}%"></i></div><b>${x.done}/${x.count}</b></div>`).join('');
+      $('#analysisList').innerHTML = arr.length ? arr.map(a=>{const ci=catInfo(a.category);return `<div class="analysis-item" style="border-left-color:${ci[2]}"><span>${esc(a.emoji||ci[1])}</span><div><b>${esc(a.title)}</b><div class="analysis-meta">${esc(a.date)} · ${esc(a.time||'--:--')} · ${esc(a.category)} · ${a.status==='completed'?'Tamamlandı':'Bekliyor'}</div></div><button class="mini" data-edit="${a.id}">✎</button></div>`}).join('') : '<div class="empty">Bu filtrede aktivite yok.</div>';
+    }
+
+    function normalizeText(x){return String(x||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+    function localSuggest(raw){
+      const text = normalizeText(raw);
+      let category='Diğer',emoji='📝',priority='medium';
+      const rules = [
+        ['Yazılım','💻',/(kod|react|mvc|api|sql|openai|javascript|python|c#|proje|bug|debug|tasarim|html|css)/],
+        ['Kitap','📚',/(kitap|oku|sayfa|roman|makale|ozet)/],['Spor','🏋️',/(spor|yuru|kos|fitness|antrenman|kardiyo|egzersiz)/],
+        ['Sağlık','🧘',/(su ic|uyku|nefes|meditasyon|diyet|kalori|saglik|vitamin)/],['İbadet','🕌',/(namaz|dua|ibadet|cami|sure|tesbih)/],
+        ['İş','🧩',/(is|toplanti|mail|musteri|rapor|sunum|ofis)/],['Kişisel','✨',/(oda|temizlik|aile|alisveris|plan|kisisel|camasir)/]
+      ];
+      for(const [c,e,r] of rules){if(r.test(text)){category=c;emoji=e;break}}
+      if(/acil|onemli|bitir|deadline|teslim/.test(text)) priority='high';
+      if(/basit|hafif|kisa|5 dk|10 dk/.test(text)) priority='low';
+      return {title:raw.trim().replace(/^./,m=>m.toLocaleUpperCase('tr-TR')),description:`${raw.trim()} için odaklı bir aktivite kaydı. Tamamlandığında günlük istatistiklere işlenir.`,category,emoji,priority};
+    }
+    function applySuggestion(s,keepTitle=false){
+      if(!s) return;
+      if(!keepTitle) $('#activityTitle').value = s.title || $('#activityTitle').value;
+      $('#activityDesc').value = s.description || '';
+      $('#activityCat').value = s.category || 'Diğer';
+      $('#activityPriority').value = s.priority || 'medium';
+      $('#activityEmoji').value = s.emoji || '';
+    }
+    function renderAutocomplete(){
+      const raw = $('#activityTitle').value.trim();
+      const box = $('#activityAutocomplete');
+      if(!raw){box.classList.remove('show');box.innerHTML='';return}
+      const n = normalizeText(raw);
+      const matches = QUICK.map((q,i)=>({q,i,score:normalizeText(q[1]).startsWith(n)?0:normalizeText(q[1]).includes(n)?1:normalizeText(q[2]).includes(n)?2:9})).filter(x=>x.score<9).sort((a,b)=>a.score-b.score || a.q[1].localeCompare(b.q[1],'tr')).slice(0,8);
+      if(!matches.length){box.classList.remove('show');box.innerHTML='';return}
+      box.innerHTML = matches.map(x=>`<button class="autocomplete-item" type="button" data-auto="${x.i}"><span>${esc(x.q[0])}</span><span>${esc(x.q[1])}</span><small>${esc(x.q[2])}</small></button>`).join('');
+      box.classList.add('show');
+    }
+    function chooseAutocomplete(index){
+      const q = QUICK[Number(index)]; if(!q) return;
+      applySuggestion({title:q[1],description:`${q[1]} aktivitesi hızlı öneriden seçildi.`,category:q[2],emoji:q[0],priority:'low'});
+      $('#activityTime').value = `${pad(q[3])}:00`;
+      $('#activityAutocomplete').classList.remove('show');
+    }
+    function aiComplete(){
+      const raw = $('#activityTitle').value.trim();
+      if(!raw){toast('Önce aktivite başlığı yaz','err');return}
+      lastAiSuggestion = localSuggest(raw);
+      $('#aiStatus').textContent = 'Öneri hazır';
+      $('#aiSuggest').innerHTML = `<span class="ai-pill">${esc(lastAiSuggestion.emoji)} ${esc(lastAiSuggestion.category)}</span><span class="ai-pill">${esc(lastAiSuggestion.priority)}</span><p class="activity-desc" style="margin-top:8px">${esc(lastAiSuggestion.description)}</p>`;
+      $('#aiSuggest').classList.add('show');
+      $('#btnApplyAi').disabled = false;
+    }
+    function applyAiSuggestion(){applySuggestion(lastAiSuggestion,true);toast('Öneri uygulandı')}
+
+    function exportJson(){
+      const data = {version:5,exportedAt:new Date().toISOString(),state};
+      const text = JSON.stringify(data,null,2);
+      $('#jsonBox').value = text;
+      downloadBlob(new Blob([text],{type:'application/json'}),'devlife-yedek.json');
+    }
+    function importJson(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        try{
+          const data = JSON.parse(reader.result);
+          state = normalizeState(data.state || data);
+          save(); renderAll(); toast('Veriler içe aktarıldı. Başlangıç tarihi bugün olarak ayarlandı.');
+        }catch(e){toast('JSON okunamadı: ' + e.message,'err')}
+      };
+      reader.readAsText(file);
+    }
+    function downloadBlob(blob,name){
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+      setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},100);
+    }
+    function downloadHtml(){downloadBlob(new Blob([document.documentElement.outerHTML],{type:'text/html'}),'devlife-gelisim-tracker.html')}
+
+    function initPrayerCities(){
+      $('#prayerCity').innerHTML = PRAYER_CITIES.map(c=>`<option value="${esc(c)}" ${c===state.settings.prayerCity?'selected':''}>${esc(c)}</option>`).join('');
+    }
+    function prayerCityForApi(city){return city === 'Tosya' ? 'Kastamonu' : city}
+    async function fetchPrayerTimes(){
+      const city = $('#prayerCity').value || state.settings.prayerCity || 'İstanbul';
+      state.settings.prayerCity = city; save();
+      const status = $('#prayerStatus'); const list = $('#prayerList');
+      status.className = 'prayer-status'; status.textContent = 'Güncel vakitler çekiliyor...'; list.innerHTML = '';
+      try{
+        const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(prayerCityForApi(city))}&country=Turkey&method=13&school=1`;
+        const res = await fetch(url);
+        if(!res.ok) throw new Error('Servis yanıt vermedi');
+        const data = await res.json();
+        const t = data?.data?.timings;
+        if(!t) throw new Error('Vakit bilgisi bulunamadı');
+        const rows = [['İmsak',t.Fajr],['Güneş',t.Sunrise],['Öğle',t.Dhuhr],['İkindi',t.Asr],['Akşam',t.Maghrib],['Yatsı',t.Isha]];
+        list.innerHTML = rows.map(r=>`<div class="prayer-item"><span>${r[0]}</span><b>${String(r[1]).slice(0,5)}</b></div>`).join('');
+        status.className = 'prayer-status ok'; status.textContent = `${city} için bugünkü vakitler yüklendi.`;
+      }catch(_){
+        status.className = 'prayer-status err'; status.textContent = 'Vakitler çekilemedi. İnternet/CORS engeli olabilir.'; list.innerHTML = '';
+      }
+    }
+
+    function renderAll(){renderClock();renderWeek();renderTimeline();renderActivityTable();renderQuick();renderCats();renderStats();renderBooks();renderQuote();renderAnalysis()}
+    function relocateQuickPanel(){
+      const panel = $('#quickPanel'), right = $('#rightCol'), week = $('#week'); if(!panel || !right || !week) return;
+      const mobile = window.matchMedia('(max-width:720px)').matches;
+      if(mobile){if(panel.previousElementSibling !== week) week.insertAdjacentElement('afterend', panel)}
+      else{if(panel.parentElement !== right) right.insertBefore(panel, right.firstElementChild)}
+    }
+    function bindCollapses(){document.body.addEventListener('click',e=>{const h=e.target.closest('[data-collapse-head]'); if(h) h.closest('.collapsible')?.classList.toggle('open')})}
+    function bind(){
+      setInterval(renderClock,1000);
+      window.addEventListener('resize', relocateQuickPanel);
+      bindCollapses();
+      $('#nav').addEventListener('click',e=>{const b=e.target.closest('button[data-view]'); if(b){renderNav(b.dataset.view); if(b.dataset.view==='graphs') renderAnalysis()}});
+      $('#week').addEventListener('click',e=>{
+        const day = e.target.closest('[data-date]'); const arrow = e.target.closest('[data-week]');
+        if(day){state.selectedDate = day.dataset.date; state.weekStart = fmtDate(getMonday(parseDate(state.selectedDate))); save(); renderAll(); return}
+        if(arrow){
+          const ws = currentWeekStart(); ws.setDate(ws.getDate()+Number(arrow.dataset.week)*7);
+          state.weekStart = fmtDate(ws);
+          const today = parseDate(todayStr());
+          const end = new Date(ws); end.setDate(end.getDate()+7);
+          state.selectedDate = (today >= ws && today < end) ? todayStr() : fmtDate(ws);
+          save(); renderAll();
+        }
+      });
+      ['#searchInput','#filterCat','#filterStatus'].forEach(s=>$(s).addEventListener('input',renderTimeline));
+      ['#analysisRange','#analysisCat','#analysisStatus'].forEach(s=>$(s).addEventListener('input',renderAnalysis));
+      $('#btnAddActivity').onclick = () => openActivity();
+      $('#btnAddActivity2').onclick = () => openActivity();
+      $('#modalClose').onclick = closeActivity;
+      $('#modalCancel').onclick = closeActivity;
+      $('#modalSave').onclick = saveActivity;
+      $('#activityModal').addEventListener('click',e=>{if(e.target.id==='activityModal') closeActivity()});
+      document.body.addEventListener('click',e=>{
+        const edit=e.target.closest('[data-edit]'), del=e.target.closest('[data-del]'), done=e.target.closest('[data-done]'), hour=e.target.closest('[data-hour]'), quick=e.target.closest('[data-quick]');
+        const be=e.target.closest('[data-book-edit]'), bd=e.target.closest('[data-book-del]'), ba=e.target.closest('[data-book-active]'), sd=e.target.closest('[data-session-del]'), auto=e.target.closest('[data-auto]');
+        if(edit) openActivity(edit.dataset.edit);
+        if(del) deleteActivity(del.dataset.del);
+        if(done) toggleDone(done.dataset.done);
+        if(hour) openActivity(null,hour.dataset.hour);
+        if(quick) addQuick(Number(quick.dataset.quick));
+        if(be) editBook(be.dataset.bookEdit);
+        if(bd) delBook(bd.dataset.bookDel);
+        if(ba){state.activeBookId=ba.dataset.bookActive;save();renderBooks();toast('Aktif kitap seçildi')}
+        if(sd) delSession(sd.dataset.sessionDel);
+        if(auto) chooseAutocomplete(auto.dataset.auto);
+      });
+      $('#activityTitle').addEventListener('input',()=>{renderAutocomplete(); const raw=$('#activityTitle').value.trim(); if(raw.length>=2) applySuggestion(localSuggest(raw),true)});
+      $('#activityTitle').addEventListener('focus',renderAutocomplete);
+      document.addEventListener('click',e=>{if(!e.target.closest('.autocomplete-wrap')) $('#activityAutocomplete').classList.remove('show')});
+      $('#btnAiComplete').onclick = aiComplete;
+      $('#btnApplyAi').onclick = applyAiSuggestion;
+      $('#btnSeed').onclick = seed;
+      $('#btnClearActivities').onclick = () => confirmDo('Tüm aktivite kayıtları silinsin mi?',()=>{state.activities=[];save();renderAll();toast('Aktiviteler temizlendi')});
+      $('#bookForm').addEventListener('submit',addBook);
+      $('#activeBookSelect').addEventListener('change',e=>{state.activeBookId=e.target.value;save();renderBooks()});
+      $('#btnTimerStart').onclick=startTimer; $('#btnTimerPause').onclick=pauseTimer; $('#btnTimerReset').onclick=resetTimer; $('#btnTimerStop').onclick=stopTimer;
+      $('#btnExport').onclick=exportJson; $('#importFile').addEventListener('change',e=>e.target.files[0] && importJson(e.target.files[0])); $('#btnDownloadHtml').onclick=downloadHtml;
+      $('#btnFactoryReset').onclick = () => confirmDo('Tüm aktivite, kitap ve seans verileri silinsin mi?',()=>{OLD_KEYS.forEach(storage.remove); state=normalizeState(null); save(); renderAll(); toast('Tüm veriler sıfırlandı')});
+      $('#prayerCity').addEventListener('change',fetchPrayerTimes); $('#btnPrayerRefresh').onclick=fetchPrayerTimes;
+      $('#confirmNo').onclick = () => $('#confirmBox').classList.remove('show');
+      $('#confirmYes').onclick = () => {if(pendingAction) pendingAction(); pendingAction=null; $('#confirmBox').classList.remove('show')};
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeActivity();$('#confirmBox').classList.remove('show')}});
+    }
+    function init(){
+      save();
+      renderFilters(); initPrayerCities(); bind(); relocateQuickPanel(); renderAll(); fetchPrayerTimes();
+      toast('Başlangıç tarihi bugün olarak ayarlandı');
+    }
+    init();
+  })();
+  </script>
 </body>
 </html>
