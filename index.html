@@ -449,16 +449,21 @@
       $('#quoteBox').innerHTML = `${esc(q)}<small>— DEV/LIFE</small>`;
     }
 
+    function stampNewActivityNow(){
+      if($('#activityId').value) return;
+      $('#activityDate').value = todayStr();
+      $('#activityTime').value = timeNow();
+    }
+
     function openActivity(id=null,hour=null){
       const a = id ? state.activities.find(x=>x.id===id) : null;
-      if(hour){state.lastSelectedHour = String(hour).slice(0,2); save()}
       $('#modalTitle').textContent = a ? 'Aktivite Düzenle' : 'Aktivite Ekle';
       $('#activityId').value = a?.id || '';
       $('#activityTitle').value = a?.title || '';
       $('#activityCat').value = a?.category || 'Yazılım';
       $('#activityPriority').value = a?.priority || 'medium';
-      $('#activityDate').value = a?.date || state.selectedDate || todayStr();
-      $('#activityTime').value = a?.time || (hour ? timeForHour(hour) : (state.selectedDate === todayStr() ? timeNow() : '09:00'));
+      $('#activityDate').value = a?.date || todayStr();
+      $('#activityTime').value = a?.time || timeNow();
       $('#activityEmoji').value = a?.emoji || '';
       $('#activityStatus').value = a?.status || 'pending';
       $('#activityDesc').value = a?.desc || '';
@@ -466,6 +471,7 @@
       $('#aiSuggest').classList.remove('show');
       $('#btnApplyAi').disabled = true;
       $('#activityModal').classList.add('show');
+      stampNewActivityNow();
       setTimeout(()=>$('#activityTitle').focus(),50);
     }
     function closeActivity(){$('#activityModal').classList.remove('show')}
@@ -473,14 +479,16 @@
       const title = $('#activityTitle').value.trim();
       if(!title){toast('Başlık boş olamaz','err');return}
       const id = $('#activityId').value;
-      const date = $('#activityDate').value || todayStr();
+      const isEdit = Boolean(id);
+      const date = isEdit ? ($('#activityDate').value || todayStr()) : todayStr();
+      const time = isEdit ? ($('#activityTime').value || timeNow()) : timeNow();
       const item = {
         id: id || uid(),
         title,
         category: $('#activityCat').value || 'Diğer',
         priority: $('#activityPriority').value || 'medium',
         date,
-        time: $('#activityTime').value || '',
+        time,
         emoji: $('#activityEmoji').value.trim(),
         status: $('#activityStatus').value,
         desc: $('#activityDesc').value.trim(),
@@ -509,16 +517,18 @@
     }
     function addQuick(index){
       const q = QUICK[index]; if(!q) return;
-      const defaultTime = `${pad(q[3])}:00`;
-      const existing = state.activities.find(a=>a.date===state.selectedDate && a.title===q[1] && a.category===q[2]);
+      const date = todayStr();
+      const time = timeNow();
+      const existing = state.activities.find(a=>a.date===date && a.time===time && a.title===q[1] && a.category===q[2]);
       if(existing){
         existing.status = existing.status === 'completed' ? 'pending' : 'completed';
-        existing.time = existing.time || defaultTime;
         existing.updatedAt = Date.now();
       }else{
-        state.activities.push({id:uid(),title:q[1],category:q[2],priority:'low',date:state.selectedDate,time:defaultTime,emoji:q[0],status:'completed',desc:'Hızlı aktivite ile eklendi',createdAt:Date.now(),updatedAt:Date.now()});
+        state.activities.push({id:uid(),title:q[1],category:q[2],priority:'low',date,time,emoji:q[0],status:'completed',desc:'Hızlı aktivite ile şimdiki zamana eklendi',createdAt:Date.now(),updatedAt:Date.now()});
       }
-      save(); renderAll(); toast('Hızlı aktivite işlendi');
+      state.selectedDate = date;
+      state.weekStart = fmtDate(getMonday(parseDate(date)));
+      save(); renderAll(); toast(`${q[1]} ${time} saatine işlendi`);
     }
     function seed(){
       const examples = [['💻','OpenAI API notlarını düzenle','Yazılım','09:00'],['📚','20 sayfa kitap oku','Kitap','21:00'],['🏋️','45 dk spor','Spor','19:00'],['🧘','Nefes egzersizi','Sağlık','08:00']];
@@ -680,7 +690,7 @@
     function chooseAutocomplete(index){
       const q = QUICK[Number(index)]; if(!q) return;
       applySuggestion({title:q[1],description:`${q[1]} aktivitesi hızlı öneriden seçildi.`,category:q[2],emoji:q[0],priority:'low'});
-      $('#activityTime').value = `${pad(q[3])}:00`;
+      stampNewActivityNow();
       $('#activityAutocomplete').classList.remove('show');
     }
     function aiComplete(){
@@ -692,7 +702,7 @@
       $('#aiSuggest').classList.add('show');
       $('#btnApplyAi').disabled = false;
     }
-    function applyAiSuggestion(){applySuggestion(lastAiSuggestion,true);toast('Öneri uygulandı')}
+    function applyAiSuggestion(){applySuggestion(lastAiSuggestion,true);stampNewActivityNow();toast('Öneri uygulandı')}
 
     function exportJson(){
       const data = {version:5,exportedAt:new Date().toISOString(),state};
