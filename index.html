@@ -38,6 +38,11 @@
     .nav button:hover,.nav button.active{color:var(--text);background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.38)}
     .clock{font-family:var(--mono);font-size:.76rem;font-weight:800;color:var(--cyan);border:1px solid rgba(6,182,212,.24);background:rgba(6,182,212,.08);border-radius:13px;padding:9px 11px;white-space:nowrap}
     .layout{display:grid;grid-template-columns:300px minmax(0,1fr) 360px;gap:16px;margin-top:16px;align-items:start}
+    body[data-current-view]:not([data-current-view="dashboard"]) .side-left,
+    body[data-current-view]:not([data-current-view="dashboard"]) .side-right,
+    body[data-current-view]:not([data-current-view="dashboard"]) .week-card{display:none!important}
+    body[data-current-view]:not([data-current-view="dashboard"]) .layout{grid-template-columns:minmax(0,1fr)!important}
+    body[data-current-view]:not([data-current-view="dashboard"]) .main-stack{width:min(1120px,100%);margin:0 auto}
     .stack{display:flex;flex-direction:column;gap:16px}.main-stack{min-width:0}.panel{background:rgba(26,26,46,.9);border:1px solid var(--border);border-radius:22px;box-shadow:0 10px 40px rgba(0,0,0,.18);overflow:hidden}.panel.pad{padding:16px}
     .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 16px;border-bottom:1px solid var(--border)}
     .panel-title{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;font-weight:900}.panel-title:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px rgba(124,58,237,.7)}
@@ -67,7 +72,7 @@
     @media(max-width:390px){.quick-grid{grid-template-columns:1fr}.stats,.analysis-grid{grid-template-columns:1fr}.timer-controls{grid-template-columns:1fr}.week{grid-template-columns:30px repeat(7,42px) 30px}}
   </style>
 </head>
-<body>
+<body data-current-view="dashboard">
   <div class="app">
     <header class="topbar">
       <div class="brand"><span class="brand-dot"></span><span><b>DEV</b>/<b>LIFE</b></span></div>
@@ -91,10 +96,6 @@
             <div class="stat"><small>Okuma</small><strong id="statRead" class="cyan">0dk</strong></div>
             <div class="stat"><small>Seri</small><strong id="statStreak" class="orange">0</strong></div>
           </div>
-        </section>
-        <section class="panel">
-          <div class="panel-head"><div class="panel-title">Kategoriler</div></div>
-          <div class="cat-list" id="categoryList"></div>
         </section>
       </aside>
 
@@ -378,7 +379,11 @@
   function apiKey(){return ($('#openaiApiKey')?.value||'').trim()}
 
   function renderClock(){const d=new Date();$('#clock').textContent=d.toLocaleString('tr-TR',{weekday:'short',hour:'2-digit',minute:'2-digit'}).replace(',','');$('#todayBadge').textContent=d.toLocaleDateString('tr-TR',{day:'2-digit',month:'short'})}
-  function renderNav(view){$$('.view').forEach(v=>v.classList.toggle('active',v.id===view));$$('#topNav button,#bottomNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view))}
+  function renderNav(view){
+    document.body.dataset.currentView=view;
+    $$('.view').forEach(v=>v.classList.toggle('active',v.id===view));
+    $$('#topNav button,#bottomNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  }
   function renderWeek(){
     const ws=currentWeekStart();const today=todayKey();const end=new Date(ws);end.setDate(ws.getDate()+6);
     $('#weekLabel').textContent=`${ws.toLocaleDateString('tr-TR',{day:'2-digit',month:'short'})} - ${end.toLocaleDateString('tr-TR',{day:'2-digit',month:'short'})}`;
@@ -416,7 +421,9 @@
     $('#quickGrid').innerHTML=QUICK.map((q,i)=>{const done=today.some(a=>a.title===q[1]&&a.category===q[2]&&a.status==='completed');return `<button class="quick ${done?'done':''}" data-quick="${i}"><span>${q[0]}</span><span>${esc(q[1])}</span></button>`}).join('');
   }
   function renderCats(){
-    $('#categoryList').innerHTML=CATS.map(c=>{const count=selectedActivities().filter(a=>a.category===c[0]).length;return `<div class="cat"><i style="background:${c[2]}"></i><span>${c[1]} ${c[0]}</span><b>${count}</b></div>`}).join('');
+    const box=$('#categoryList');
+    if(!box)return;
+    box.innerHTML=CATS.map(c=>{const count=selectedActivities().filter(a=>a.category===c[0]).length;return `<div class="cat"><i style="background:${c[2]}"></i><span>${c[1]} ${c[0]}</span><b>${count}</b></div>`}).join('');
   }
   function calcStreak(){
     let n=0;const d=new Date();
@@ -571,7 +578,7 @@
     window.addEventListener('keydown',e=>{if(e.key==='Escape'){closeActivity();$('#confirmBox').classList.remove('show')}});
   }
 
-  renderFilters();bind();renderAll();loadPrayer(false);setInterval(renderClock,1000);setInterval(()=>{if(!$('#activityId').value&&$('#activityModal').classList.contains('show'))setNewDateTimeFields()},30000);
+  renderFilters();bind();renderNav('dashboard');renderAll();loadPrayer(false);setInterval(renderClock,1000);setInterval(()=>{if(!$('#activityId').value&&$('#activityModal').classList.contains('show'))setNewDateTimeFields()},30000);
 })();
 </script>
 </body>
